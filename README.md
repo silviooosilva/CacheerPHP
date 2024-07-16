@@ -24,6 +24,7 @@ Cacheer-PHP é um pacote minimalista para caching em PHP, oferecendo uma interfa
 
 <p>Exemplo 01 </p>
 <p>Cache de Dados Simples</p>
+
 ```php
 <?php
 require_once __DIR__ . "/../vendor/autoload.php";
@@ -64,6 +65,7 @@ if ($Cacheer->isSuccess()) {
 
 <p>Exemplo 02 </p>
 <p>Cache com tempo de expiração Personalizado</p>
+
 ```php
 <?php
 require_once __DIR__ . "/../vendor/autoload.php";
@@ -102,6 +104,7 @@ if ($Cacheer->isSuccess()) {
 
 <p>Exemplo 03 </p>
 <p>Limpeza e Flush do Cache</p>
+
 ```php
 <?php
 
@@ -141,6 +144,7 @@ if ($Cacheer->isSuccess()) {
 
 <p>Exemplo 04 </p>
 <p>Uso de Namespaces</p>
+
 ```php
 <?php
 require_once __DIR__ . "/../vendor/autoload.php";
@@ -179,6 +183,7 @@ if ($Cacheer->isSuccess()) {
 
 <p>Exemplo 05 </p>
 <p>Cache de Resposta de API</p>
+
 ```php
 <?php
 
