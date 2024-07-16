@@ -23,28 +23,28 @@ Cacheer-PHP é um pacote minimalista para caching em PHP, oferecendo uma interfa
 ## Uso
 
 <p>Exemplo 01 </p>
-```sh
-<b>Cache de Dados Simples</b>
+```
+Cache de Dados Simples
 ```
 
 <p>Exemplo 02 </p>
-```sh
-<b>Cache com Tempo de Expiração Personalizada</b>
+```
+Cache com Tempo de Expiração Personalizada
 ```
 
 <p>Exemplo 03 </p>
-```sh
-<b>Limpeza e Flush do Cache</b>
+```
+Limpeza e Flush do Cache
 ```
 
 <p>Exemplo 04 </p>
-```sh
-<b>Uso de Namespaces</b>
+```
+Uso de Namespaces
 ```
 
 <p>Exemplo 05 </p>
-```sh
-<b>Cache de Resposta de API</b>
+```
+Cache de Resposta de API
 ```
 
 ### Configuração
