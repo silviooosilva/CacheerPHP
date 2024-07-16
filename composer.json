@@ -1,0 +1,18 @@
+{
+    "name": "silviooosilva/cacheer-php",
+    "description": "Um pacote simples e minimalista para gerenciamento de cache",
+    "type": "metapackage",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Silviooosilva\\CacheerPhp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "silviooosilva",
+            "email": "gasparsilvio7@gmail.com"
+        }
+    ],
+    "require": {}
+}
