@@ -1,18 +1,34 @@
 {
-    "name": "silviooosilva/cacheer-php",
-    "description": "Um pacote simples e minimalista para gerenciamento de cache",
-    "type": "metapackage",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Silviooosilva\\CacheerPhp\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "silviooosilva",
-            "email": "gasparsilvio7@gmail.com"
-        }
-    ],
-    "require": {}
+  "name": "silviooosilva/cacheer-php",
+  "description": "Um pacote simples e minimalista para gerenciamento de cache",
+  "keywords": [
+    "cache",
+    "optimizer",
+    "performance",
+    "PHP",
+    "caching",
+    "cache-manager",
+    "Silviooosilva",
+    "speed",
+    "optimization",
+    "file-cache"
+  ],
+  "homepage": "https://github.com/silviooosilva",
+  "type": "metapackage",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Silviooosilva\\CacheerPhp\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Sílvio Silva",
+      "email": "gasparsilvio7@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=8.0"
+  }
 }
