@@ -239,8 +239,7 @@ $options = [
 
 Pode configurar o tempo de expiração do cache em: 
 ```php
-<p>Minutos -> minute(s)</p>
-<p>Horas -> hour(s)</p>
-<p>Segundos -> second(s)</p>
-
+Minutos -> minute(s)
+Horas -> hour(s)
+Segundos -> second(s)
 ```
