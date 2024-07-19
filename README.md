@@ -2,11 +2,11 @@
 
 [![Maintainer](https://img.shields.io/badge/maintainer-@silviooosilva-blue.svg?style=flat-square)](https://twitter.com/silviooosilva)
 [![Source Code](http://img.shields.io/badge/source-silviooosilva/CacheerPHP-blue.svg?style=flat-square)](https://github.com/silviooosilva/CacheerPHP)
-<!-- [![PHP from Packagist](https://img.shields.io/packagist/php-v/silviooosilva/CacheerPHP.svg?style=flat-square)](https://packagist.org/packages/silviooosilva/cacheer-php) -->
+[![PHP from Packagist](https://img.shields.io/packagist/php-v/silviooosilva/CacheerPHP.svg?style=flat-square)](https://packagist.org/packages/silviooosilva/cacheer-php)
 [![Latest Version](https://img.shields.io/github/release/silviooosilva/CacheerPHP.svg?style=flat-square)](https://github.com/silviooosilva/CacheerPHP/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Quality Score](https://img.shields.io/scrutinizer/g/silviooosilva/CacheerPHP.svg?style=flat-square)](https://scrutinizer-ci.com/g/silviooosilva/CacheerPHP)
-<!-- [![Total Downloads](https://img.shields.io/packagist/dt/ssilviooosilva/CacheerPHP.svg?style=flat-square)](https://packagist.org/packages/silviooosilva/cacheer-php) -->
+[![Total Downloads](https://img.shields.io/packagist/dt/ssilviooosilva/CacheerPHP.svg?style=flat-square)](https://packagist.org/packages/silviooosilva/cacheer-php)
 
 
 Cacheer-PHP é um pacote minimalista para caching em PHP, oferecendo uma interface simples para armazenar e recuperar dados em cache utilizando arquivos.
