@@ -83,12 +83,14 @@ class Cacheer
     public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '')
     {
         $namespace = $namespace ? md5($namespace) . '/' : '';
-        $cacheDir = "{$this->cacheDir}/{$namespace}";
+        $cacheDir = $this->cacheDir;
+
         if (!empty($namespace)) {
+            $cacheDir = "{$this->cacheDir}/{$namespace}";
             $this->createCacheDir($cacheDir);
         }
 
-        $cacheFile = "{$this->cacheDir}/{$namespace}" . md5($cacheKey) . ".cache";
+        $cacheFile = $cacheDir . md5($cacheKey) . ".cache";
         $data = serialize($cacheData);
         if (!file_put_contents($cacheFile, $data, LOCK_EX)) {
             $this->message = "Could not create cache file. Try Again";
