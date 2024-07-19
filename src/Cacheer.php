@@ -83,7 +83,7 @@ class Cacheer
     public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '')
     {
         $namespace = $namespace ? md5($namespace) . '/' : '';
-        $cacheDir = $this->cacheDir;
+        $cacheDir = "{$this->cacheDir}/";
 
         if (!empty($namespace)) {
             $cacheDir = "{$this->cacheDir}/{$namespace}";
@@ -92,9 +92,10 @@ class Cacheer
 
         $cacheFile = $cacheDir . md5($cacheKey) . ".cache";
         $data = serialize($cacheData);
-        if (!file_put_contents($cacheFile, $data, LOCK_EX)) {
-            $this->message = "Could not create cache file. Try Again";
-            $this->success = false;
+
+
+        if (!@file_put_contents($cacheFile, $data, LOCK_EX)) {
+            throw new Exception("Could not create cache file. Check your dir permissions and try again.");
         } else {
             $this->message = "Cache file created successfully";
             $this->success = true;
@@ -165,7 +166,7 @@ class Cacheer
     private function createCacheDir(string $dirName)
     {
         if (!file_exists($dirName) || !is_dir($dirName)) {
-            if (!mkdir($dirName, 0777, true)) {
+            if (!mkdir($dirName, 0775, true)) {
                 $this->message = "Could not create cache folder";
                 return $this;
             }
