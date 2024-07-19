@@ -52,7 +52,7 @@ class Cacheer
 
         $this->cacheDir = realpath($options['cacheDir']) ?: "";
         $this->createCacheDir($options['cacheDir']);
-        $this->defaultTTL = ($options['expirationTime'] ? $this->convertExpirationToSeconds($options['expirationTime']) : $this->defaultTTL);
+        $this->defaultTTL = (isset($options['expirationTime']) ? $this->convertExpirationToSeconds($options['expirationTime']) : $this->defaultTTL);
     }
 
 
