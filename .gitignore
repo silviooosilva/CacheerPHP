@@ -1,20 +1,4 @@
-# Ignorar diretórios de dependências
 /vendor/
 
-# Ignorar arquivos de configuração locais
+/.vagrant
 .phpunit.result.cache
-
-# Ignorar arquivos de log
-*.log
-
-# Ignorar arquivos do sistema operacional
-.DS_Store
-Thumbs.db
-
-# Ignorar arquivos de IDEs
-.idea/
-.vscode/
-
-# Ignorar outros arquivos temporários
-*.tmp
-*.swp
