@@ -1,15 +1,3 @@
 /vendor/
-/cache/
-
+/.vagrant
 .phpunit.result.cache
-
-*.log
-
-.DS_Store
-Thumbs.db
-
-.idea/
-.vscode/
-
-*.tmp
-*.swp
