@@ -14,7 +14,7 @@
     "file-cache"
   ],
   "homepage": "https://github.com/silviooosilva",
-  "type": "metapackage",
+  "type": "library",
   "license": "MIT",
   "autoload": {
     "psr-4": {
