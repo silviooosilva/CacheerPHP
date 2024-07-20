@@ -1,0 +1,1 @@
+{"version":1,"defects":{"CacheerTest::testPutCache":7,"CacheerTest::testGetCache":7},"times":{"CacheerTest::testPutCache":0.004,"CacheerTest::testGetCache":2.002,"CacheerTest::testClearCache":0.002,"CacheerTest::testFlushCache":0.001}}
