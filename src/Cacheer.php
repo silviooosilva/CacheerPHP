@@ -3,6 +3,8 @@
 namespace Silviooosilva\CacheerPhp;
 
 use Exception;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Class CacheerPHP
@@ -124,22 +126,38 @@ class Cacheer
     }
 
     /**
-     * @return $this|string
+     * @return $this | string
      */
     public function flushCache()
     {
         $cacheDir = "{$this->cacheDir}/";
-        $cacheFiles = glob($cacheDir . "*.cache");
-        foreach ($cacheFiles as $file) {
-            if (is_file($file)) {
-                unlink($file);
+
+
+        $cacheFiles = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($cacheDir, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        if (count(scandir($cacheDir)) <= 2) {
+            $this->message = "No CacheFiles in {$cacheDir}";
+            $this->success = false;
+        }
+
+        foreach ($cacheFiles as $cacheFile) {
+            $cachePath = $cacheFile->getPathname();
+            if ($cacheFile->isDir()) {
+                $this->removeCacheDir($cachePath);
                 $this->message = "Flush finished successfully";
                 $this->success = true;
             } else {
-                $this->message = "No CacheFiles in {$this->cacheDir}";
-                $this->success = false;
+                unlink($cachePath);
+                $this->message = "Flush finished successfully";
+                $this->success = true;
             }
         }
+
+
+
         return $this;
     }
 
@@ -189,5 +207,15 @@ class Cacheer
         if (strpos($expiration, 'hour') !== false) {
             return (int)$expiration * 3600;
         }
+    }
+
+
+    /**
+     * @param string $cacheDir
+     * @return bool
+     */
+    private function removeCacheDir(string $cacheDir)
+    {
+        return (rmdir($cacheDir) ? true : false);
     }
 }
