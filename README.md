@@ -252,3 +252,11 @@ Minutos -> minute(s)
 Horas -> hour(s)
 Segundos -> second(s)
 ```
+
+### Testes
+
+Para rodar os testes, vá para a raíz do projeto e digite o comando:
+
+```sh
+vendor/bin/phpunit
+```
