@@ -1,6 +1,24 @@
-composer.phar
+# Ignorar diretórios de dependências
 /vendor/
 
-# Commit your application's lock file https://getcomposer.org/doc/01-basic-usage.md#commit-your-composer-lock-file-to-version-control
-# You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
-# composer.lock
+# Ignorar diretórios de cache
+/cache/
+
+# Ignorar arquivos de configuração locais
+.env
+.phpunit.result.cache
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de IDEs
+.idea/
+.vscode/
+
+# Ignorar outros arquivos temporários
+*.tmp
+*.swp
