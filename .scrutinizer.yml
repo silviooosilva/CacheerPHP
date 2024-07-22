@@ -1,17 +1,17 @@
 version: "3"
 
 environment:
-    php:
-        version: "8.2"
-        extensions:
-            - openssl
+  php:
+    version: "8.2"
+    extensions:
+      - openssl
 
 project_setup:
-    commands:
-        - sudo apt-get update
-        - sudo apt-get install -y openssl
+  commands:
+    - apt-get update
+    - apt-get install -y openssl
 
 tests:
-    run:
-        command: vendor/bin/phpunit
-        before: composer install
+  run:
+    command: vendor/bin/phpunit
+  before: composer install
