@@ -1,0 +1,26 @@
+version: "3"
+
+# Definições do ambiente
+environment:
+    php:
+        version: "8.2"
+        extensions:
+            - openssl
+build:
+    install:
+        - sudo apt-get update
+        - sudo apt-get install -y openssl
+        - openssl version
+    composer:
+        install: true
+
+analyzer:
+    general:
+        paths:
+            - src
+        tests:
+            - tests
+
+tests:
+    run:
+        command: vendor/bin/phpunit
