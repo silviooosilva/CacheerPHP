@@ -181,7 +181,7 @@ class Cacheer
     private function createCacheDir(string $dirName)
     {
         if (!file_exists($dirName) || !is_dir($dirName)) {
-            if (!mkdir($dirName, 0775, true)) {
+            if (!mkdir($dirName, 0777, true)) {
                 $this->message = "Could not create cache folder";
                 return $this;
             }
