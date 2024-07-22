@@ -40,39 +40,42 @@ class Cacheer
     private bool $success;
 
     /**
+     * @var string
+     */
+    private string $lastFlushTimeFile;
+
+    /**
      * @param array $options
      */
     public function __construct(array $options = [])
     {
-        if (!empty($options)) {
-            $this->options = $options;
-        }
-        if (!isset($options['cacheDir'])) {
-            throw new Exception("The 'cacheDir' option is required.");
-        }
-
-
-        $this->cacheDir = realpath($options['cacheDir']) ?: "";
-        $this->createCacheDir($options['cacheDir']);
-        $this->defaultTTL = (isset($options['expirationTime']) ? $this->convertExpirationToSeconds($options['expirationTime']) : $this->defaultTTL);
+        $this->validateOptions($options);
+        $this->initializeCacheDir($options['cacheDir']);
+        $this->defaultTTL = $this->getExpirationTime($options);
+        $this->lastFlushTimeFile = "{$this->cacheDir}/last_flush_time";
+        $this->handleAutoFlush($options);
     }
 
 
     /**
      * @param string $cacheKey
+     * @param string $namespace
+     * @param string | int $ttl
      * @return $this | string
      */
-    public function getCache(string $cacheKey, string $namespace = '')
+    public function getCache(string $cacheKey, string $namespace = '', string | int $ttl = null)
     {
         $namespace = $namespace ? md5($namespace) . '/' : '';
+        $ttl = isset($ttl) ? (is_string($ttl) ? $this->convertExpirationToSeconds($ttl) : $ttl) : $this->defaultTTL;
+
+
         $cacheFile = "{$this->cacheDir}/{$namespace}" . md5($cacheKey) . '.cache';
-        if (file_exists($cacheFile) && (filemtime($cacheFile) > (time() - $this->defaultTTL))) {
+        if (file_exists($cacheFile) && (filemtime($cacheFile) > (time() - $ttl))) {
             $this->success = true;
             return unserialize(file_get_contents($cacheFile));
         }
 
-        $this->message = "cacheFile not found, does not exists or expired";
-        $this->success = false;
+        $this->setMessage("cacheFile not found, does not exists or expired", false);
         return $this;
     }
 
@@ -99,8 +102,7 @@ class Cacheer
         if (!@file_put_contents($cacheFile, $data, LOCK_EX)) {
             throw new Exception("Could not create cache file. Check your dir permissions and try again.");
         } else {
-            $this->message = "Cache file created successfully";
-            $this->success = true;
+            $this->setMessage("Cache file created successfully", true);
         }
 
         return $this;
@@ -116,11 +118,9 @@ class Cacheer
         $cacheFile = "{$this->cacheDir}/{$namespace}" . md5($cacheKey) . ".cache";
         if (file_exists($cacheFile)) {
             unlink($cacheFile);
-            $this->message = "Cache file deleted successfully!";
-            $this->success = true;
+            $this->setMessage("Cache file deleted successfully!", true);
         } else {
-            $this->message = "Cache file does not exists!";
-            $this->success = false;
+            $this->setMessage("Cache file does not exists!", false);
         }
         return $this;
     }
@@ -139,24 +139,21 @@ class Cacheer
         );
 
         if (count(scandir($cacheDir)) <= 2) {
-            $this->message = "No CacheFiles in {$cacheDir}";
-            $this->success = false;
+            $this->setMessage("No CacheFiles in {$cacheDir}", false);
         }
 
         foreach ($cacheFiles as $cacheFile) {
             $cachePath = $cacheFile->getPathname();
             if ($cacheFile->isDir()) {
                 $this->removeCacheDir($cachePath);
-                $this->message = "Flush finished successfully";
-                $this->success = true;
+                $this->setMessage("Flush finished successfully", true);
             } else {
                 unlink($cachePath);
-                $this->message = "Flush finished successfully";
-                $this->success = true;
+                $this->setMessage("Flush finished successfully", true);
             }
         }
 
-
+        file_put_contents($this->lastFlushTimeFile, time());
 
         return $this;
     }
@@ -191,24 +188,106 @@ class Cacheer
         }
     }
 
+
     /**
-     * Convert expiration time to seconds
+     * @param array $options
+     * @return void
+     */
+    private function validateOptions(array $options)
+    {
+        if (!isset($options['cacheDir'])) {
+            throw new Exception("The 'cacheDir' option is required.");
+        }
+        $this->options = $options;
+    }
+
+    /**
+     * @param string $cacheDir
+     * @return void
+     */
+    private function initializeCacheDir(string $cacheDir)
+    {
+        $this->cacheDir = realpath($cacheDir) ?: "";
+        $this->createCacheDir($cacheDir);
+    }
+
+    /**
      * @param string $expiration
      * @return int
      */
     private function convertExpirationToSeconds(string $expiration)
     {
-        if (strpos($expiration, 'second') !== false) {
-            return (int)$expiration * 1;
+        $units = [
+            'second' => 1,
+            'minute' => 60,
+            'hour' => 3600,
+            'day' => 86400,
+            'week' => 604800,
+            'month' => 2592000,
+            'year' => 31536000,
+        ];
+
+        foreach ($units as $unit => $value) {
+            if (strpos($expiration, $unit) !== false) {
+                return (int)$expiration * $value;
+            }
         }
-        if (strpos($expiration, 'minute') !== false) {
-            return (int)$expiration * 60;
-        }
-        if (strpos($expiration, 'hour') !== false) {
-            return (int)$expiration * 3600;
+
+        throw new Exception("Invalid expiration format");
+    }
+
+
+    /**
+     * @param array $options
+     * @return integer
+     */
+    private function getExpirationTime(array $options): int
+    {
+        return isset($options['expirationTime'])
+            ? $this->convertExpirationToSeconds($options['expirationTime'])
+            : $this->defaultTTL;
+    }
+
+
+    /**
+     * @param string $flushAfter
+     * @return void
+     */
+    private function scheduleFlush(string $flushAfter)
+    {
+        $flushAfterSeconds = $this->convertExpirationToSeconds($flushAfter);
+
+        if (file_exists($this->lastFlushTimeFile)) {
+            $lastFlushTime = file_get_contents($this->lastFlushTimeFile);
+            if ((time() - (int)$lastFlushTime) >= $flushAfterSeconds) {
+                $this->flushCache();
+            }
+        } else {
+            file_put_contents($this->lastFlushTimeFile, time());
         }
     }
 
+    /**
+     * @param array $options
+     * @return void
+     */
+    private function handleAutoFlush(array $options)
+    {
+        if (isset($options['flushAfter'])) {
+            $this->scheduleFlush($options['flushAfter']);
+        }
+    }
+
+    /**
+     * @param string $message
+     * @param boolean $success
+     * @return void
+     */
+    private function setMessage(string $message, bool $success)
+    {
+        $this->message = $message;
+        $this->success = $success;
+    }
 
     /**
      * @param string $cacheDir
