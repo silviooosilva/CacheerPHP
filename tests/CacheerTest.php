@@ -17,7 +17,8 @@ class CacheerTest extends TestCase
 
         $options = [
             'cacheDir' => $this->cacheDir,
-            'expirationTime' => '1 second'
+            // 'expirationTime' => '1 second',
+            // 'flushAfter' => '10 seconds'
         ];
 
         $this->cache = new Cacheer($options);
@@ -26,6 +27,9 @@ class CacheerTest extends TestCase
     protected function tearDown(): void
     {
         array_map('unlink', glob("$this->cacheDir/*.cache"));
+        if (file_exists($this->cacheDir . '/last_flush_time')) {
+            unlink($this->cacheDir . '/last_flush_time');
+        }
         rmdir($this->cacheDir);
     }
 
@@ -56,7 +60,7 @@ class CacheerTest extends TestCase
 
         // Recuperar cache fora do período de expiração
         sleep(2);
-        $cachedData = $this->cache->getCache($cacheKey);
+        $cachedData = $this->cache->getCache($cacheKey, '', '2 seconds');
         $this->assertFalse($this->cache->isSuccess());
         $this->assertEquals('cacheFile not found, does not exists or expired', $this->cache->getMessage());
     }
@@ -93,5 +97,30 @@ class CacheerTest extends TestCase
 
         $this->assertFileDoesNotExist($cacheFile1);
         $this->assertFileDoesNotExist($cacheFile2);
+    }
+
+    public function testAutoFlush()
+    {
+        $options = [
+            'cacheDir' => $this->cacheDir,
+            'flushAfter' => '10 seconds'
+        ];
+
+        $this->cache = new Cacheer($options);
+        $this->cache->putCache('test_key', 'test_data');
+
+        // Verifica se o cache foi criado com sucesso
+        $this->assertEquals('test_data', $this->cache->getCache('test_key'));
+        $this->assertTrue($this->cache->isSuccess());
+
+        // Espera 11 segundos para o cache ser limpo automaticamente
+        sleep(11);
+
+        $this->cache = new Cacheer($options);
+
+        // Verifica se o cache foi limpo automaticamente
+        $cachedData = $this->cache->getCache('test_key');
+        $this->assertFalse($this->cache->isSuccess());
+        $this->assertEquals('cacheFile not found, does not exists or expired', $this->cache->getMessage());
     }
 }
