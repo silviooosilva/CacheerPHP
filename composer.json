@@ -16,6 +16,7 @@
   "homepage": "https://github.com/silviooosilva",
   "type": "library",
   "license": "MIT",
+  "version": "1.2.0",
   "autoload": {
     "psr-4": {
       "Silviooosilva\\CacheerPhp\\": "src/"
