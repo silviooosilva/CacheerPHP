@@ -8,7 +8,6 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/silviooosilva/CacheerPHP.svg?style=flat-square)](https://scrutinizer-ci.com/g/silviooosilva/CacheerPHP)
 [![Total Downloads](https://img.shields.io/packagist/dt/ssilviooosilva/CacheerPHP.svg?style=flat-square)](https://packagist.org/packages/silviooosilva/cacheer-php)
 
-
 Cacheer-PHP é um pacote minimalista para caching em PHP, oferecendo uma interface simples para armazenar e recuperar dados em cache utilizando arquivos.
 
 ## Funcionalidades
@@ -17,17 +16,27 @@ Cacheer-PHP é um pacote minimalista para caching em PHP, oferecendo uma interfa
 - Expiração de cache personalizável.
 - Limpeza e flush de cache.
 - Suporte a namespaces para organização de cache.
+- Limpeza automática do diretório de cache (`flushAfter`).
 
 ## Instalação
 
 1. Clone o repositório ou faça o download dos arquivos:
 
-    ```sh
-    git clone https://github.com/silviooosilva/CacheerPHP.git
-    ```
+   ```sh
+   git clone https://github.com/silviooosilva/CacheerPHP.git
+   ```
 
 2. Inclua o autoload do Composer no seu projeto
 
+   ```php
+   require_once __DIR__ . '/vendor/autoload.php';
+   ```
+
+3. Instale as dependências via Composer:
+
+   ```sh
+   composer install ou composer update
+   ```
 
 ## Uso
 
@@ -83,7 +92,7 @@ use Silviooosilva\CacheerPhp\Cacheer;
 
 $options = [
     "cacheDir" =>  __DIR__ . "/cache",
-    "expirationTime" => "2 hour"
+    "expirationTime" => "2 hour" //Primeira opção (definição global)
 ];
 
 $Cacheer = new Cacheer($options);
@@ -100,7 +109,7 @@ $dailyStats = [
 $Cacheer->putCache($cacheKey, $dailyStats);
 
 // Recuperando dados do cache por 2 horas
-$cachedStats = $Cacheer->getCache($cacheKey);
+$cachedStats = $Cacheer->getCache($cacheKey, 'namespace', '2 hours'); //Segunda opção (definição no método)
 
 if ($Cacheer->isSuccess()) {
     echo "Cache Found: ";
@@ -237,6 +246,7 @@ $options = [
     'cacheDir' => __DIR__ . '/cache'
 ];
 ```
+
 Opcionalmente, você pode configurar o tempo de expiração do cache:
 
 ```sh
@@ -246,12 +256,36 @@ $options = [
 ];
 ```
 
-Pode configurar o tempo de expiração do cache em: 
+
+Pode configurar o tempo de expiração do cache em:
+
 ```php
-Minutos -> minute(s)
-Horas -> hour(s)
-Segundos -> second(s)
+Minutos: minute(s)
+Horas: hour(s)
+Segundos: second(s)
 ```
+
+Você também pode configurar a limpeza automática do diretório de cache com a opção `flushAfter`:
+
+```php
+$options = [
+    'cacheDir' => __DIR__ . '/cache',
+    'flushAfter' => '1 week' // String
+];
+```
+
+Os formatos de tempo aceitos para `flushAfter` são:
+
+```php
+Segundos: second(s)
+Minutos: minute(s)
+Horas: hour(s)
+Dias: day(s)
+Semanas: week(s)
+Meses: month(s)
+Anos: year(s)
+```
+
 
 ### Testes
 
