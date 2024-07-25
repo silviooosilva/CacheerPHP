@@ -16,7 +16,7 @@
   "homepage": "https://github.com/silviooosilva",
   "type": "library",
   "license": "MIT",
-  "version": "v1.2.0",
+  "version": "v1.3.0",
   "autoload": {
     "psr-4": {
       "Silviooosilva\\CacheerPhp\\": "src/"
@@ -30,7 +30,7 @@
     }
   ],
   "require": {
-    "php": "^8.2"
+    "php": ">=8.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^11.2"
