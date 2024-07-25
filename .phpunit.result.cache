@@ -1,1 +1,0 @@
-{"version":1,"defects":{"CacheerTest::testPutCache":8,"CacheerTest::testGetCache":8,"CacheerTest::testClearCache":8,"CacheerTest::testFlushCache":8,"CacheerTest::testAutoFlush":7},"times":{"CacheerTest::testPutCache":0.009,"CacheerTest::testGetCache":2.002,"CacheerTest::testClearCache":0.019,"CacheerTest::testFlushCache":0.009,"CacheerTest::testAutoFlush":11.004}}
