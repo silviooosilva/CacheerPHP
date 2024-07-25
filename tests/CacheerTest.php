@@ -30,7 +30,7 @@ class CacheerTest extends TestCase
         if (file_exists($this->cacheDir . '/last_flush_time')) {
             unlink($this->cacheDir . '/last_flush_time');
         }
-        rmdir($this->cacheDir);
+        // rmdir($this->cacheDir);
     }
 
     public function testPutCache()
@@ -123,4 +123,66 @@ class CacheerTest extends TestCase
         $this->assertFalse($this->cache->isSuccess());
         $this->assertEquals('cacheFile not found, does not exists or expired', $this->cache->getMessage());
     }
+
+    public function testAppendCache()
+    {
+        $cacheKey = 'test_append_key';
+        $initialData = ['initial' => 'data'];
+        $additionalData = ['new' => 'data'];
+        $expectedData = array_merge($initialData, $additionalData);
+
+        // Armazena os dados iniciais no cache
+        $this->cache->putCache($cacheKey, $initialData);
+        $this->assertTrue($this->cache->isSuccess());
+
+        // Adiciona novos dados ao cache existente
+        $this->cache->appendCache($cacheKey, $additionalData);
+        $this->assertTrue($this->cache->isSuccess());
+
+        // Verifica se os dados no cache são os esperados
+        $cachedData = $this->cache->getCache($cacheKey);
+        $this->assertEquals($expectedData, $cachedData);
+
+        // Testa adicionar dados como string
+        $additionalData = ['string_data' => 'string data'];
+        $expectedData = array_merge($expectedData, $additionalData);
+        $this->cache->appendCache($cacheKey, $additionalData);
+        $cachedData = $this->cache->getCache($cacheKey);
+        $this->assertEquals($expectedData, $cachedData);
+    }
+
+    public function testAppendCacheFileNotExists()
+    {
+        $cacheKey = 'non_existing_key';
+        $data = ['data'];
+
+        // Tenta adicionar dados a um arquivo de cache que não existe
+        $this->cache->appendCache($cacheKey, $data);
+        $this->assertFalse($this->cache->isSuccess());
+        $this->assertEquals('Cache file does not exists', $this->cache->getMessage());
+    }
+
+    public function testAppendCacheWithNamespace()
+{
+    $cacheKey = 'test_append_key_ns';
+    $namespace = 'test_namespace';
+
+    $initialData = ['initial' => 'data'];
+    $additionalData = ['new' => 'data'];
+     
+    $expectedData = array_merge($initialData, $additionalData);
+
+    // Armazena os dados iniciais no cache com namespace
+    $this->cache->putCache($cacheKey, $initialData, $namespace);
+    $this->assertTrue($this->cache->isSuccess());
+
+    // Adiciona novos dados ao cache existente com namespace
+    $this->cache->appendCache($cacheKey, $additionalData, $namespace);
+    $this->assertTrue($this->cache->isSuccess());
+
+    // Verifica se os dados no cache são os esperados
+    $cachedData = $this->cache->getCache($cacheKey, $namespace);
+    $this->assertEquals($expectedData, $cachedData);
+}
+
 }
