@@ -301,7 +301,7 @@ class Cacheer
      * @param integer $ttl
      * @return boolean
      */
-    private function isCacheValid(string $cacheFile, int $ttl): bool
+    private function isCacheValid(string $cacheFile, int $ttl)
     {
         return file_exists($cacheFile) && (filemtime($cacheFile) > (time() - $ttl));
     }
