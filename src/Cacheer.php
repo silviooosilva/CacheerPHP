@@ -41,6 +41,11 @@ class Cacheer
     private bool $success;
 
     /**
+     * @var boolean
+     */
+    private bool $formatted;
+
+    /**
      * @var string
      */
     private string $lastFlushTimeFile;
@@ -48,8 +53,9 @@ class Cacheer
     /**
      * @param array $options
      */
-    public function __construct(array $options = [])
+    public function __construct(array $options = [], $formatted = false)
     {
+        $this->formatted = $formatted;
         $this->validateOptions($options);
         $this->initializeCacheDir($options['cacheDir']);
         $this->defaultTTL = $this->getExpirationTime($options);
@@ -66,18 +72,18 @@ class Cacheer
      * @param boolean $formatted
      * @return CacheDataFormatter | string | null
      */
-    public function getCache(string $cacheKey, string $namespace = '', string | int $ttl = null, bool $formatted = false)
+    public function getCache(string $cacheKey, string $namespace = '', string | int $ttl = null)
     {
         $ttl = isset($ttl) ? (is_string($ttl) ? $this->convertExpirationToSeconds($ttl) : $ttl) : $this->defaultTTL;
 
         $cacheFile = $this->buildCacheFilePath($cacheKey, $namespace);
         if ($this->isCacheValid($cacheFile, $ttl)) {
             $cacheData = $this->retrieveCache($cacheFile);
-            return $formatted ? new CacheDataFormatter($cacheData) : $cacheData;
+            return $this->formatted ? new CacheDataFormatter($cacheData) : $cacheData;
         }
 
         $this->setMessage("cacheFile not found, does not exists or expired", false);
-        return $formatted ? new CacheDataFormatter(null) : $this;
+        return $this->formatted ? new CacheDataFormatter(null) : $this;
     }
 
 
