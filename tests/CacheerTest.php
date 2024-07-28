@@ -187,26 +187,36 @@ class CacheerTest extends TestCase
 
     public function testDataOutputShouldBeOfTypeJson()
     {
+        $options = [
+            'cacheDir' => $this->cacheDir
+        ];
+        $this->cache = new Cacheer($options, true);
+
         $cacheKey = "key_json";
         $cacheData = "data_json";
 
         $this->cache->putCache($cacheKey, $cacheData);
         $this->assertTrue($this->cache->isSuccess());
 
-        $cacheOutput = $this->cache->getCache($cacheKey, '', null, true)->toJson();
+        $cacheOutput = $this->cache->getCache($cacheKey)->toJson();
         $this->assertTrue($this->cache->isSuccess());
         $this->assertJson($cacheOutput);
     }
 
     public function testDataOutputShouldBeOfTypeArray()
     {
+        $options = [
+            'cacheDir' => $this->cacheDir
+        ];
+        $this->cache = new Cacheer($options, true);
+
         $cacheKey = "key_array";
         $cacheData = "data_array";
 
         $this->cache->putCache($cacheKey, $cacheData);
         $this->assertTrue($this->cache->isSuccess());
 
-        $cacheOutput = $this->cache->getCache($cacheKey, '', null, true)->toArray();
+        $cacheOutput = $this->cache->getCache($cacheKey)->toArray();
         $this->assertTrue($this->cache->isSuccess());
         $this->assertIsArray($cacheOutput);
     }
