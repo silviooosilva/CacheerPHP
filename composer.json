@@ -16,7 +16,7 @@
   "homepage": "https://github.com/silviooosilva",
   "type": "library",
   "license": "MIT",
-  "version": "v1.3.0",
+  "version": "v1.4.0",
   "autoload": {
     "files": [
       "src/utils/DataFormatter.php"
