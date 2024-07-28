@@ -18,6 +18,9 @@
   "license": "MIT",
   "version": "v1.3.0",
   "autoload": {
+    "files": [
+      "src/utils/DataFormatter.php"
+    ],
     "psr-4": {
       "Silviooosilva\\CacheerPhp\\": "src/"
     }
