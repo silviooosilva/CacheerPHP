@@ -2,6 +2,7 @@
 
 namespace Silviooosilva\CacheerPhp;
 
+use Silviooosilva\Utils\CacheDataFormatter;
 use Exception;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -57,23 +58,26 @@ class Cacheer
     }
 
 
+
     /**
      * @param string $cacheKey
      * @param string $namespace
      * @param string | int $ttl
-     * @return $this | string
+     * @param boolean $formatted
+     * @return CacheDataFormatter | string | null
      */
-    public function getCache(string $cacheKey, string $namespace = '', string | int $ttl = null)
+    public function getCache(string $cacheKey, string $namespace = '', string | int $ttl = null, bool $formatted = false)
     {
         $ttl = isset($ttl) ? (is_string($ttl) ? $this->convertExpirationToSeconds($ttl) : $ttl) : $this->defaultTTL;
 
         $cacheFile = $this->buildCacheFilePath($cacheKey, $namespace);
         if ($this->isCacheValid($cacheFile, $ttl)) {
-            return $this->retrieveCache($cacheFile);
+            $cacheData = $this->retrieveCache($cacheFile);
+            return $formatted ? new CacheDataFormatter($cacheData) : $cacheData;
         }
 
         $this->setMessage("cacheFile not found, does not exists or expired", false);
-        return $this;
+        return $formatted ? new CacheDataFormatter(null) : $this;
     }
 
 
@@ -93,15 +97,14 @@ class Cacheer
      * @param string $cacheKey
      * @param mixed $cacheData
      * @param string $namespace
-     * @return void
+     * @return void | string
      */
     public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
     {
         $currentCacheFileData = $this->getCache($cacheKey, $namespace);
 
         if (!$this->isSuccess()) {
-            $this->setMessage("Cache file does not exists", false);
-            return;
+            return $this->getMessage();
         }
 
         if (is_array($currentCacheFileData) && is_array($cacheData)) {
