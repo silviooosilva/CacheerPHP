@@ -41,8 +41,8 @@ Cacheer-PHP é um pacote minimalista para caching em PHP, oferecendo uma interfa
 
 ## Documentação
 
-1. [Armazenar e Recuperar Dados em Cache](docs/example1.md)
-2. [Expiração de cache personalizável](docs/example2.md)
+1. [Armazenar e Recuperar Dados em Cache](docs/example01.md)
+2. [Expiração de cache personalizável](docs/example02.md)
 3. [Limpeza e flush de cache](docs/example03.md)
 4. [Suporte a namespaces para organização de cache](docs/example04.md)
 5. [Limpeza automática do diretório de cache `flushAfter`](docs/example09.md)
