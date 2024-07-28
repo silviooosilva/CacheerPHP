@@ -159,30 +159,55 @@ class CacheerTest extends TestCase
         // Tenta adicionar dados a um arquivo de cache que não existe
         $this->cache->appendCache($cacheKey, $data);
         $this->assertFalse($this->cache->isSuccess());
-        $this->assertEquals('Cache file does not exists', $this->cache->getMessage());
+        $this->assertEquals('cacheFile not found, does not exists or expired', $this->cache->getMessage());
     }
 
     public function testAppendCacheWithNamespace()
-{
-    $cacheKey = 'test_append_key_ns';
-    $namespace = 'test_namespace';
+    {
+        $cacheKey = 'test_append_key_ns';
+        $namespace = 'test_namespace';
 
-    $initialData = ['initial' => 'data'];
-    $additionalData = ['new' => 'data'];
-     
-    $expectedData = array_merge($initialData, $additionalData);
+        $initialData = ['initial' => 'data'];
+        $additionalData = ['new' => 'data'];
 
-    // Armazena os dados iniciais no cache com namespace
-    $this->cache->putCache($cacheKey, $initialData, $namespace);
-    $this->assertTrue($this->cache->isSuccess());
+        $expectedData = array_merge($initialData, $additionalData);
 
-    // Adiciona novos dados ao cache existente com namespace
-    $this->cache->appendCache($cacheKey, $additionalData, $namespace);
-    $this->assertTrue($this->cache->isSuccess());
+        // Armazena os dados iniciais no cache com namespace
+        $this->cache->putCache($cacheKey, $initialData, $namespace);
+        $this->assertTrue($this->cache->isSuccess());
 
-    // Verifica se os dados no cache são os esperados
-    $cachedData = $this->cache->getCache($cacheKey, $namespace);
-    $this->assertEquals($expectedData, $cachedData);
-}
+        // Adiciona novos dados ao cache existente com namespace
+        $this->cache->appendCache($cacheKey, $additionalData, $namespace);
+        $this->assertTrue($this->cache->isSuccess());
 
+        // Verifica se os dados no cache são os esperados
+        $cachedData = $this->cache->getCache($cacheKey, $namespace);
+        $this->assertEquals($expectedData, $cachedData);
+    }
+
+    public function testDataOutputShouldBeOfTypeJson()
+    {
+        $cacheKey = "key_json";
+        $cacheData = "data_json";
+
+        $this->cache->putCache($cacheKey, $cacheData);
+        $this->assertTrue($this->cache->isSuccess());
+
+        $cacheOutput = $this->cache->getCache($cacheKey, '', null, true)->toJson();
+        $this->assertTrue($this->cache->isSuccess());
+        $this->assertJson($cacheOutput);
+    }
+
+    public function testDataOutputShouldBeOfTypeArray()
+    {
+        $cacheKey = "key_array";
+        $cacheData = "data_array";
+
+        $this->cache->putCache($cacheKey, $cacheData);
+        $this->assertTrue($this->cache->isSuccess());
+
+        $cacheOutput = $this->cache->getCache($cacheKey, '', null, true)->toArray();
+        $this->assertTrue($this->cache->isSuccess());
+        $this->assertIsArray($cacheOutput);
+    }
 }
