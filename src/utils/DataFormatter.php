@@ -30,4 +30,10 @@ class CacheDataFormatter
     {
         return (string)$this->data;
     }
+
+
+    public function toObject()
+    {
+        return (object)$this->data;
+    }
 }
