@@ -220,4 +220,22 @@ class CacheerTest extends TestCase
         $this->assertTrue($this->cache->isSuccess());
         $this->assertIsArray($cacheOutput);
     }
+
+    public function testDataOutputShouldBeOfTypeObject()
+    {
+        $options = [
+            'cacheDir' => $this->cacheDir
+        ];
+        $this->cache = new Cacheer($options, true);
+
+        $cacheKey = "key_object";
+        $cacheData = ["id" => 123];
+
+        $this->cache->putCache($cacheKey, $cacheData);
+        $this->assertTrue($this->cache->isSuccess());
+
+        $cacheOutput = $this->cache->getCache($cacheKey)->toObject();
+        $this->assertTrue($this->cache->isSuccess());
+        $this->assertIsObject($cacheOutput);
+    }
 }
