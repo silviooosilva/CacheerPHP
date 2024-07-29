@@ -17,7 +17,7 @@ Cacheer-PHP é um pacote minimalista para caching em PHP, oferecendo uma interfa
 - Limpeza e flush de cache.
 - Suporte a namespaces para organização de cache.
 - Limpeza automática do diretório de cache (`flushAfter`).
-- Saída de Dados Personalizada (`JSON, Array, Strings`)
+- Saída de Dados Personalizada (`JSON, Array, Strings, Objetos`)
 
 ## Instalação
 
