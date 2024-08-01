@@ -22,23 +22,17 @@ Cacheer-PHP é um pacote minimalista para caching em PHP, oferecendo uma interfa
 
 ## Instalação
 
-1. Clone o repositório ou faça o download dos arquivos:
+O CacheerPHP está disponível via Composer:
 
-   ```sh
-   git clone https://github.com/silviooosilva/CacheerPHP.git
-   ```
+```sh
+  "silviooosilva/cacheer-php": "^1.4"
+```
 
-2. Inclua o autoload do Composer no seu projeto
+Ou rode o comando:
 
-   ```php
-   require_once __DIR__ . '/vendor/autoload.php';
-   ```
-
-3. Instale as dependências via Composer:
-
-   ```sh
-   composer install ou composer update
-   ```
+```sh
+composer require silviooosilva/cacheer-php
+```
 
 ## Documentação
 
