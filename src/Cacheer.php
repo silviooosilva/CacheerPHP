@@ -99,6 +99,48 @@ class Cacheer
         return $this;
     }
 
+
+    /**
+     * @param array $items
+     * @param string $namespace
+     * @param integer $batchSize
+     * @return void | $this
+     */
+    public function putMany(array $items, string $namespace = '', int $batchSize = 100)
+    {
+        $processedCount = 0;
+        $itemCount = count($items);
+
+        while ($processedCount < $itemCount) {
+            $batchItems = array_slice($items, $processedCount, $batchSize);
+            foreach ($batchItems as $item) {
+                if (isset($item['cacheKey']) && isset($item['cacheData'])) {
+                    $cacheKey = $item['cacheKey'];
+                    $cacheData = $item['cacheData'];
+
+
+                    if (is_array($cacheData) && is_array(reset($cacheData))) {
+                        $mergedData = [];
+                        foreach ($cacheData as $data) {
+                            $mergedData[] = $data;
+                        }
+                    } else {
+                        $mergedData = $cacheData;
+                    }
+
+                    $this->putCache($cacheKey, $mergedData, $namespace);
+                } else {
+                    throw new Exception("Each item must contain 'cacheKey' and 'cacheData'");
+                }
+            }
+
+            $processedCount += count($batchItems);
+        }
+
+        return $this;
+    }
+
+
     /**
      * @param string $cacheKey
      * @param mixed $cacheData
