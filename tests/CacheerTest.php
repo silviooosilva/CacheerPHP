@@ -44,7 +44,7 @@ class CacheerTest extends TestCase
 
         $cacheFile = $this->cacheDir . '/' . md5($cacheKey) . '.cache';
         $this->assertFileExists($cacheFile);
-        $this->assertEquals($data, unserialize(file_get_contents($cacheFile)));
+        $this->assertEquals($data, $this->cache->getCache($cacheKey));
     }
 
     public function testGetCache()
@@ -237,5 +237,26 @@ class CacheerTest extends TestCase
         $cacheOutput = $this->cache->getCache($cacheKey)->toObject();
         $this->assertTrue($this->cache->isSuccess());
         $this->assertIsObject($cacheOutput);
+    }
+
+    public function testPutMany()
+    {
+        $cacheer = new Cacheer(['cacheDir' => __DIR__ . '/cache']);
+        $items = [
+            [
+                'cacheKey' => 'user_1_profile',
+                'cacheData' => ['name' => 'John Doe', 'email' => 'john@example.com']
+            ],
+            [
+                'cacheKey' => 'user_2_profile',
+                'cacheData' => ['name' => 'Jane Doe', 'email' => 'jane@example.com']
+            ],
+        ];
+
+        $cacheer->putMany($items);
+
+        foreach ($items as $item) {
+            $this->assertEquals($item['cacheData'], $cacheer->getCache($item['cacheKey']));
+        }
     }
 }
