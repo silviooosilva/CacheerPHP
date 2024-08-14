@@ -213,7 +213,7 @@ class Cacheer
     {
         if (!file_exists($dirName) || !is_dir($dirName)) {
             if (!mkdir($dirName, 0777, true)) {
-                $this->message = "Could not create cache folder";
+                $this->setMessage("Could not create cache folder", false);
                 return $this;
             }
         }
