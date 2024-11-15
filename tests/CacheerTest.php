@@ -26,11 +26,7 @@ class CacheerTest extends TestCase
 
     protected function tearDown(): void
     {
-        array_map('unlink', glob("$this->cacheDir/*.cache"));
-        if (file_exists($this->cacheDir . '/last_flush_time')) {
-            unlink($this->cacheDir . '/last_flush_time');
-        }
-        // rmdir($this->cacheDir);
+        $this->cache->flushCache();
     }
 
     public function testPutCache()

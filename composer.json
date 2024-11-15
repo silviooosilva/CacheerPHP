@@ -11,15 +11,20 @@
     "Silviooosilva",
     "speed",
     "optimization",
-    "file-cache"
+    "file-cache",
+    "database",
+    "database-cache",
+    "mysql",
+    "sqlite",
+    "pgsql"
   ],
   "homepage": "https://github.com/silviooosilva",
   "type": "library",
   "license": "MIT",
-  "version": "v1.5.0",
+  "version": "v2.0.0",
   "autoload": {
     "files": [
-      "src/utils/DataFormatter.php"
+      "src/Boot/Configs.php"
     ],
     "psr-4": {
       "Silviooosilva\\CacheerPhp\\": "src/"

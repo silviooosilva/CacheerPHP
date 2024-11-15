@@ -1,6 +1,6 @@
 <?php
 
-namespace Silviooosilva\Utils;
+namespace Silviooosilva\CacheerPhp\Utils;
 
 class CacheDataFormatter
 {
