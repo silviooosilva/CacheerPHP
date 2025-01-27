@@ -31,12 +31,12 @@ class CacheDriver
      * @throws \Exception
      * @return Cacheer
      */
-    public function useFileDriver()
+    public function useFileDriver(string $logPath = 'cacheer.log')
     {
         if (!isset($this->cacheer->options['cacheDir'])) {
             throw new Exception("The 'cacheDir' option is required for the file driver.");
         }
-
+        $this->cacheer->options['loggerPath'] = $logPath;
         $this->cacheer->cacheStore = new FileCacheStore($this->cacheer->options);
         return $this->cacheer;
     }
