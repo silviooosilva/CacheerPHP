@@ -28,19 +28,19 @@ class CacheDatabaseRepository
     public function store(string $cacheKey, mixed $cacheData, string $namespace, int | string $ttl = 3600)
     {
         $expirationTime = date('Y-m-d H:i:s', time() + $ttl);
+        $createdAt = date('Y-m-d H:i:s');
 
-        if (!$this->cacheExists($cacheKey)) {
-            $stmt = $this->connection->prepare(
-                "INSERT INTO cacheer_table (cacheKey, cacheData, cacheNamespace, expirationTime) VALUES (?, ?, ?, ?)"
+        $stmt = $this->connection->prepare(
+                "INSERT INTO cacheer_table (cacheKey, cacheData, cacheNamespace, expirationTime, created_at) VALUES (?, ?, ?, ?, ?)"
             );
 
-            $stmt->bindValue(1, $cacheKey);
-            $stmt->bindValue(2, $this->serialize($cacheData));
-            $stmt->bindValue(3, $namespace);
-            $stmt->bindValue(4, $expirationTime);
+        $stmt->bindValue(1, $cacheKey);
+        $stmt->bindValue(2, $this->serialize($cacheData));
+        $stmt->bindValue(3, $namespace);
+        $stmt->bindValue(4, $expirationTime);
+        $stmt->bindValue(5, $createdAt);
 
-            return $stmt->execute() && $stmt->rowCount() > 0;
-        }
+        return $stmt->execute() && $stmt->rowCount() > 0;
     }
 
     /**
@@ -98,6 +98,46 @@ class CacheDatabaseRepository
     }
 
     /**
+    * @param string $cacheKey
+    * @param int|string $ttl
+    * @param string $namespace
+    * @return bool
+    */
+    public function renew(string $cacheKey, int|string $ttl, string $namespace = '')
+    {
+        $currentTime = date('Y-m-d H:i:s');
+
+        $actualExpirationTime = $this->connection->prepare(
+            "SELECT expirationTime FROM cacheer_table 
+            WHERE cacheKey = ? AND cacheNamespace = ? AND expirationTime > ?"
+        );
+        $actualExpirationTime->bindValue(1, $cacheKey);
+        $actualExpirationTime->bindValue(2, $namespace);
+        $actualExpirationTime->bindValue(3, $currentTime);
+        $actualExpirationTime->execute();
+
+        if ($actualExpirationTime->rowCount() > 0) {
+           
+            $stmt = $this->connection->prepare(
+                "UPDATE cacheer_table 
+                SET expirationTime = DATE_ADD(expirationTime, INTERVAL ? SECOND)
+                WHERE cacheKey = ? AND cacheNamespace = ? AND expirationTime > ?"
+            );
+            $stmt->bindValue(1, (int) $ttl, PDO::PARAM_INT);
+            $stmt->bindValue(2, $cacheKey);
+            $stmt->bindValue(3, $namespace);
+            $stmt->bindValue(4, $currentTime);
+            $stmt->execute();
+
+            return $stmt->rowCount() > 0;
+        }
+
+        return false;
+    }
+
+
+
+    /**
      * @return bool
      */
     public function flush()
@@ -114,18 +154,5 @@ class CacheDatabaseRepository
     private function serialize(mixed $data, bool $serialize = true)
     {
         return $serialize ? serialize($data) : unserialize($data);
-    }
-
-    /**
-     * @param string $cacheKey
-     * @return bool
-     */
-    private function cacheExists(string $cacheKey)
-    {
-        $stmt = $this->connection->prepare("SELECT cacheKey FROM cacheer_table WHERE cacheKey = ?");
-        $stmt->bindValue(1, $cacheKey);
-        $stmt->execute();
-
-        return $stmt->rowCount() > 0 ? true : false;
     }
 }

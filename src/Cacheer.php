@@ -95,6 +95,34 @@ class Cacheer
         $this->cacheStore->appendCache($cacheKey, $cacheData, $namespace);
         $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
     }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @return bool
+     */
+    public function has(string $cacheKey, string $namespace = '')
+    {
+        return $this->cacheStore->hasCache($cacheKey, $namespace);
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @param string | int $ttl
+     * @return bool
+     */
+    public function renewCache(string $cacheKey, int | string $ttl = 3600, string $namespace = '')
+    {
+        $renewedCache = $this->cacheStore->renewCache($cacheKey, $ttl, $namespace);
+
+        if($renewedCache) {
+            $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @param string $cacheKey
      * @param string $namespace

@@ -53,7 +53,7 @@ class FileCacheStore
         $this->defaultTTL = $this->getExpirationTime($options);
         $this->lastFlushTimeFile = "{$this->cacheDir}/last_flush_time";
         $this->handleAutoFlush($options);
-        $this->logger = new CacheLogger();
+        $this->logger = new CacheLogger($options['loggerPath']);
     }
 
     /**
@@ -161,6 +161,39 @@ class FileCacheStore
             $this->setMessage("Cache updated successfully", true);
             $this->logger->debug("{$this->getMessage()} from file driver.");
         }
+    }
+
+
+        /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @return bool
+     */
+    public function hasCache(string $cacheKey, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+        if ($cacheData) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param int $ttl
+     * @param string $namespace
+     * @return bool
+     */
+    public function renewCache(string $cacheKey, int | string $ttl, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+        if ($cacheData) {
+            $this->putCache($cacheKey, $cacheData, $namespace, $ttl);
+            $this->setMessage("Cache with key {$cacheKey} renewed successfully", true);
+            $this->logger->debug("{$this->getMessage()} from file driver.");
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -290,7 +323,6 @@ class FileCacheStore
             $lastFlushTime = file_get_contents($this->lastFlushTimeFile);
             if ((time() - (int)$lastFlushTime) >= $flushAfterSeconds) {
                 $this->flushCache();
-                // $this->logger->debug("{$this->getMessage()} from file driver.");
             }
         } else {
             file_put_contents($this->lastFlushTimeFile, time());

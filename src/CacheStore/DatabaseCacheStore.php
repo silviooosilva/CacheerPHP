@@ -64,7 +64,7 @@ class DatabaseCacheStore
      * @param integer $ttl
      * @return $this
      */
-    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', int | string $ttl = 3600)
+    public function putCache(string $cacheKey, mixed $cacheData, string $namespace, int | string $ttl = 3600)
     {
         $this->storeCache($cacheKey, $cacheData, $namespace, $ttl);
         $this->logger->debug("{$this->getMessage()} from database driver.");
@@ -135,6 +135,38 @@ class DatabaseCacheStore
     /**
      * @param string $cacheKey
      * @param string $namespace
+     * @return bool
+     */
+    public function hasCache(string $cacheKey, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+        if ($cacheData) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @param integer $ttl
+     * @return bool
+     */
+    public function renewCache(string $cacheKey, int | string $ttl, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+        if ($cacheData) {
+            $this->renew($cacheKey, $ttl, $namespace);
+            $this->setMessage("Cache with key {$cacheKey} renewed successfully", true);
+            $this->logger->debug("{$this->getMessage()} from database driver.");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
      * @return void
      */
     public function clearCache(string $cacheKey, string $namespace = '')
@@ -194,6 +226,28 @@ class DatabaseCacheStore
         );
         return $data;
     }
+
+    /**
+     * @param string $cacheKey
+     * @param int | string $ttl
+     * @param string $namespace
+     * @return bool
+     */
+    private function renew(string $cacheKey, int | string $ttl = 3600, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+        if ($cacheData) {
+            $renewedCache = $this->cacheRepository->renew($cacheKey, $ttl, $namespace);
+            if ($renewedCache) {
+                $this->setMessage("Cache with key {$cacheKey} renewed successfully", true);
+                $this->logger->debug("{$this->getMessage()} from database driver.");
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
 
     /**
      * @param string $message

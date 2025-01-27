@@ -3,6 +3,7 @@
 namespace Silviooosilva\CacheerPhp\Helpers;
 
 use Silviooosilva\CacheerPhp\Cacheer;
+use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
 use Silviooosilva\CacheerPhp\Core\Connect;
 use Silviooosilva\CacheerPhp\Utils\CacheDriver;
 
@@ -17,7 +18,7 @@ class CacheConfig
     public function __construct(Cacheer $cacheer)
     {
         $this->cacheer = $cacheer;
-        $this->setTimeZone('Africa/Luanda');
+        $this->setTimeZone(date_default_timezone_get());
     }
 
     /**
@@ -51,6 +52,11 @@ class CacheConfig
      */
     public function setLoggerPath(string $path)
     {
+        $cacheDriver = $this->cacheer->cacheStore;
+        if ($cacheDriver instanceof FileCacheStore) {
+            $this->setDriver()->useFileDriver($path);
+            return;
+        }
         $this->setDriver()->useDatabaseDriver($path);
     }
 
