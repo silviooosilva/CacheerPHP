@@ -1,0 +1,11 @@
+build:
+    environment:
+        php:
+            version: 8.2
+    dependencies:
+        pre:
+            - sudo apt-get update
+            - sudo apt-get install -y software-properties-common
+            - sudo add-apt-repository ppa:ondrej/php -y
+            - sudo apt-get install -y openssl libssl-dev
+            - openssl version
