@@ -16,6 +16,7 @@ build:
         override:
             - vendor/bin/phpunit
 tools:
-    php:
-        config:
-            debug: true
+    php_analyzer:
+        enabled: true
+    php_cs_fixer:
+        enabled: true
