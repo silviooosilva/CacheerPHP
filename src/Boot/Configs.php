@@ -1,11 +1,11 @@
 <?php
 
 use Dotenv\Dotenv;
+use Silviooosilva\CacheerPhp\Helpers\EnvHelper;
 
-    if(file_exists(__DIR__ . "./../../.env")){
-        $dotenv = Dotenv::createImmutable(__DIR__ . "./../../");
-        $dotenv->load();
-    }
+    $rootPath = EnvHelper::getRootPath();
+    $dotenv = Dotenv::createImmutable($rootPath);
+    $dotenv->load();
 
     $Connection = $_ENV['DB_CONNECTION'] ?? 'mysql';
     $Host = $_ENV['DB_HOST'] ?? 'localhost';
