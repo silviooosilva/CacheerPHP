@@ -44,14 +44,17 @@ class CacheDatabaseRepository
     }
 
     /**
-     * @param string $cacheKey
-     * @param string $namespace
-     * @return mixed
-     */
+    * @param string $cacheKey
+    * @param string $namespace
+    * @return mixed
+    */
     public function retrieve(string $cacheKey, string $namespace = '')
     {
+        $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $nowFunction = $this->getCurrentDateTime($driver);
+
         $stmt = $this->connection->prepare(
-            "SELECT cacheData FROM cacheer_table WHERE cacheKey = ? AND cacheNamespace = ? AND expirationTime > NOW()"
+            "SELECT cacheData FROM cacheer_table WHERE cacheKey = ? AND cacheNamespace = ? AND expirationTime > $nowFunction"
         );
         $stmt->bindValue(1, $cacheKey);
         $stmt->bindValue(2, $namespace);
@@ -119,7 +122,7 @@ class CacheDatabaseRepository
         if ($actualExpirationTime->rowCount() > 0) {
            
             $stmt = $this->connection->prepare(
-                "UPDATE cacheer_table 
+                "UPDATE cacheer_table
                 SET expirationTime = DATE_ADD(expirationTime, INTERVAL ? SECOND)
                 WHERE cacheKey = ? AND cacheNamespace = ? AND expirationTime > ?"
             );
@@ -154,5 +157,14 @@ class CacheDatabaseRepository
     private function serialize(mixed $data, bool $serialize = true)
     {
         return $serialize ? serialize($data) : unserialize($data);
+    }
+
+    /**
+    * @param string $driver
+    * @return string
+    */
+    private function getCurrentDateTime(string $driver)
+    {
+        return ($driver === 'sqlite') ? "DATETIME('now', 'localtime')" : "NOW()";
     }
 }
