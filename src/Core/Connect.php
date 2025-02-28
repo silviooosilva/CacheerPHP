@@ -17,7 +17,7 @@ class Connect
     /**
      * @var string
      */
-    public static string $connection = 'mysql';
+    public static string $connection = 'sqlite';
 
     /**
      * @var array
@@ -33,12 +33,17 @@ class Connect
      * @param array|null $database
      * @return PDO|null
      */
-    public static function getInstance(array $database = null): ?PDO
+    public static function getInstance(array $database = null)
     {
         $dbConf = $database ?? CACHEER_DATABASE_CONFIG[self::getConnection()];
-        $dbName = "{$dbConf["driver"]}-{$dbConf["dbname"]}@{$dbConf["host"]}";
-        $dbDsn = $dbConf["driver"] . ":host=" . $dbConf["host"] . ";dbname=" . $dbConf["dbname"] . ";port=" . $dbConf["port"];
 
+        if ($dbConf["driver"] === 'sqlite') {
+            $dbName = $dbConf["dbname"];
+            $dbDsn = $dbConf["driver"] . ":" . $dbName;
+        } else {
+            $dbName = "{$dbConf["driver"]}-{$dbConf["dbname"]}@{$dbConf["host"]}";
+            $dbDsn = $dbConf["driver"] . ":host=" . $dbConf["host"] . ";dbname=" . $dbConf["dbname"] . ";port=" . $dbConf["port"];
+        }
 
         if (!isset(self::$instance)) {
             self::$instance = [];
@@ -46,11 +51,17 @@ class Connect
 
         if (empty(self::$instance[$dbName])) {
             try {
+                $options = $dbConf["options"] ?? [];
+                foreach ($options as $key => $value) {
+                    if (is_string($value) && defined($value)) {
+                        $options[$key] = constant($value);
+                    }
+                }
                 self::$instance[$dbName] = new PDO(
                     $dbDsn,
-                    $dbConf["username"],
-                    $dbConf["passwd"],
-                    $dbConf["options"]
+                    $dbConf["username"] ?? null,
+                    $dbConf["passwd"] ?? null,
+                    $options
                 );
                 self::migrate(self::$instance[$dbName]);
             } catch (PDOException $exception) {
@@ -70,15 +81,30 @@ class Connect
         $createdAtDefault = ($driver === 'pgsql') ? 'DEFAULT NOW()' : 'DEFAULT CURRENT_TIMESTAMP';
 
         try {
-            $Connection->exec("USE " . CACHEER_DATABASE_CONFIG[self::getConnection()]['dbname']);
-            $Connection->exec("CREATE TABLE IF NOT EXISTS cacheer_table (
-                id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                cacheKey VARCHAR(255) NOT NULL,
-                cacheData LONGTEXT NOT NULL,
-                cacheNamespace VARCHAR(255) NULL,
-                expirationTime DATETIME NOT NULL,
-                created_at TIMESTAMP $createdAtDefault
-            )");
+            if ($driver !== 'sqlite') {
+                $Connection->exec("USE " . CACHEER_DATABASE_CONFIG[self::getConnection()]['dbname']);
+            }
+           
+            if ($driver === 'sqlite') {
+                $query = "CREATE TABLE IF NOT EXISTS cacheer_table (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    cacheKey VARCHAR(255) NOT NULL,
+                    cacheData TEXT NOT NULL,
+                    cacheNamespace VARCHAR(255),
+                    expirationTime DATETIME NOT NULL,
+                    created_at DATETIME $createdAtDefault
+                )";
+            } else {
+                $query = "CREATE TABLE IF NOT EXISTS cacheer_table (
+                    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                    cacheKey VARCHAR(255) NOT NULL,
+                    cacheData LONGTEXT NOT NULL,
+                    cacheNamespace VARCHAR(255) NULL,
+                    expirationTime DATETIME NOT NULL,
+                    created_at TIMESTAMP $createdAtDefault
+                )";
+            }
+            $Connection->exec($query);
         } catch (PDOException $exception) {
             self::$error = $exception;
         }
@@ -93,7 +119,7 @@ class Connect
     {
         $drivers = ['mysql', 'sqlite', 'pgsql'];
         if (!in_array($connection, $drivers)) {
-            throw new Exception("Only ['MySQL', 'SQLite', 'PgSQL'] Are available at the moment...");
+            throw new Exception("Only ['MySQL(mysql)', 'SQLite(sqlite)', 'PgSQL(pgsql)'] Are available at the moment...");
         }
         self::$connection = $connection;
     }
@@ -109,7 +135,7 @@ class Connect
     /**
      * @return PDOException|null
      */
-    public static function getError(): ?PDOException
+    public static function getError()
     {
         return self::$error;
     }
