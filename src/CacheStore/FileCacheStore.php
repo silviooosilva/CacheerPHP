@@ -96,7 +96,7 @@ class FileCacheStore
      * @param array $items
      * @param string $namespace
      * @param integer $batchSize
-     * @return void | $this
+     * @return void
      */
     public function putMany(array $items, string $namespace = '', int $batchSize = 100)
     {
@@ -129,8 +129,6 @@ class FileCacheStore
 
             $processedCount += count($batchItems);
         }
-
-        return $this;
     }
 
 
@@ -139,7 +137,7 @@ class FileCacheStore
      * @param string $cacheKey
      * @param mixed $cacheData
      * @param string $namespace
-     * @return void | string
+     * @return void
      */
     public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
     {
