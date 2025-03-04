@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . "/../../vendor/autoload.php";
-
 use Dotenv\Dotenv;
 use Silviooosilva\CacheerPhp\Core\Connect;
 use Silviooosilva\CacheerPhp\Helpers\EnvHelper;
