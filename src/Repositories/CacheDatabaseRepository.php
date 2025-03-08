@@ -5,11 +5,15 @@ namespace Silviooosilva\CacheerPhp\Repositories;
 use PDO;
 use Silviooosilva\CacheerPhp\Core\Connect;
 
+/**
+ * Class CacheDatabaseRepository
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ */
 class CacheDatabaseRepository
 {
-    /**
-     * Summary of connection
-     */
+
+    /** @var PDO */
     private $connection = null;
 
     public function __construct()
@@ -20,12 +24,12 @@ class CacheDatabaseRepository
 
     /**
      * @param string $cacheKey
-     * @param mixed $cacheData
+     * @param mixed  $cacheData
      * @param string $namespace
-     * @param int | string $ttl
+     * @param string|int $ttl
      * @return bool
      */
-    public function store(string $cacheKey, mixed $cacheData, string $namespace, int | string $ttl = 3600)
+    public function store(string $cacheKey, mixed $cacheData, string $namespace, string|int $ttl = 3600)
     {
         $expirationTime = date('Y-m-d H:i:s', time() + $ttl);
         $createdAt = date('Y-m-d H:i:s');
@@ -66,7 +70,7 @@ class CacheDatabaseRepository
 
     /**
      * @param string $cacheKey
-     * @param mixed $cacheData
+     * @param mixed  $cacheData
      * @param string $namespace
      * @return bool
      */
@@ -102,11 +106,11 @@ class CacheDatabaseRepository
 
     /**
     * @param string $cacheKey
-    * @param int|string $ttl
+    * @param string|int $ttl
     * @param string $namespace
     * @return bool
     */
-    public function renew(string $cacheKey, int|string $ttl, string $namespace = '')
+    public function renew(string $cacheKey, string|int $ttl, string $namespace = '')
     {
         $currentTime = date('Y-m-d H:i:s');
 
@@ -150,7 +154,6 @@ class CacheDatabaseRepository
 
     /**
      * Serializa os dados de cache para armazenamento.
-     *
      * @param mixed $data
      * @return string
      */
