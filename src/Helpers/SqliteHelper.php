@@ -3,6 +3,11 @@
 namespace Silviooosilva\CacheerPhp\Helpers;
 use Silviooosilva\CacheerPhp\Helpers\EnvHelper;
 
+/**
+ * Class SqliteHelper
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ */
 class SqliteHelper
 {
 
