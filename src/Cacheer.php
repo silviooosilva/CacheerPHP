@@ -2,6 +2,7 @@
 
 namespace Silviooosilva\CacheerPhp;
 
+use Silviooosilva\CacheerPhp\Interface\CacheerInterface;
 use Silviooosilva\CacheerPhp\CacheStore\DatabaseCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
 use Silviooosilva\CacheerPhp\Helpers\CacheConfig;
@@ -13,7 +14,7 @@ use Silviooosilva\CacheerPhp\Utils\CacheDriver;
  * @author Sílvio Silva <https://github.com/silviooosilva>
  * @package Silviooosilva\CacheerPhp
  */
-class Cacheer
+class Cacheer implements CacheerInterface
 {
     /**
      * @var string
@@ -28,10 +29,10 @@ class Cacheer
     /**
      * @var boolean
      */
-    private bool $formatted;
+    private bool $formatted = false;
 
     /**
-     * @var FileCacheStore | DatabaseCacheStore
+     * @var FileCacheStore|DatabaseCacheStore|RedisCacheStore
      */
     public $cacheStore;
 
@@ -50,10 +51,10 @@ class Cacheer
     /**
      * @param string $cacheKey
      * @param string $namespace
-     * @param string | int $ttl
-     * @return CacheDataFormatter | string
+     * @param string|int $ttl
+     * @return CacheDataFormatter|mixed
      */
-    public function getCache(string $cacheKey, string $namespace = '', string | int $ttl = null)
+    public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
     {
         $cacheData = $this->cacheStore->getCache($cacheKey, $namespace, $ttl);
         $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
@@ -62,20 +63,20 @@ class Cacheer
 
     /**
      * @param string $cacheKey
-     * @param mixed $cacheData
+     * @param mixed  $cacheData
      * @param string $namespace
-     * @return $this
+     * @param string|int $ttl
+     * @return void
      */
-    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', int | string $ttl = 3600)
+    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600)
     {
         $this->cacheStore->putCache($cacheKey, $cacheData, $namespace, $ttl);
         $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
-        return $this;
     }
 
     /**
-     * @param array $items
-     * @param string $namespace
+     * @param array   $items
+     * @param string  $namespace
      * @param integer $batchSize
      * @return void
      */
@@ -86,7 +87,7 @@ class Cacheer
 
     /**
      * @param string $cacheKey
-     * @param mixed $cacheData
+     * @param mixed  $cacheData
      * @param string $namespace
      * @return void
      */
@@ -103,24 +104,26 @@ class Cacheer
      */
     public function has(string $cacheKey, string $namespace = '')
     {
-        return $this->cacheStore->hasCache($cacheKey, $namespace);
+        return $this->cacheStore->has($cacheKey, $namespace);
     }
 
     /**
      * @param string $cacheKey
+     * @param string|int $ttl
      * @param string $namespace
-     * @param string | int $ttl
-     * @return bool
+     * @return mixed
      */
-    public function renewCache(string $cacheKey, int | string $ttl = 3600, string $namespace = '')
+    public function renewCache(string $cacheKey, string|int $ttl = 3600, string $namespace = '')
     {
         $renewedCache = $this->cacheStore->renewCache($cacheKey, $ttl, $namespace);
 
-        if($renewedCache) {
+        if ($this->cacheStore->isSuccess()) {
             $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
-            return true;
+        } else {
+            $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
         }
-        return false;
+
+        return $renewedCache;
     }
 
     /**
@@ -131,7 +134,7 @@ class Cacheer
     public function clearCache(string $cacheKey, string $namespace = '')
     {
         $this->cacheStore->clearCache($cacheKey, $namespace);
-        return $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
     }
 
     /**
@@ -155,7 +158,7 @@ class Cacheer
 
 
     /**
-     * @param string $message
+     * @param string  $message
      * @param boolean $success
      * @return void
      */
@@ -202,6 +205,6 @@ class Cacheer
      */
     public function useFormatter()
     {
-        $this->formatted = true;
+        $this->formatted = !$this->formatted;
     }
 }
