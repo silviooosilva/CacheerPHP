@@ -53,7 +53,7 @@ class RedisCacheStore implements CacheerInterface
   * @param string|int $ttl
   * @return mixed
   */
-  public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = null)
+  public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
   {
     $fullCacheKey = $this->buildKey($cacheKey, $namespace);
     $cacheData = $this->redis->get($fullCacheKey);
