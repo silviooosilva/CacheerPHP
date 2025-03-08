@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . "/../../vendor/autoload.php";
-
 use Dotenv\Dotenv;
 use Silviooosilva\CacheerPhp\Core\Connect;
 use Silviooosilva\CacheerPhp\Helpers\EnvHelper;
@@ -20,8 +18,16 @@ $DBName     = $_ENV['DB_DATABASE'] ?? 'cacheer_db';
 $User       = $_ENV['DB_USERNAME'] ?? 'root';
 $Password   = $_ENV['DB_PASSWORD'] ?? '';
 
+// Retrieve Redis environment variables
+$redisClient    = $_ENV['REDIS_CLIENT'];
+$redisHost      = $_ENV['REDIS_HOST'];
+$redisPassword  = $_ENV['REDIS_PASSWORD'];
+$redisPort      = $_ENV['REDIS_PORT'];
+$redisNamespace = $_ENV['REDIS_NAMESPACE'];
+
 Connect::setConnection($Connection);
 
+// Database configuration array
 define('CACHEER_DATABASE_CONFIG', [
     "mysql" => [
         "driver"  => $Connection,
@@ -60,3 +66,13 @@ define('CACHEER_DATABASE_CONFIG', [
         ]
     ],
 ]);
+
+// Redis configuration array
+define('REDIS_CONNECTION_CONFIG', [
+    'REDIS_CLIENT'   => $redisClient,
+    'REDIS_HOST'     => $redisHost,
+    'REDIS_PASSWORD' => $redisPassword,
+    'REDIS_PORT'     => $redisPort,
+    'REDIS_NAMESPACE'=> $redisNamespace
+]);
+
