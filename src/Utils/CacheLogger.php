@@ -2,6 +2,12 @@
 
 namespace Silviooosilva\CacheerPhp\Utils;
 
+
+/**
+ * Class CacheLogger
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ */
 class CacheLogger
 {
     private $logFile;
@@ -16,11 +22,50 @@ class CacheLogger
         $this->logLevel = strtoupper($logLevel);
     }
 
-    private function shouldLog($level)
+    /**
+    * @return void
+    */
+    public function info($message)
+    {
+        $this->log('INFO', $message);
+    }
+
+    /**
+    * @return void
+    */
+    public function warning($message)
+    {
+        $this->log('WARNING', $message);
+    }
+
+    /**
+    * @return void
+    */
+    public function error($message)
+    {
+        $this->log('ERROR', $message);
+    }
+
+    /**
+    * @return void
+    */
+    public function debug($message)
+    {
+        $this->log('DEBUG', $message);
+    }
+
+    /**
+    * @param mixed $level
+    * @return string|int|false
+    */
+    private function shouldLog(mixed $level)
     {
         return array_search($level, $this->logLevels) >= array_search($this->logLevel, $this->logLevels);
     }
 
+    /**
+    * @return void
+    */
     private function rotateLog()
     {
         if (file_exists($this->logFile) && filesize($this->logFile) >= $this->maxFileSize) {
@@ -29,6 +74,11 @@ class CacheLogger
         }
     }
 
+    /**
+    * @param mixed $level
+    * @param string $message
+    * @return void
+    */
     private function log($level, $message)
     {
         if (!$this->shouldLog($level)) {
@@ -40,25 +90,5 @@ class CacheLogger
         $date = date('Y-m-d H:i:s');
         $logMessage = "[$date] [$level] $message" . PHP_EOL;
         file_put_contents($this->logFile, $logMessage, FILE_APPEND);
-    }
-
-    public function info($message)
-    {
-        $this->log('INFO', $message);
-    }
-
-    public function warning($message)
-    {
-        $this->log('WARNING', $message);
-    }
-
-    public function error($message)
-    {
-        $this->log('ERROR', $message);
-    }
-
-    public function debug($message)
-    {
-        $this->log('DEBUG', $message);
     }
 }
