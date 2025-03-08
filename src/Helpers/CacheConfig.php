@@ -4,14 +4,20 @@ namespace Silviooosilva\CacheerPhp\Helpers;
 
 use Silviooosilva\CacheerPhp\Cacheer;
 use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
+use Silviooosilva\CacheerPhp\CacheStore\RedisCacheStore;
 use Silviooosilva\CacheerPhp\Core\Connect;
 use Silviooosilva\CacheerPhp\Utils\CacheDriver;
 
+/**
+ * Class CacheConfig
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ */
 class CacheConfig
 {
 
     /**
-     * @var Cacheer 
+     * @var Cacheer
      */
     protected $cacheer;
 
@@ -27,7 +33,7 @@ class CacheConfig
      */
     public function setTimeZone($timezone)
     {
-        /** 
+        /**
          * Certifique-se de que o timezone fornecido é válido * 
          * https://www.php.net/manual/en/timezones.php 
          * */
@@ -52,12 +58,19 @@ class CacheConfig
      */
     public function setLoggerPath(string $path)
     {
-        $cacheDriver = $this->cacheer->cacheStore;
-        if ($cacheDriver instanceof FileCacheStore) {
-            $this->setDriver()->useFileDriver($path);
-            return;
+        
+        $cacheDriver = $this->setDriver();
+        $cacheDriver->logPath = $path;
+
+        $cacheDriverInstance = $this->cacheer->cacheStore;
+
+        if ($cacheDriverInstance instanceof FileCacheStore) {
+            $cacheDriver->useFileDriver();
+        } elseif ($cacheDriverInstance instanceof RedisCacheStore) {
+            $cacheDriver->useRedisDriver();
+        } else {
+            $cacheDriver->useDatabaseDriver();
         }
-        $this->setDriver()->useDatabaseDriver($path);
     }
 
     /**
