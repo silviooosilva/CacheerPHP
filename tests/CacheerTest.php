@@ -17,8 +17,6 @@ class CacheerTest extends TestCase
 
         $options = [
             'cacheDir' => $this->cacheDir,
-            // 'expirationTime' => '1 second',
-            // 'flushAfter' => '10 seconds'
         ];
 
         $this->cache = new Cacheer($options);
