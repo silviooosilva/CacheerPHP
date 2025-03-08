@@ -2,7 +2,8 @@
 
 namespace Silviooosilva\CacheerPhp\CacheStore;
 
-use Exception;
+use Silviooosilva\CacheerPhp\Interface\CacheerInterface;
+use Silviooosilva\CacheerPhp\Helpers\CacheDatabaseHelper;
 use Silviooosilva\CacheerPhp\Utils\CacheLogger;
 use Silviooosilva\CacheerPhp\Repositories\CacheDatabaseRepository;
 
@@ -11,29 +12,29 @@ use Silviooosilva\CacheerPhp\Repositories\CacheDatabaseRepository;
  * @author Sílvio Silva <https://github.com/silviooosilva>
  * @package Silviooosilva\CacheerPhp
  */
-class DatabaseCacheStore
+class DatabaseCacheStore implements CacheerInterface
 {
     /**
-     * @var boolean
+     * @param boolean
      */
-    private bool $success;
+    private bool $success = false;
 
     /**
-     * @var string
+     * @param string
      */
-    private string $message;
+    private string $message = '';
 
     /**
-     * Summary of logger
+     * @var CacheLogger
      */
     private $logger = null;
 
     /**
-     * Summary of cacheRepository
+     * @var CacheDatabaseRepository
      */
     private $cacheRepository;
 
-    public function __construct(string $logPath = null)
+    public function __construct(string $logPath)
     {
         $this->logger = new CacheLogger($logPath);
         $this->cacheRepository = new CacheDatabaseRepository();
@@ -43,9 +44,10 @@ class DatabaseCacheStore
     /**
      * @param string $cacheKey
      * @param string $namespace
+     * @param string|int $ttl
      * @return mixed
      */
-    public function getCache(string $cacheKey, string $namespace = '')
+    public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
     {
         $cacheData = $this->retrieveCache($cacheKey, $namespace);
         if ($cacheData) {
@@ -59,21 +61,24 @@ class DatabaseCacheStore
     }
     /**
      * @param string $cacheKey
-     * @param mixed $cacheData
+     * @param mixed  $cacheData
      * @param string $namespace
-     * @param integer $ttl
-     * @return $this
+     * @param string|int $ttl
+     * @return bool
      */
-    public function putCache(string $cacheKey, mixed $cacheData, string $namespace, int | string $ttl = 3600)
+    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600)
     {
-        $this->storeCache($cacheKey, $cacheData, $namespace, $ttl);
-        $this->logger->debug("{$this->getMessage()} from database driver.");
-        return $this;
+        if($this->storeCache($cacheKey, $cacheData, $namespace, $ttl)){
+            $this->logger->debug("{$this->getMessage()} from database driver.");
+            return true;
+        }
+        $this->logger->error("{$this->getMessage()} from database driver.");
+        return false;
     }
 
     /**
-     * @param array $items
-     * @param string $namespace
+     * @param array   $items
+     * @param string  $namespace
      * @param integer $batchSize
      * @return void
      */
@@ -81,76 +86,52 @@ class DatabaseCacheStore
     {
         $processedCount = 0;
         $itemCount = count($items);
-
         while ($processedCount < $itemCount) {
             $batchItems = array_slice($items, $processedCount, $batchSize);
-            foreach ($batchItems as $item) {
-                if (isset($item['cacheKey']) && isset($item['cacheData'])) {
-                    $cacheKey = $item['cacheKey'];
-                    $cacheData = $item['cacheData'];
-
-
-                    if (is_array($cacheData) && is_array(reset($cacheData))) {
-                        $mergedData = [];
-                        foreach ($cacheData as $data) {
-                            $mergedData[] = $data;
-                        }
-                    } else {
-                        $mergedData = $cacheData;
-                    }
-
-                    $this->putCache($cacheKey, $mergedData, $namespace);
-                } else {
-                    $this->logger->info("Each item must contain 'cacheKey' and 'cacheData' from database driver.");
-                    throw new Exception("Each item must contain 'cacheKey' and 'cacheData'");
-                }
-            }
-
+            $this->processBatchItems($batchItems, $namespace);
             $processedCount += count($batchItems);
         }
     }
 
     /**
      * @param string $cacheKey
-     * @param mixed $cacheData
+     * @param mixed  $cacheData
      * @param string $namespace
-     * @return void | string
+     * @return bool
      */
     public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
     {
         $currentCacheData = $this->getCache($cacheKey, $namespace);
-
-        if (is_array($currentCacheData) && is_array($cacheData)) {
-            $mergedCacheData = array_merge($currentCacheData, $cacheData);
-        } else {
-            $mergedCacheData = array_merge((array)$currentCacheData, (array)$cacheData);
-        }
+        $mergedCacheData = CacheDatabaseHelper::arrayIdentifier($currentCacheData, $cacheData);
 
         if ($this->updateCache($cacheKey, $mergedCacheData, $namespace)) {
-            $this->setMessage("Cache updated successfully", true);
             $this->logger->debug("{$this->getMessage()} from database driver.");
-        }
-    }
-
-    /**
-     * @param string $cacheKey
-     * @param string $namespace
-     * @return bool
-     */
-    public function hasCache(string $cacheKey, string $namespace = '')
-    {
-        $cacheData = $this->getCache($cacheKey, $namespace);
-        if ($cacheData) {
             return true;
         }
+
+        $this->logger->error("{$this->getMessage()} from database driver.");
         return false;
     }
 
     /**
      * @param string $cacheKey
      * @param string $namespace
+     * @return void
+     */
+    public function has(string $cacheKey, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+        if ($cacheData) {
+            $this->logger->debug("Cache key: {$cacheKey} exists and it's available from database driver.");
+        }
+        $this->logger->warning("{$this->getMessage()} from database driver.");
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
      * @param integer $ttl
-     * @return bool
+     * @return void
      */
     public function renewCache(string $cacheKey, int | string $ttl, string $namespace = '')
     {
@@ -159,9 +140,7 @@ class DatabaseCacheStore
             $this->renew($cacheKey, $ttl, $namespace);
             $this->setMessage("Cache with key {$cacheKey} renewed successfully", true);
             $this->logger->debug("{$this->getMessage()} from database driver.");
-            return true;
         }
-        return false;
     }
 
     /**
@@ -172,7 +151,13 @@ class DatabaseCacheStore
     public function clearCache(string $cacheKey, string $namespace = '')
     {
         $data = $this->cacheRepository->clear($cacheKey, $namespace);
-        return $this->setMessage($data ? "Cache deleted successfully!" : "Cache does not exist!", $data);
+        if($data) {
+            $this->setMessage("Cache deleted successfully!", true);
+        } else {
+            $this->setMessage("Cache does not exists!", false);
+        }
+
+        $this->logger->debug("{$this->getMessage()} from database driver.");
     }
 
     /**
@@ -180,9 +165,14 @@ class DatabaseCacheStore
      */
     public function flushCache()
     {
-        $this->cacheRepository->flush();
-        $this->setMessage("Flush finished successfully", true);
+        if($this->cacheRepository->flush()){
+            $this->setMessage("Flush finished successfully", true);
+        } else {
+            $this->setMessage("Something went wrong. Please, try again.", false);
+        }
+
         $this->logger->info("{$this->getMessage()} from database driver.");
+
     }
 
 
@@ -198,42 +188,47 @@ class DatabaseCacheStore
 
     /**
      * @param string $cacheKey
-     * @param mixed $cacheData
+     * @param mixed  $cacheData
      * @param string $namespace
      * @param integer $ttl
-     * @return void
+     * @return bool
      */
-    private function storeCache(string $cacheKey, mixed $cacheData, string $namespace = '', int | string $ttl = 3600)
+    private function storeCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600)
     {
         $data = $this->cacheRepository->store($cacheKey, $cacheData, $namespace, $ttl);
-        return $data ? $this->setMessage("Cache Stored Successfully", true) :
-            $this->setMessage("Already exists a cache with this key...", false);
+        if($data) {
+            $this->setMessage("Cache Stored Successfully", true);
+            return true;
+        }
+        $this->setMessage("Already exists a cache with this key...", false);
+        return false;
     }
 
 
     /**
      * @param string $cacheKey
-     * @param mixed $cacheData
+     * @param mixed  $cacheData
      * @param string $namespace
      * @return bool
      */
     private function updateCache(string $cacheKey, mixed $cacheData, string $namespace = '')
     {
         $data = $this->cacheRepository->update($cacheKey, $cacheData, $namespace);
-        $this->setMessage(
-            $data ? "Cache updated successfully!" : "Cache does not exist or update failed!",
-            $data
-        );
-        return $data;
+        if($data) {
+            $this->setMessage("Cache updated successfully.", true);
+            return true;
+        }
+        $this->setMessage("Cache does not exist or update failed!", false);
+        return false;
     }
 
     /**
      * @param string $cacheKey
-     * @param int | string $ttl
+     * @param string|int $ttl
      * @param string $namespace
      * @return bool
      */
-    private function renew(string $cacheKey, int | string $ttl = 3600, string $namespace = '')
+    private function renew(string $cacheKey, string|int $ttl = 3600, string $namespace = '')
     {
         $cacheData = $this->getCache($cacheKey, $namespace);
         if ($cacheData) {
@@ -248,9 +243,25 @@ class DatabaseCacheStore
         return false;
     }
 
+    /**
+     * @param array  $batchItems
+     * @param string $namespace
+     * @return void
+     */
+    private function processBatchItems(array $batchItems, string $namespace)
+    {
+        foreach($batchItems as $item) {
+            CacheDatabaseHelper::validateCacheItem($item);
+            $cacheKey = $item['cacheKey'];
+            $cacheData = $item['cacheData'];
+            $mergedData = CacheDatabaseHelper::mergeCacheData($cacheData);
+            $this->putCache($cacheKey, $mergedData, $namespace);
+        }
+    }
+
 
     /**
-     * @param string $message
+     * @param string  $message
      * @param boolean $success
      * @return void
      */
