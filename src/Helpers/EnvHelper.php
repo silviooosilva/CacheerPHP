@@ -2,8 +2,14 @@
 
 namespace Silviooosilva\CacheerPhp\Helpers;
 
+use RuntimeException;
 use Composer\InstalledVersions;
 
+/**
+ * Class EnvHelper
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ */
 class EnvHelper {
 
     /**
@@ -27,7 +33,7 @@ class EnvHelper {
         }
 
         if (!file_exists($baseDir . DIRECTORY_SEPARATOR . '.env')) {
-            throw new \RuntimeException('<CacheerPHP>: Arquivo .env não encontrado na raiz do projeto.');
+            throw new RuntimeException('<CacheerPHP>: Arquivo .env não encontrado na raiz do projeto.');
         }
 
         return rtrim($baseDir, DIRECTORY_SEPARATOR);
