@@ -100,11 +100,12 @@ class Cacheer implements CacheerInterface
     /**
      * @param string $cacheKey
      * @param string $namespace
-     * @return bool
+     * @return void
      */
     public function has(string $cacheKey, string $namespace = '')
     {
-        return $this->cacheStore->has($cacheKey, $namespace);
+        $this->cacheStore->has($cacheKey, $namespace);
+        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
     }
 
     /**
