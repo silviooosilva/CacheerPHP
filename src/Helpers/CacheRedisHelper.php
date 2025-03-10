@@ -55,19 +55,61 @@ class CacheRedisHelper
     }
 
   /**
-  * @param mixed $currentCacheData
-  * @param mixed $cacheData
-  * @return array
-  */
+    * @param mixed $currentCacheData
+    * @param mixed $cacheData
+    * @return array
+    */
   public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData)
   {
-    if (is_array($currentCacheData) && is_array($cacheData)) {
-      $mergedCacheData = array_merge($currentCacheData, $cacheData);
-    } else {
-      $mergedCacheData = array_merge((array)$currentCacheData, (array)$cacheData);
-    }
+      /**
+      * Se ambos forem arrays, mescle-os de forma recursiva para preservar subarrays
+      */
+      if (is_array($currentCacheData) && is_array($cacheData)) {
+          return self::mergeRecursive($currentCacheData, $cacheData);
+      }
 
-    return $mergedCacheData;
+      /** 
+      * Se $currentCacheData não for um array, inicialize-o como um array vazio
+      */
+      if (!is_array($currentCacheData)) {
+          $currentCacheData = [];
+      }
+
+      /**
+      * Se $cacheData não for um array, converta-o em um array
+      */
+      if (!is_array($cacheData)) {
+          $cacheData = [$cacheData];
+      }
+
+      return array_merge($currentCacheData, $cacheData);
+  }
+
+  /**
+    * Mescla arrays de forma recursiva.
+    * @param array $array1
+    * @param array $array2
+    * @return array
+    */
+  private static function mergeRecursive(array $array1, array $array2)
+  {
+      foreach ($array2 as $key => $value) {
+
+          /**
+          * Se a chave existe em ambos os arrays e ambos os valores são arrays, mescle recursivamente
+          */
+          if (isset($array1[$key]) && is_array($array1[$key]) && is_array($value)) {
+              $array1[$key] = self::mergeRecursive($array1[$key], $value);
+          } else {
+
+              /**
+              * Caso contrário, sobrescreva o valor em $array1 com o valor de $array2
+              */
+              $array1[$key] = $value;
+          }
+      }
+
+      return $array1;
   }
 
 }
