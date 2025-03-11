@@ -1,5 +1,4 @@
-# Cacheer-PHP
-
+# CacheerPHP
 
 [![Maintainer](https://img.shields.io/badge/maintainer-@silviooosilva-blue.svg?style=for-the-badge&color=blue)](https://github.com/silviooosilva)
 ![Packagist Dependency Version](https://img.shields.io/packagist/dependency-v/silviooosilva/cacheer-php/PHP?style=for-the-badge&color=blue)
@@ -7,25 +6,29 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/silviooosilva/CacheerPHP.svg?style=for-the-badge&color=blue)](https://scrutinizer-ci.com/g/silviooosilva/CacheerPHP)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/silviooosilva/cacheer-php?style=for-the-badge&color=blue)
 
+CacheerPHP é um pacote minimalista para caching em PHP. Agora, na versão **3.0.0**, você tem ainda mais flexibilidade, suporte a múltiplos backends (arquivos, banco de dados e Redis), além de novas funcionalidades para monitoramento, compressão, Criptografia(Em Breve) e um design de API mais robusto.
 
-
-Cacheer-PHP é um pacote minimalista para caching em PHP, oferecendo uma interface simples para armazenar e recuperar dados em cache utilizando arquivos e banco de dados.
+---
 
 ## Funcionalidades
 
-- Armazenamento e recuperação de cache em arquivos e banco de dados.
-- Expiração de cache personalizável.
-- Limpeza e flush de cache.
-- Suporte a namespaces para organização de cache.
-- Limpeza automática do diretório de cache (`flushAfter`).
-- Saída de Dados Personalizada (`JSON, Array, Strings, Objetos`)
+- **Armazenamento e Recuperação de Cache:** Suporte a armazenamento em arquivos, bancos de dados (MySQL, PostgreSQL, SQLite) e Redis.
+- **Expiração Personalizável:** Defina o TTL (Time To Live) do cache com precisão.
+- **Limpeza e Flush de Cache:** Suporte para limpeza manual e automática (via `flushAfter`).
+- **Suporte a Namespaces:** Organize suas entradas de cache por categorias.
+- **Saída de Dados Personalizada:** Opções para retornar os dados em `JSON`, `Array`, `String` ou `Objeto`.
+- **Compressão e Criptografia(Em Breve):** Reduza o espaço de armazenamento e aumente a segurança dos dados cacheados.
+- **Cache Statistics and Monitoring:** Acompanhe estatísticas de acertos, falhas e tempos médios de leitura/escrita.
+- **Logging Avançado:** Monitoramento detalhado do funcionamento do sistema de cache.
+
+---
 
 ## Instalação
 
-O CacheerPHP está disponível via Composer:
+O CacheerPHP 3.0.0 está disponível via Composer. Adicione a seguinte linha no seu arquivo **composer.json**:
 
 ```sh
-  "silviooosilva/cacheer-php": "^2.0"
+  "silviooosilva/cacheer-php": "^3.0"
 ```
 
 Ou rode o comando:
@@ -34,105 +37,33 @@ Ou rode o comando:
 composer require silviooosilva/cacheer-php
 ```
 
+## AVISO IMPORTANTE!!!
+
+Não se esqueça de configurar as suas variáveis de ambiente, presentes no arquivo .env.example.
+Relembrar que devem ser configurados no arquivo .env, e não no .env.example.
+Para tal, faça o seguinte na sua linha de comandos:
+
+```sh
+cp .env.example .env 
+```
+
+
+
 ## Documentação
 
-1. [Armazenar e Recuperar Dados em Cache](docs/example01.md)
-2. [Expiração de cache personalizável](docs/example02.md)
-3. [Limpeza e flush de cache](docs/example03.md)
-4. [Suporte a namespaces para organização de cache](docs/example04.md)
-5. [Limpeza automática do diretório de cache `flushAfter`](docs/example09.md)
-6. [Cache de Resposta de API](docs/example05.md)
-7. [Saída de Dados Personalizada (`JSON`)](docs/example06.md)
-8. [Saída de Dados Personalizada (`Array`)](docs/example07.md)
-9. [Saída de Dados Personalizada (`String`)](docs/example08.md)
+1.  [Armazenar e Recuperar Dados em Cache](docs/example01.md)
+2.  [Expiração de cache personalizável](docs/example02.md)
+3.  [Limpeza e flush de cache](docs/example03.md)
+4.  [Suporte a namespaces para organização de cache](docs/example04.md)
+5.  [Limpeza automática do diretório de cache `flushAfter`](docs/example09.md)
+6.  [Cache de Resposta de API](docs/example05.md)
+7.  [Saída de Dados Personalizada (`JSON`)](docs/example06.md)
+8.  [Saída de Dados Personalizada (`Array`)](docs/example07.md)
+9.  [Saída de Dados Personalizada (`String`)](docs/example08.md)
+10. [Guia de Upgrade para Versão 2.0.0](docs/guia2.0.0.md)
 
-# Lançamento da Versão 2.0.0 do CacheerPHP
+Tem ainda disponível diversos exemplos práticos na pasta **Examples**, na raíz do projeto.
 
-Estamos entusiasmados em anunciar o lançamento da versão **2.0.0** do **CacheerPHP**! Esta versão traz uma série de novos recursos e melhorias que ampliam a flexibilidade e o poder de escolha para desenvolvedores que buscam gerenciar cache de forma eficiente.
-
-## Principais Novidades da Versão 2.0.0
-
-- **Suporte a Banco de Dados**: Agora o CacheerPHP suporta armazenamento de cache em **banco de dados** com opções para `MySQL`, `SQLite` e `PostgreSQL`. Isso permite maior flexibilidade, escalabilidade e performance em diversos cenários de uso.
-- **Melhorias de Performance**: Otimizações adicionais para a recuperação e inserção de cache, garantindo maior eficiência, especialmente em sistemas com alto volume de dados.
-- **Novos Recursos**: Agora é possível monitorar o funcionamento do sistema de cache com o novo recurso de logs. Erros, avisos, informações e mensagens de debug são registrados e armazenados, proporcionando uma visão clara do desempenho do sistema e facilitando a identificação e solução de eventuais problemas.
-
-## Benefícios da Atualização
-
-Com a **versão 2.0.0**, você ganha:
-
-- **Flexibilidade** para escolher a melhor solução de armazenamento de cache para sua aplicação.
-- **Melhor performance**, com aprimoramentos no processo de recuperação e armazenamento de dados em cache.
-
----
-
-# Guia de Atualização para o CacheerPHP 2.0.0
-
-Para garantir uma transição suave para a versão 2.0.0, siga este manual de atualização detalhado.
-
-## Requisitos do Sistema
-
-- **PHP** versão 8.0 ou superior.
-- **Banco de Dados (opcional)**: MySQL, PostgreSQL, ou SQLite (para uso do driver de cache baseado em banco de dados).
-
-## Passo a Passo de Atualização
-
-### 1. Backup dos Dados de Cache Atuais
-
-Antes de iniciar a atualização, é recomendável fazer backup de quaisquer dados de cache relevantes. Se estiver utilizando cache baseado em arquivos, salve o diretório de cache.
-
-### 2. Atualize o Pacote via Composer
-
-Execute o comando abaixo para atualizar para a versão mais recente do CacheerPHP:
-
-```bash
-composer require silviooosilva/cacheer-php:^2.0.0
-```
-
-### 3. Configuração
-Após a atualização, siga as orientações abaixo para configurar a nova versão.
-
-**Manter Cache Baseado em Arquivos**.
-
-Se você já utiliza cache por arquivos e deseja continuar com essa configuração, nenhuma ação adicional é necessária.
-
-**Migrar para Cache Baseado em Banco de Dados**
-
-#### 1) Configurar Dados de Conexão
-
-- Edite o arquivo de configuração do CacheerPHP, localizado na pasta ```Boot/config.php```, e insira os dados do seu banco.
-
-#### 2) Habilitar o Driver de Banco de Dados
-- Exemplo de uso no código: 
-
-```php
-<?php
-require_once __DIR__ . "/../vendor/autoload.php";
-
-use Silviooosilva\CacheerPhp\Cacheer;
-
-$Cacheer = new Cacheer();
-$Cacheer->setConfig()->setDatabaseConnection('mysql');
-$Cacheer->setDriver()->useDatabaseDriver();
-
-```
-
-#### 3) Configurar Timezone 
-
-- Para evitar problemas com expiração de cache, configure o fuso horário:
-
-```php
-$Cacheer->setConfig()->setTimeZone('Africa/Luanda');
-```
-**NB.: Certifique-se de que o timezone fornecido é válido**
-- https://www.php.net/manual/en/timezones.php 
-
-#### 4) Sistema de Logs
-
-- Configure o caminho para salvar os logs:
-
-```php
-$Cacheer->setConfig()->setLoggerPath('/path/CacheerPHP.log');
-```
 ## API Reference
 
 ## **Classes Principais**
