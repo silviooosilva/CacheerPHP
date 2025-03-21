@@ -11,9 +11,9 @@ class CacheerDatabaseTest extends TestCase
     protected function setUp(): void
     {
         $this->cache = new Cacheer();
-        $this->cache->setConfig()->setDatabaseConnection('mysql');
+        $this->cache->setConfig()->setDatabaseConnection(Connect::getInstance()->getAttribute(PDO::ATTR_DRIVER_NAME));
         $this->cache->setDriver()->useDatabaseDriver();
-        $this->cache->setConfig()->setTimeZone('Africa/Luanda');
+        $this->cache->setConfig()->setTimeZone('America/Toronto');
     }
 
     protected function tearDown(): void
@@ -79,9 +79,12 @@ class CacheerDatabaseTest extends TestCase
         $this->assertTrue($query->execute());
 
         $this->cache->appendCache($cacheKey, $newCacheData);
-        $this->assertEquals("Cache updated successfully", $this->cache->getMessage());
+        $this->assertEquals("Cache updated successfully.", $this->cache->getMessage());
 
-        $query = $db->prepare("SELECT cacheData FROM cacheer_table WHERE cacheKey = ? AND cacheNamespace = ? AND expirationTime > NOW()");
+        $driver = Connect::getInstance()->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $nowFunction = ($driver === 'sqlite') ? "DATETIME('now', 'localtime')" : "NOW()";
+
+        $query = $db->prepare("SELECT cacheData FROM cacheer_table WHERE cacheKey = ? AND cacheNamespace = ? AND expirationTime > $nowFunction");
         $query->bindValue(1, $cacheKey);
         $query->bindValue(2, '');
 
