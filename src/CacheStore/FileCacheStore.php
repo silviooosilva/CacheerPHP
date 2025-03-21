@@ -154,7 +154,7 @@ class FileCacheStore implements CacheerInterface
     /**
      * @param string $cacheKey
      * @param string $namespace
-     * @return bool
+     * @return void
      */
     public function has(string $cacheKey, string $namespace = '')
     {

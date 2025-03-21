@@ -99,7 +99,7 @@ class RedisCacheStore implements CacheerInterface
   /**
   * @param string $cacheKey
   * @param string $namespace
-  * @return bool
+  * @return void
   */
   public function clearCache(string $cacheKey, string $namespace = '')
   {
@@ -193,7 +193,7 @@ class RedisCacheStore implements CacheerInterface
   * @param array  $items
   * @param string $namespace
   * @param int    $batchSize
-  * @return bool
+  * @return void
   */
   public function putMany(array $items, string $namespace = '', int $batchSize = 100)
   {

@@ -15,7 +15,7 @@ class CacheRedisHelper
   /**
   * @param mixed $data
   * @param bool  $serialize
-  * @return string
+  * @return mixed
   */
   public static function serialize(mixed $data, bool $serialize = true)
   {
