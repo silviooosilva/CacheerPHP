@@ -18,7 +18,7 @@ CacheerPHP é um pacote minimalista para caching em PHP. Agora, na versão **3.0
 - **Suporte a Namespaces:** Organize suas entradas de cache por categorias.
 - **Saída de Dados Personalizada:** Opções para retornar os dados em `JSON`, `Array`, `String` ou `Objeto`.
 - **Compressão e Criptografia(Em Breve):** Reduza o espaço de armazenamento e aumente a segurança dos dados cacheados.
-- **Cache Statistics and Monitoring:** Acompanhe estatísticas de acertos, falhas e tempos médios de leitura/escrita.
+- **Cache Statistics and Monitoring:** Acompanhe estatísticas de acertos, falhas e tempos médios de leitura/escrita(Em Breve).
 - **Logging Avançado:** Monitoramento detalhado do funcionamento do sistema de cache.
 
 ---
