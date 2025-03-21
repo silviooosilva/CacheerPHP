@@ -159,12 +159,21 @@ useDatabaseDriver()
 $Cacheer->setDriver()->useDatabaseDriver();
 ```
 
+Define o driver de cache como baseado no Redis.
+
+```
+useRedisDriver()
+```
+
+```
+$Cacheer->setDriver()->useRedisDriver();
+```
+
 ## Compatibilidade
 
 - PHP: 8.0 ou superior.
 - Drivers de Banco de Dados: MySQL, PostgreSQL, SQLite.
-
-Aproveite os recursos avançados da versão 2.0.0 do CacheerPHP para gerenciar o cache da sua aplicação com eficiência!
+- Redis
 
 ### Testes
 
