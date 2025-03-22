@@ -12,7 +12,7 @@ class CacheRedisException extends BaseException
   private static string $before = "<Redis Cache Store Exception>";
 
 
-    /**
+  /**
   * @return void
   */
   public static function create(string $message = "", int $code = 0, ?Exception $previous = null, array $details = [])
