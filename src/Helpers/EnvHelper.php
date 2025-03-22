@@ -2,7 +2,6 @@
 
 namespace Silviooosilva\CacheerPhp\Helpers;
 
-use RuntimeException;
 use Composer\InstalledVersions;
 
 /**
@@ -14,7 +13,6 @@ class EnvHelper {
 
     /**
      * @return string
-     * @throws \RuntimeException se o arquivo .env não for encontrado
      */
     public static function getRootPath()
     {
@@ -26,16 +24,31 @@ class EnvHelper {
             }
         }
 
-        // Fallback: sobe os diretórios a partir do __DIR__ procurando o .env
+        // Fallback: sobe os diretórios a partir do __DIR__ procurando o .env.example
         $baseDir = __DIR__;
-        while (!file_exists($baseDir . DIRECTORY_SEPARATOR . '.env') && $baseDir !== dirname($baseDir)) {
+        while (!file_exists($baseDir . DIRECTORY_SEPARATOR . '.env.example') && $baseDir !== dirname($baseDir)) {
             $baseDir = dirname($baseDir);
-        }
-
-        if (!file_exists($baseDir . DIRECTORY_SEPARATOR . '.env')) {
-            throw new RuntimeException('<CacheerPHP>: Arquivo .env não encontrado na raiz do projeto.');
         }
 
         return rtrim($baseDir, DIRECTORY_SEPARATOR);
     }
+
+    /**
+    * @return void
+    */
+    public static function copyEnv()
+    {
+        $rootDir = self::getRootPath();
+        $envFile = $rootDir . '/.env';
+        $envExampleFile = $rootDir . '/.env.example';
+
+        if (!file_exists($envFile) && file_exists($envExampleFile)) {
+            if (copy($envExampleFile, $envFile)) {
+                echo ".env file created successfully from .env.example.\n";
+            } else {
+                echo "Failed to create .env file from .env.example.\n";
+            }
+        }
+    }
+
 }
