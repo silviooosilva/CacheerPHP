@@ -38,10 +38,19 @@ class FileCacheManager
     */
     public function readFile(string $filename)
     {
-        if (!file_exists($filename)) {
+        if (!$this->fileExists($filename)) {
             throw CacheFileException::create("File not found: {$filename}");
         }
         return file_get_contents($filename);
+    }
+
+    /**
+    * @param string $filename
+    * @return bool
+    */
+    public function fileExists(string $filename)
+    {
+        return file_exists($filename);
     }
 
     /**

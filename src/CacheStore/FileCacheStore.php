@@ -277,13 +277,17 @@ class FileCacheStore implements CacheerInterface
     private function scheduleFlush(string $flushAfter)
     {
         $flushAfterSeconds = CacheFileHelper::convertExpirationToSeconds($flushAfter);
-        if ($this->fileManager->readFile($this->lastFlushTimeFile)) {
-            $lastFlushTime = $this->fileManager->readFile($this->lastFlushTimeFile);
-            if ((time() - (int)$lastFlushTime) >= $flushAfterSeconds) {
-                $this->flushCache();
-            }
-        } else {
-            file_put_contents($this->lastFlushTimeFile, time());
+
+        if(!$this->fileManager->fileExists($this->lastFlushTimeFile)) {
+            $this->fileManager->writeFile($this->lastFlushTimeFile, time());
+            return;
+        }
+
+        $lastFlushTime = (int) $this->fileManager->readFile($this->lastFlushTimeFile);
+
+        if ((time() - $lastFlushTime) >= $flushAfterSeconds) {
+            $this->flushCache();
+            $this->fileManager->writeFile($this->lastFlushTimeFile, time());
         }
     }
 
