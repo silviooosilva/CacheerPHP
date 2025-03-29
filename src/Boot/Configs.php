@@ -45,7 +45,7 @@ define('CACHEER_DATABASE_CONFIG', [
     ],
     "sqlite" => [
         "driver"  => $Connection,
-        "dbname"  => SqliteHelper::database($DBName),
+        "dbname"  => SqliteHelper::database(),
         "options" => [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
