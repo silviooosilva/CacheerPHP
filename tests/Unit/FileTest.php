@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use Silviooosilva\CacheerPhp\Cacheer;
 
-class CacheerTest extends TestCase
+class FileTest extends TestCase
 {
     private $cache;
     private $cacheDir;
