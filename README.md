@@ -48,7 +48,6 @@ cp .env.example .env
 ```
 
 
-
 ## Documentação
 
 1.  [Armazenar e Recuperar Dados em Cache](docs/example01.md)
@@ -61,113 +60,9 @@ cp .env.example .env
 8.  [Saída de Dados Personalizada (`Array`)](docs/example07.md)
 9.  [Saída de Dados Personalizada (`String`)](docs/example08.md)
 10. [Guia de Upgrade para Versão 2.0.0](docs/guia2.0.0.md)
+11. [API Reference](docs/api-reference.md)
 
 Tem ainda disponível diversos exemplos práticos na pasta **Examples**, na raíz do projeto.
-
-## API Reference
-
-## **Classes Principais**
-
-### `Silviooosilva\CacheerPhp\Cacheer`
-
-A classe principal do pacote, usada para todas as operações de cache.
-
-
-## **Métodos**
-
-### 1. **Configuração**
-
-#### `setConfig()`
-Inicia uma configuração personalizada para o CacheerPHP.
-
-```php
-$Cacheer->setConfig();
-```
-```php
-$Cacheer->setConfig()->setDatabaseConnection(string $driver)
-```
-Configura o banco de dados para armazenamento do cache.
-
-- Parâmetros:
-```
-$driver: Driver do banco de dados. Valores possíveis: 'mysql', 'pgsql', 'sqlite'.
-```
-
-**Exemplo:**
-
-```
-$Cacheer->setConfig()->setDatabaseConnection('mysql');
-```
-Timezone
----
-
-```
-$Cacheer->setConfig()->setTimeZone(string $timezone);
-```
-
-Define o fuso horário para operações de cache.
-- Parâmetros
-
-```
-$timezone: Fuso horário no formato PHP (exemplo: 'UTC', 'Africa/Luanda').
-```
-
-**Exemplo:**
-
-```
-$Cacheer->setConfig()->setTimeZone('UTC');
-```
-
-Logger
----
-
-```
-$Cacheer->setConfig()->setLoggerPath(string $path);
-```
-Define o caminho onde os logs serão armazenados.
-
-- Parâmetros
-
-```
-$path: Caminho completo para o arquivo de logs.
-```
-
-**Exemplo:**
-
-```
-$Cacheer->setConfig()->setLoggerPath('/path/to/logs/CacheerPHP.log');
-```
-
-### 2. **Drivers**
-
-```
-useFileDriver()
-```
-Define o driver de cache como baseado em arquivos.
-
-```
-$Cacheer->setDriver()->useFileDriver();
-```
-
-Define o driver de cache como baseado em banco de dados.
-
-```
-useDatabaseDriver()
-```
-
-```
-$Cacheer->setDriver()->useDatabaseDriver();
-```
-
-Define o driver de cache como baseado no Redis.
-
-```
-useRedisDriver()
-```
-
-```
-$Cacheer->setDriver()->useRedisDriver();
-```
 
 ## Compatibilidade
 
