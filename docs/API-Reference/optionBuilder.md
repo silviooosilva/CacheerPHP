@@ -2,6 +2,8 @@
 
 O **OptionBuilder** lhe permite definir diferentes parametros para configuração do CacheerPHP, dando-lhe mais segurança, robustez e velocidade de execução, excluindo ainda, possíveis erros, como os de digitação, por exemplo.
 
+Confira também o **TimeBuilder**: [TimeBuilder - Introdução](./OptionBuilder/TimeBuilder.md)
+
 Atualmente, é apenas compatível com o **FileCacheStore**, visto que é o driver que requer um conjunto de configurações antecipadas para o seu funcionamento.
 
 Confira alguns exemplos:
