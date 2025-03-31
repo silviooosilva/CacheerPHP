@@ -2,6 +2,8 @@
 
 namespace Silviooosilva\CacheerPhp\CacheStore\CacheManager\OptionBuilders;
 
+use Silviooosilva\CacheerPhp\Support\TimeBuilder;
+
 class FileOptionBuilder
 {
   /** @param null|string $cacheDir */
@@ -27,23 +29,37 @@ class FileOptionBuilder
   }
 
   /**
-  * @param string $expirationTime
-  * @return $this
+  * @param ?string $expirationTime
+  * @return $this|TimeBuilder
   */
-  public function expirationTime(string $expirationTime)
+  public function expirationTime(?string $expirationTime = null)
   {
-    $this->expirationTime = $expirationTime;
-    return $this;
+
+    if (!is_null($expirationTime)) {
+      $this->expirationTime = $expirationTime;
+      return $this;
+    }
+
+    return new TimeBuilder(function ($formattedTime){
+      $this->expirationTime = $formattedTime;
+    }, $this);
   }
 
   /**
-  * @param string $flushAfter
-  * @return $this
+  * @param ?string $flushAfter
+  * @return $this|TimeBuilder
   */
-  public function flushAfter(string $flushAfter)
+  public function flushAfter(?string $flushAfter = null)
   {
-    $this->flushAfter = mb_strtolower($flushAfter, 'UTF-8');
-    return $this;
+
+    if (!is_null($flushAfter)) {
+      $this->flushAfter = mb_strtolower($flushAfter, 'UTF-8');
+      return $this;
+    }
+
+    return new TimeBuilder(function ($formattedTime){
+      $this->flushAfter = $formattedTime;
+    }, $this);
   }
 
   /**
