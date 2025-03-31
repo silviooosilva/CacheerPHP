@@ -76,6 +76,36 @@ class OptionBuildTest extends TestCase
         ], $options);
     }
 
+  public function test_it_allows_setting_expiration_time_with_timebuilder()
+    {
+      $options = OptionBuilder::forFile()->expirationTime()->week(1)->build();
+      $this->assertArrayHasKey('expirationTime', $options);
+      $this->assertEquals('1 weeks', $options['expirationTime']);
+    }
+
+  public function test_it_allows_setting_flush_after_with_timebuilder()
+  {
+    $options = OptionBuilder::forFile()->flushAfter()->second(10)->build();
+    $this->assertArrayHasKey('flushAfter', $options);
+    $this->assertEquals('10 seconds', $options['flushAfter']);
+  }
+
+  public function test_it_can_set_multiple_options_together_with_timebuilder()
+  {
+    $cacheDir = __DIR__ . "/cache";
+    $options = OptionBuilder::forFile()
+          ->dir($cacheDir)
+          ->expirationTime()->week(1)
+          ->flushAfter()->minute(10)
+          ->build();
+
+    $this->assertEquals([
+            'cacheDir' => $cacheDir,
+            'expirationTime' => '1 weeks',
+            'flushAfter' => '10 minutes',
+        ], $options);
+  }
+
   public function test_it_returns_empty_array_when_no_options_are_set()
   {
     $options = OptionBuilder::forFile()->build();
