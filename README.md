@@ -77,3 +77,6 @@ Para rodar os testes, vá para a raíz do projeto e digite o comando:
 ```sh
 vendor/bin/phpunit
 ```
+
+<h3 align="left">Support:</h3>
+<p><a href="https://buymeacoffee.com/silviooosilva"> <img align="left" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="50" width="210" alt="silviooosilva" /></a></p><br><br>
