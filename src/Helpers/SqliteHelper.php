@@ -13,18 +13,20 @@ class SqliteHelper
 
     /**
      * @param string $database
-     * @param string $path
+     * @param ?string $path
      * @return string
      */
-    public static function database(string $database = 'database.sqlite', string $path = null)
+    public static function database(string $database = 'database.sqlite', ?string $path = null)
     {
         return self::getDynamicSqliteDbPath($database, $path);
     }
 
     /**
+     * @param  string $database
+     * @param ?string $path
      * @return string
      */
-    private static function getDynamicSqliteDbPath(string $database, string $path = null)
+    private static function getDynamicSqliteDbPath(string $database, ?string $path = null)
     {
         $rootPath = EnvHelper::getRootPath();
         $databaseDir = is_null($path) ? $rootPath . '/database' : $rootPath . '/' . $path;
