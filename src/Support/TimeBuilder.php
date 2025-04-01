@@ -83,7 +83,7 @@ class TimeBuilder
   /**
   * @param int $value
   * @param string $unit
-  * @return void
+  * @return FileOptionBuilder
   */
   private function setTime(int $value, string $unit) {
 
