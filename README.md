@@ -40,6 +40,7 @@ composer require silviooosilva/cacheer-php
 ## AVISO IMPORTANTE!!!
 
 Não se esqueça de configurar as suas variáveis de ambiente, presentes no arquivo .env.example.
+
 Relembrar que devem ser configurados no arquivo .env, e não no .env.example.
 Para tal, faça o seguinte na sua linha de comandos:
 
