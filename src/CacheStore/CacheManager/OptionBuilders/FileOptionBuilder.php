@@ -4,6 +4,11 @@ namespace Silviooosilva\CacheerPhp\CacheStore\CacheManager\OptionBuilders;
 
 use Silviooosilva\CacheerPhp\Support\TimeBuilder;
 
+/**
+ * Class FileOptionBuilder
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ */
 class FileOptionBuilder
 {
   /** @param null|string $cacheDir */
