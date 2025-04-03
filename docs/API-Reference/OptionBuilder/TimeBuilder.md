@@ -1,6 +1,8 @@
 ## API Reference
 
-O TimeBuilder fornece uma forma fluida e encadeável de definir períodos de tempo de maneira mais intuitiva e sem erros de digitação. Ele permite que os valores de expirationTime e flushAfter sejam passados diretamente como inteiros ou definidos usando métodos encadeados, como day(1), week(2), etc.
+O TimeBuilder fornece uma forma fluida e encadeável de definir períodos de tempo de maneira mais intuitiva e sem erros de digitação. 
+
+Ele permite que os valores de expirationTime e flushAfter sejam passados diretamente como inteiros ou definidos usando métodos encadeados, como day(1), week(2), etc.
 
 #### Uso Simples
 
@@ -43,7 +45,7 @@ $Options = OptionBuilder::forFile()
 var_dump($Options);
 ```
 
-**🎯 Saída Esperada**
+**Saída Esperada**
 
 ```php
 [
