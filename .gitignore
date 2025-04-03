@@ -3,3 +3,5 @@
 .phpunit.result.cache
 .env
 /composer.lock
+/database
+/CacheerPHP
