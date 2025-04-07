@@ -5,7 +5,13 @@ namespace Silviooosilva\CacheerPhp\CacheStore\CacheManager;
 use Predis\Client;
 use Predis\Autoloader;
 
-class RedisCacheManager 
+
+/**
+ * Class RedisCacheManager
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ */
+class RedisCacheManager
 {
 
   /** @var Predis\Client */
