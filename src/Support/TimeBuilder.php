@@ -33,49 +33,55 @@ class TimeBuilder
 
   /**
   * @param int $value
-  * @return mixed
+  * @return FileOptionBuilder|mixed
   */
-  public function second(int $value) {
+  public function second(int $value) 
+  {
     return $this->setTime($value, "seconds");
   }
 
   /**
   * @param int $value
-  * @return mixed
+  * @return FileOptionBuilder|mixed
   */
-  public function minute(int $value) {
+  public function minute(int $value) 
+  {
     return $this->setTime($value, "minutes");
   }
 
   /**
   * @param int $value
-  * @return mixed
+  * @return FileOptionBuilder|mixed
   */
-  public function hour(int $value) {
+  public function hour(int $value) 
+  {
     return $this->setTime($value, "hours");
   }
 
   /**
   * @param int $value
-  * @return mixed
+  * @return FileOptionBuilder|mixed
   */
-  public function day(int $value) {
+  public function day(int $value) 
+  {
     return $this->setTime($value, "days");
   }
 
   /**
   * @param int $value
-  * @return mixed
+  * @return FileOptionBuilder|mixed
   */
-  public function week(int $value) {
+  public function week(int $value) 
+  {
     return $this->setTime($value, "weeks");
   }
 
   /**
   * @param int $value
-  * @return mixed
+  * @return FileOptionBuilder|mixed
   */
-  public function month(int $value) {
+  public function month(int $value) 
+  {
     return $this->setTime($value, "months");
   }
   
@@ -85,7 +91,8 @@ class TimeBuilder
   * @param string $unit
   * @return FileOptionBuilder
   */
-  private function setTime(int $value, string $unit) {
+  private function setTime(int $value, string $unit) 
+  {
 
     $this->value = $value;
     $this->unit = $unit;
