@@ -6,6 +6,11 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Silviooosilva\CacheerPhp\Exceptions\CacheFileException;
 
+/**
+ * Class FileCacheManager
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ */
 class FileCacheManager
 {
 
