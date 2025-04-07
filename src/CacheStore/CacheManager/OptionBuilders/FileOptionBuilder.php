@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Silviooosilva\CacheerPhp\CacheStore\CacheManager\OptionBuilders;
 
 use Silviooosilva\CacheerPhp\Support\TimeBuilder;
