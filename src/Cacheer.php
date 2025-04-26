@@ -164,7 +164,7 @@ class Cacheer implements CacheerInterface
     */
     public function forever(string $cacheKey, mixed $cacheData)
     {
-        $this->putCache($cacheKey, $cacheData, '', 0);
+        $this->putCache($cacheKey, $cacheData, '', 31536000 * 1000);
         $this->setMessage($this->getMessage(), $this->isSuccess());
     }
 
