@@ -31,6 +31,11 @@ class CacheDatabaseRepository
      */
     public function store(string $cacheKey, mixed $cacheData, string $namespace, string|int $ttl = 3600)
     {
+
+        if(!empty($this->retrieve($cacheKey, $namespace))) {
+            $this->update($cacheKey, $cacheData, $namespace);
+        }
+
         $expirationTime = date('Y-m-d H:i:s', time() + $ttl);
         $createdAt = date('Y-m-d H:i:s');
 
