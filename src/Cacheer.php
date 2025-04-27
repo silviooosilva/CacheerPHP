@@ -2,6 +2,7 @@
 
 namespace Silviooosilva\CacheerPhp;
 
+use Closure;
 use Silviooosilva\CacheerPhp\Interface\CacheerInterface;
 use Silviooosilva\CacheerPhp\CacheStore\DatabaseCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
@@ -125,6 +126,114 @@ class Cacheer implements CacheerInterface
         }
 
         return $renewedCache;
+    }
+
+    /**
+    * @param string $cacheKey
+    * @param int $amount
+    * @param string $namespace
+    * @return bool
+    */
+    public function increment(string $cacheKey, int $amount = 1, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+
+        if(!empty($cacheData) && is_numeric($cacheData)) {
+            $this->putCache($cacheKey, (int)($cacheData + $amount), $namespace);
+            $this->setMessage($this->getMessage(), $this->isSuccess());
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+    * @param string $cacheKey
+    * @param int $amount
+    * @param string $namespace
+    * @return bool
+    */
+    public function decrement(string $cacheKey, int $amount = 1, string $namespace = '')
+    {
+      return $this->increment($cacheKey, ($amount * -1), $namespace);
+    }
+    /**
+    * @param string $cacheKey
+    * @param mixed $cacheData
+    * @return void
+    */
+    public function forever(string $cacheKey, mixed $cacheData)
+    {
+        $this->putCache($cacheKey, $cacheData, '', 31536000 * 1000);
+        $this->setMessage($this->getMessage(), $this->isSuccess());
+    }
+
+    /**
+    * @param string $cacheKey
+    * @param int|string $ttl
+    * @param Closure $callback
+    * @return mixed
+    */
+    public function remember(string $cacheKey, int|string $ttl, Closure $callback)
+    {
+        $isCache = $this->getCache($cacheKey);
+
+
+        if(!empty($isCache)) {
+            return $this->getCache($cacheKey, ttl: $ttl);
+        }
+
+        $cacheData = $callback();
+        $this->putCache($cacheKey, $cacheData, ttl: $ttl);
+        $this->setMessage($this->getMessage(), $this->isSuccess());
+
+        return $cacheData;
+    }
+
+    /**
+    * @param string $cacheKey
+    * @param Closure $callback
+    * @return mixed
+    */
+    public function rememberForever(string $cacheKey, Closure $callback)
+    {
+        return $this->remember($cacheKey, 31536000 * 1000, $callback);
+    }
+
+    /**
+    * @param string $cacheKey
+    * @param string $namespace
+    * @return mixed
+    */
+    public function getAndForget(string $cacheKey, string $namespace = '')
+    {
+        $cachedData = $this->getCache($cacheKey, $namespace);
+
+        if (!empty($cachedData)) {
+            $this->clearCache($cacheKey, $namespace);
+            return $cachedData;
+        }
+
+        return null;
+    }
+
+    /**
+    * @param string $cacheKey
+    * @param mixed  $cacheData
+    * @param string $namespace
+    * @param int|string $ttl
+    * @return bool
+    */
+    public function add(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
+    {
+        if (!empty($this->getCache($cacheKey, $namespace))) {
+            return true;
+        }
+
+        $this->putCache($cacheKey, $cacheData, $namespace, $ttl);
+        $this->setMessage($this->getMessage(), $this->isSuccess());
+
+        return false;
     }
 
     /**

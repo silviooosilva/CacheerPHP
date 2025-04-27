@@ -70,7 +70,7 @@ class FileCacheStore implements CacheerInterface
      * @param string $cacheKey
      * @param string $namespace
      * @param string|int $ttl
-     * @return string|null
+     * @return string
      */
     public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
     {
@@ -87,7 +87,6 @@ class FileCacheStore implements CacheerInterface
 
         $this->setMessage("cacheFile not found, does not exists or expired", false);
         $this->logger->info("{$this->getMessage()} from file driver.");
-        return null;
     }
 
     /**
@@ -159,7 +158,8 @@ class FileCacheStore implements CacheerInterface
     public function has(string $cacheKey, string $namespace = '')
     {
         $cacheData = $this->getCache($cacheKey, $namespace);
-        if ($cacheData) {
+
+        if ($this->isSuccess()) {
             $this->setMessage("Cache key: {$cacheKey} exists and it's available! from file driver", true);
         }
         $this->setMessage("Cache key: {$cacheKey} does not exists or it's expired! from file driver", false);

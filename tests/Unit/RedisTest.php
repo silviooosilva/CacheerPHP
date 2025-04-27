@@ -258,4 +258,120 @@ class RedisTest extends TestCase
     $this->assertNotEmpty($this->cache->getCache($cacheKey, $namespace));
   }
 
+  public function test_remember_saves_and_recover_values() 
+    {
+        $this->cache->flushCache();
+
+        $value = $this->cache->remember('remember_test_key', 60, function () {
+            return 'valor_teste';
+        });
+
+        $this->assertEquals('valor_teste', $value);
+
+        $cachedValue = $this->cache->remember('remember_test_key', 60, function (){
+            return 'novo_valor';
+        });
+
+
+        $this->assertEquals('valor_teste', $cachedValue);
+    }
+
+    public function test_remember_forever_saves_value_indefinitely()
+    {
+        $this->cache->flushCache();
+
+        $value = $this->cache->rememberForever('remember_forever_key', function () {
+            return 'valor_eterno';
+        });
+        $this->assertEquals('valor_eterno', $value);
+
+        $cachedValue = $this->cache->rememberForever('remember_forever_key', function () {
+            return 'novo_valor';
+        });
+
+        $this->assertEquals('valor_eterno', $cachedValue);
+    }
+
+
+      public function test_get_and_forget()
+    {
+        $cacheKey = 'cache_key_test';
+        $this->cache->putCache($cacheKey, 10);
+
+        $this->assertTrue($this->cache->isSuccess());
+
+        $cacheData = $this->cache->getAndForget($cacheKey);
+
+        $this->assertTrue($this->cache->isSuccess());
+        $this->assertEquals(10, $cacheData);
+
+        $oldCacheData = $this->cache->getAndForget($cacheKey);
+
+        $this->assertNull($oldCacheData);
+        $this->assertFalse($this->cache->isSuccess());
+
+        $noCacheData = $this->cache->getAndForget('non_existent_cache_key');
+        $this->assertNull($noCacheData);
+    }
+
+      public function test_store_if_not_present_with_add_function()
+    {
+        $existentKey = 'cache_key_test';
+
+        $nonExistentKey = 'non_existent_key';
+
+        $this->cache->putCache($existentKey, 'existent_data');
+
+        $this->assertTrue($this->cache->isSuccess());
+        $this->assertEquals('existent_data', $this->cache->getCache($existentKey));
+
+        $addCache = $this->cache->add($existentKey, 100);
+        
+        $this->assertTrue($addCache);
+        $this->assertNotEquals(100, 'existent_data');
+    
+        $addNonExistentKey = $this->cache->add($nonExistentKey, 'non_existent_data');
+
+        $this->assertFalse($addNonExistentKey);
+        $this->assertEquals('non_existent_data', $this->cache->getCache($nonExistentKey));
+        $this->assertTrue($this->cache->isSuccess());
+
+    }
+
+      public function test_increment_function() {
+
+        $cacheKey = 'test_increment';
+        $cacheData = 2025;
+
+        $this->cache->putCache($cacheKey, $cacheData);
+
+        $this->assertTrue($this->cache->isSuccess());
+        $this->assertEquals($cacheData, $this->cache->getCache($cacheKey));
+        $this->assertIsNumeric($this->cache->getCache($cacheKey));
+
+        $increment = $this->cache->increment($cacheKey, 2);
+        $this->assertTrue($increment);
+
+        $this->assertEquals(2027, $this->cache->getCache($cacheKey));
+
+    }
+
+        public function test_decrement_function() {
+
+        $cacheKey = 'test_decrement';
+        $cacheData = 2027;
+
+        $this->cache->putCache($cacheKey, $cacheData);
+
+        $this->assertTrue($this->cache->isSuccess());
+        $this->assertEquals($cacheData, $this->cache->getCache($cacheKey));
+        $this->assertIsNumeric($this->cache->getCache($cacheKey));
+
+        $increment = $this->cache->decrement($cacheKey, 2);
+        $this->assertTrue($increment);
+
+        $this->assertEquals(2025, $this->cache->getCache($cacheKey));
+
+    }
+
 }
