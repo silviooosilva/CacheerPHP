@@ -157,7 +157,7 @@ class FileCacheStore implements CacheerInterface
      */
     public function has(string $cacheKey, string $namespace = '')
     {
-        $cacheData = $this->getCache($cacheKey, $namespace);
+        $this->getCache($cacheKey, $namespace);
 
         if ($this->isSuccess()) {
             $this->setMessage("Cache key: {$cacheKey} exists and it's available! from file driver", true);
