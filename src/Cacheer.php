@@ -33,7 +33,7 @@ final class Cacheer implements CacheerInterface
     private bool $formatted = false;
 
     /**
-     * @var FileCacheStore|DatabaseCacheStore|RedisCacheStore
+     * @var FileCacheStore|DatabaseCacheStore|RedisCacheStore|ArrayCacheStore
      */
     public $cacheStore;
 

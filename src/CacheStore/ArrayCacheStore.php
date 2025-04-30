@@ -130,11 +130,6 @@ class ArrayCacheStore implements CacheerInterface
           return false;
       }
 
-      $currentValue = $this->arrayStore[$arrayStoreKey]['value'];
-      if (is_string($currentValue)) {
-          $currentValue = unserialize($currentValue);
-      }
-
       $this->arrayStore[$arrayStoreKey]['value'] = serialize($cacheData);
       $this->setMessage("Cache appended successfully", true);
       return true;

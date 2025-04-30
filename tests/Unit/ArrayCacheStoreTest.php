@@ -91,7 +91,7 @@ class ArrayCacheStoreTest extends TestCase
             ]
         ];
 
-    $storeCache = $this->cache->putMany($items);
+    $this->cache->putMany($items);
     foreach ($items as $item) {
           
             $this->assertEquals($item['cacheData'], $this->cache->getCache($item['cacheKey']));
@@ -108,8 +108,7 @@ class ArrayCacheStoreTest extends TestCase
     $this->assertEquals("Cache stored successfully", $this->cache->getMessage());
     $this->assertTrue($this->cache->isSuccess());
 
-    $hasCache = $this->cache->has($cacheKey);
-
+    $this->cache->has($cacheKey);
     $this->assertTrue($this->cache->isSuccess());
   }
 
