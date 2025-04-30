@@ -15,7 +15,7 @@ use Silviooosilva\CacheerPhp\Utils\CacheDriver;
  * @author Sílvio Silva <https://github.com/silviooosilva>
  * @package Silviooosilva\CacheerPhp
  */
-class Cacheer implements CacheerInterface
+final class Cacheer implements CacheerInterface
 {
     /**
      * @var string
