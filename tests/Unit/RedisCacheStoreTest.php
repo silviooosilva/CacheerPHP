@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use Silviooosilva\CacheerPhp\Cacheer;
 use Silviooosilva\CacheerPhp\CacheStore\RedisCacheStore;
 
-class RedisTest extends TestCase
+class RedisCacheStoreTest extends TestCase
 {
 
   /** @var Cacheer */
@@ -193,7 +193,7 @@ class RedisTest extends TestCase
         $this->assertEmpty($this->cache->getCache($cacheKey));
     }
 
-  public function testFlushCacheDataFromDatabase()
+  public function testFlushCacheDataFromRedis()
     {
         $key1 = 'test_key1';
         $data1 = 'test_data1';

@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use Silviooosilva\CacheerPhp\Cacheer;
 use Silviooosilva\CacheerPhp\Core\Connect;
 
-class CacheerDatabaseTest extends TestCase
+class DatabaseCacheStoreTest extends TestCase
 {
     private $cache;
 
