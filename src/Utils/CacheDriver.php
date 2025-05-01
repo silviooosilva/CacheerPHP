@@ -4,6 +4,7 @@ namespace Silviooosilva\CacheerPhp\Utils;
 
 use Exception;
 use Silviooosilva\CacheerPhp\Cacheer;
+use Silviooosilva\CacheerPhp\CacheStore\ArrayCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\RedisCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\DatabaseCacheStore;
@@ -60,6 +61,15 @@ class CacheDriver
     public function useRedisDriver()
     {
         $this->cacheer->cacheStore = new RedisCacheStore($this->logPath);
+        return $this->cacheer;
+    }
+
+    /**
+    * @return Cacheer
+    */
+    public function useArrayDriver()
+    {
+        $this->cacheer->cacheStore = new ArrayCacheStore($this->logPath);
         return $this->cacheer;
     }
 

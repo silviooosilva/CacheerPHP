@@ -6,6 +6,8 @@ use Closure;
 use Silviooosilva\CacheerPhp\Interface\CacheerInterface;
 use Silviooosilva\CacheerPhp\CacheStore\DatabaseCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
+use Silviooosilva\CacheerPhp\CacheStore\RedisCacheStore;
+use Silviooosilva\CacheerPhp\CacheStore\ArrayCacheStore;
 use Silviooosilva\CacheerPhp\Helpers\CacheConfig;
 use Silviooosilva\CacheerPhp\Utils\CacheDataFormatter;
 use Silviooosilva\CacheerPhp\Utils\CacheDriver;
@@ -33,7 +35,7 @@ final class Cacheer implements CacheerInterface
     private bool $formatted = false;
 
     /**
-     * @var FileCacheStore|DatabaseCacheStore|RedisCacheStore
+     * @var FileCacheStore|DatabaseCacheStore|RedisCacheStore|ArrayCacheStore
      */
     public $cacheStore;
 
