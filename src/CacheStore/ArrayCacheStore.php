@@ -69,7 +69,7 @@ class ArrayCacheStore implements CacheerInterface
 
     $this->setMessage("Cache retrieved successfully", true);
     $this->logger->debug("{$this->getMessage()} from array driver.");
-    return $this->serialize($cacheData['value'], false);
+    return $this->serialize($cacheData['cacheData'], false);
   }
 
   /**
@@ -85,7 +85,7 @@ class ArrayCacheStore implements CacheerInterface
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
 
     $this->arrayStore[$arrayStoreKey] = [
-      'value' => serialize($cacheData),
+      'cacheData' => serialize($cacheData),
       'expirationTime' => time() + $ttl
     ];
 
@@ -130,7 +130,7 @@ class ArrayCacheStore implements CacheerInterface
           return false;
       }
 
-      $this->arrayStore[$arrayStoreKey]['value'] = serialize($cacheData);
+      $this->arrayStore[$arrayStoreKey]['cacheData'] = serialize($cacheData);
       $this->setMessage("Cache appended successfully", true);
       return true;
   }

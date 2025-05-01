@@ -130,7 +130,7 @@ class ArrayCacheStoreTest extends TestCase
     $this->assertNotEmpty($this->cache->getCache($cacheKey));
   }
 
-      public function testRenewCacheWithNamespaceFromRedis()
+      public function testRenewCacheWithNamespaceFromArray()
   {
     $cacheKey = 'expired_key';
     $namespace = 'expired_namespace';
@@ -147,7 +147,7 @@ class ArrayCacheStoreTest extends TestCase
     $this->assertNotEmpty($this->cache->getCache($cacheKey, $namespace));
   }
 
-    public function testClearCacheDataFromRedis()
+    public function testClearCacheDataFromArray()
     {
         $cacheKey = 'test_key';
         $data = 'test_data';
@@ -162,7 +162,7 @@ class ArrayCacheStoreTest extends TestCase
         $this->assertEmpty($this->cache->getCache($cacheKey));
     }
 
-    public function testFlushCacheDataFromRedis()
+    public function testFlushCacheDataFromArray()
     {
         $key1 = 'test_key1';
         $data1 = 'test_data1';
