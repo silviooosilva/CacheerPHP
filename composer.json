@@ -24,7 +24,7 @@
   "homepage": "https://github.com/silviooosilva",
   "type": "library",
   "license": "MIT",
-  "version": "v3.4.0",
+  "version": "v3.4.1",
   "autoload": {
     "files": [
       "src/Boot/Configs.php"
