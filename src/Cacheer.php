@@ -211,6 +211,7 @@ final class Cacheer implements CacheerInterface
         $cachedData = $this->getCache($cacheKey, $namespace);
 
         if (!empty($cachedData)) {
+            $this->setMessage("Cache retrieved and deleted successfully!", true);
             $this->clearCache($cacheKey, $namespace);
             return $cachedData;
         }
