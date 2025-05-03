@@ -166,7 +166,7 @@ final class Cacheer implements CacheerInterface
     */
     public function forever(string $cacheKey, mixed $cacheData)
     {
-        $this->putCache($cacheKey, $cacheData, '', 31536000 * 1000);
+        $this->putCache($cacheKey, $cacheData, ttl: 31536000 * 1000);
         $this->setMessage($this->getMessage(), $this->isSuccess());
     }
 
@@ -178,11 +178,10 @@ final class Cacheer implements CacheerInterface
     */
     public function remember(string $cacheKey, int|string $ttl, Closure $callback)
     {
-        $isCache = $this->getCache($cacheKey);
+        $cachedData = $this->getCache($cacheKey, ttl: $ttl);
 
-
-        if(!empty($isCache)) {
-            return $this->getCache($cacheKey, ttl: $ttl);
+        if(!empty($cachedData)) {
+            return $cachedData;
         }
 
         $cacheData = $callback();
