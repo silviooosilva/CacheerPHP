@@ -40,3 +40,13 @@ require_once __DIR__ . "/../vendor/autoload.php";
 $Cacheer = new Cacheer();
 $Cacheer->setDriver()->useRedisDriver();
 ```
+
+Define o driver de cache como baseado em Arrays(Memória):
+```php
+<?php
+
+require_once __DIR__ . "/../vendor/autoload.php"; 
+
+$Cacheer = new Cacheer();
+$Cacheer->setDriver()->useArrayDriver();
+```

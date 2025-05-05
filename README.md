@@ -62,6 +62,7 @@ cp .env.example .env
 9.  [Saída de Dados Personalizada (`String`)](docs/example08.md)
 10. [Guia de Upgrade para Versão 2.0.0](docs/guia2.0.0.md)
 11. [API Reference](docs/api-reference.md)
+12. [API Reference - Funções de Cache](docs/API-Reference/FuncoesCache/README.md)
 
 Tem ainda disponível diversos exemplos práticos na pasta **Examples**, na raíz do projeto.
 
