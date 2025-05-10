@@ -21,7 +21,7 @@ class Connect
     * @param array|null $database
     * @return PDO|null
     */
-    public static function getInstance(array $database = null)
+    public static function getInstance(?array $database = null)
     {
         $pdo = ConnectionFactory::createConnection($database);
         if ($pdo) {

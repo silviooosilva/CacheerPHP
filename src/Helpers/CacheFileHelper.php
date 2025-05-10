@@ -67,7 +67,7 @@ class CacheFileHelper
     * @param int $defaultTTL
     * @return mixed
     */
-    public static function ttl(string|int $ttl = null, int $defaultTTL = null) {
+    public static function ttl($ttl = null, ?int $defaultTTL = null) {
         if ($ttl) {
             $ttl = is_string($ttl) ? CacheFileHelper::convertExpirationToSeconds($ttl) : $ttl;
         } else {
