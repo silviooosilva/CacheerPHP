@@ -14,7 +14,8 @@ class OptionBuilder
   /**
   * @return FileOptionBuilder
   */
-  public static function forFile() {
+  public static function forFile() 
+  {
     return new FileOptionBuilder();
   }
 }

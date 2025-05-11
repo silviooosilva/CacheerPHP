@@ -3,6 +3,8 @@
 namespace Silviooosilva\CacheerPhp\Helpers;
 
 use Silviooosilva\CacheerPhp\Cacheer;
+use Silviooosilva\CacheerPhp\CacheStore\ArrayCacheStore;
+use Silviooosilva\CacheerPhp\CacheStore\DatabaseCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\RedisCacheStore;
 use Silviooosilva\CacheerPhp\Core\Connect;
@@ -64,13 +66,13 @@ class CacheConfig
 
         $cacheDriverInstance = $this->cacheer->cacheStore;
 
-        if ($cacheDriverInstance instanceof FileCacheStore) {
-            $cacheDriver->useFileDriver();
-        } elseif ($cacheDriverInstance instanceof RedisCacheStore) {
-            $cacheDriver->useRedisDriver();
-        } else {
-            $cacheDriver->useDatabaseDriver();
-        }
+        $cacheDriverInstance = match (get_class($cacheDriverInstance)) {
+            FileCacheStore::class => $cacheDriver->useFileDriver(),
+            RedisCacheStore::class => $cacheDriver->useRedisDriver(),
+            ArrayCacheStore::class => $cacheDriver->useArrayDriver(),
+            DatabaseCacheStore::class => $cacheDriver->useDatabaseDriver(),
+            default => $cacheDriver->useDatabaseDriver(),
+        };
     }
 
     /**
