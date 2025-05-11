@@ -18,7 +18,7 @@ class ConnectionFactory
       * @param array|null $database
       * @return PDO|null
     */
-    public static function createConnection(array $database = null)
+    public static function createConnection(?array $database = null)
     {
         $dbConf = $database ?? CACHEER_DATABASE_CONFIG[Connect::getConnection()];
 
