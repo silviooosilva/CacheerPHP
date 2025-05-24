@@ -75,14 +75,14 @@ class CacheDriver
 
     /**
      * @return Cacheer
-     */
+    */
     public function useDefaultDriver()
     {
         if (!isset($this->cacheer->options['cacheDir'])) {
-            $cacheDir = EnvHelper::getRootPath() . "CacheerPHP/Cache";
+            $projectRoot = dirname(__DIR__, 2);
+            $cacheDir = $projectRoot . DIRECTORY_SEPARATOR . "CacheerPHP" . DIRECTORY_SEPARATOR . "Cache";
             if ($this->isDir($cacheDir)) {
                 $this->cacheer->options['cacheDir'] = $cacheDir;
-
             } else {
                 throw CacheFileException::create("Failed to create cache directory: " . $cacheDir);
             }
