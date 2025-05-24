@@ -19,11 +19,11 @@ $User       = $_ENV['DB_USERNAME'] ?? 'root';
 $Password   = $_ENV['DB_PASSWORD'] ?? '';
 
 // Retrieve Redis environment variables
-$redisClient    = $_ENV['REDIS_CLIENT'];
-$redisHost      = $_ENV['REDIS_HOST'];
-$redisPassword  = $_ENV['REDIS_PASSWORD'];
-$redisPort      = $_ENV['REDIS_PORT'];
-$redisNamespace = $_ENV['REDIS_NAMESPACE'];
+$redisClient    = $_ENV['REDIS_CLIENT'] ?? '';
+$redisHost      = $_ENV['REDIS_HOST'] ?? 'localhost';
+$redisPassword  = $_ENV['REDIS_PASSWORD'] ?? '';
+$redisPort      = $_ENV['REDIS_PORT'] ?? '6379';
+$redisNamespace = $_ENV['REDIS_NAMESPACE'] ?? '';
 
 Connect::setConnection($Connection);
 
