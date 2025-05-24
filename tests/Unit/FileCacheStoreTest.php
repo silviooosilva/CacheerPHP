@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use Silviooosilva\CacheerPhp\Cacheer;
+use Silviooosilva\CacheerPhp\Utils\CacheDriver;
 
 class FileCacheStoreTest extends TestCase
 {
@@ -367,6 +368,109 @@ class FileCacheStoreTest extends TestCase
 
         $this->assertEquals(2025, $this->cache->getCache($cacheKey));
 
-    }
+        }
 
-}
+        private function removeDirectoryRecursively($dir)
+        {
+        if (!is_dir($dir)) {
+            return;
+        }
+        $items = scandir($dir);
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') {
+            continue;
+            }
+            $path = $dir . DIRECTORY_SEPARATOR . $item;
+            if (is_dir($path)) {
+            $this->removeDirectoryRecursively($path);
+            } else {
+            unlink($path);
+            }
+        }
+        rmdir($dir);
+        }
+
+        public function testUseDefaultDriverCreatesCacheDirInProjectRoot()
+        {
+        $cacheer = new Cacheer();
+        $driver = new CacheDriver($cacheer);
+
+        $projectRoot = dirname(__DIR__, 2);
+        $expectedCacheDir = $projectRoot . DIRECTORY_SEPARATOR . "CacheerPHP" . DIRECTORY_SEPARATOR . "Cache";
+
+        if (is_dir($expectedCacheDir)) {
+            $this->removeDirectoryRecursively($expectedCacheDir);
+        }
+
+        $driver->useDefaultDriver();
+
+        $this->assertDirectoryExists($expectedCacheDir);
+
+        if (is_dir($expectedCacheDir)) {
+            $this->removeDirectoryRecursively($expectedCacheDir);
+        }
+        }
+
+        public function testPutCacheWithNamespace()
+        {
+        $cacheKey = 'namespace_key';
+        $data = 'namespace_data';
+        $namespace = 'my_namespace';
+
+        $this->cache->putCache($cacheKey, $data, $namespace);
+        $this->assertTrue($this->cache->isSuccess());
+
+        $cachedData = $this->cache->getCache($cacheKey, $namespace);
+        $this->assertEquals($data, $cachedData);
+        }
+
+        public function testClearCacheWithNamespace()
+        {
+        $cacheKey = 'namespace_key_clear';
+        $data = 'namespace_data_clear';
+        $namespace = 'clear_namespace';
+
+        $this->cache->putCache($cacheKey, $data, $namespace);
+        $this->assertTrue($this->cache->isSuccess());
+
+        $this->cache->clearCache($cacheKey, $namespace);
+        $this->assertTrue($this->cache->isSuccess());
+
+        $cachedData = $this->cache->getCache($cacheKey, $namespace);
+        $this->assertFalse($this->cache->isSuccess());
+        $this->assertNull($cachedData);
+        }
+
+        public function testFlushCacheRemovesNamespacedFiles()
+        {
+        $cacheKey = 'ns_flush_key';
+        $data = 'ns_flush_data';
+        $namespace = 'flush_namespace';
+
+        $this->cache->putCache($cacheKey, $data, $namespace);
+        $this->assertTrue($this->cache->isSuccess());
+
+        $this->cache->flushCache();
+
+        $cachedData = $this->cache->getCache($cacheKey, $namespace);
+        $this->assertFalse($this->cache->isSuccess());
+        $this->assertNull($cachedData);
+        }
+
+        public function testAppendCacheWithDifferentTypes()
+        {
+        $cacheKey = 'append_type_key';
+        $initialData = ['a' => 1];
+        $additionalData = ['b' => 2];
+        $expectedData = ['a' => 1, 'b' => 2];
+
+        $this->cache->putCache($cacheKey, $initialData);
+        $this->cache->appendCache($cacheKey, $additionalData);
+        $this->assertEquals($expectedData, $this->cache->getCache($cacheKey));
+
+        $this->cache->appendCache($cacheKey, ['c' => 'string']);
+        $expectedData['c'] = 'string';
+        $this->assertEquals($expectedData, $this->cache->getCache($cacheKey));
+        }
+
+    }
