@@ -7,3 +7,4 @@
 /CacheerPHP
 cacheer.log
 /tests/Unit/cache
+/Examples/InternalTests/
