@@ -2,6 +2,7 @@
 
 namespace Silviooosilva\CacheerPhp\Helpers;
 
+use Silviooosilva\CacheerPhp\Helpers\CacheerHelper;
 use Silviooosilva\CacheerPhp\Exceptions\CacheFileException;
 
 /**
@@ -41,14 +42,7 @@ class CacheFileHelper
      */
     public static function mergeCacheData($cacheData)
     {
-        if (is_array($cacheData) && is_array(reset($cacheData))) {
-            $merged = [];
-            foreach ($cacheData as $data) {
-                $merged[] = $data;
-            }
-            return $merged;
-        }
-        return (array)$cacheData;
+        return CacheerHelper::mergeCacheData($cacheData);
     }
 
     /**
@@ -57,9 +51,10 @@ class CacheFileHelper
      */
     public static function validateCacheItem(array $item)
     {
-        if (!isset($item['cacheKey']) || !isset($item['cacheData'])) {
-            throw CacheFileException::create("Each item must contain 'cacheKey' and 'cacheData'");
-        }
+        CacheerHelper::validateCacheItem(
+            $item,
+            fn($msg) => CacheFileException::create($msg)
+        );
     }
 
     /**
@@ -69,7 +64,7 @@ class CacheFileHelper
     */
     public static function ttl($ttl = null, ?int $defaultTTL = null) {
         if ($ttl) {
-            $ttl = is_string($ttl) ? CacheFileHelper::convertExpirationToSeconds($ttl) : $ttl;
+            $ttl = is_string($ttl) ? self::convertExpirationToSeconds($ttl) : $ttl;
         } else {
             $ttl = $defaultTTL;
         }
@@ -83,12 +78,6 @@ class CacheFileHelper
   */
   public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData)
   {
-    if (is_array($currentCacheData) && is_array($cacheData)) {
-      $mergedCacheData = array_merge($currentCacheData, $cacheData);
-    } else {
-      $mergedCacheData = array_merge((array)$currentCacheData, (array)$cacheData);
-    }
-
-    return $mergedCacheData;
+    return CacheerHelper::arrayIdentifier($currentCacheData, $cacheData);
   }
 }

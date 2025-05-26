@@ -2,6 +2,7 @@
 
 namespace Silviooosilva\CacheerPhp\Helpers;
 
+use Silviooosilva\CacheerPhp\Helpers\CacheerHelper;
 use Silviooosilva\CacheerPhp\Exceptions\CacheDatabaseException;
 
 /**
@@ -11,50 +12,35 @@ use Silviooosilva\CacheerPhp\Exceptions\CacheDatabaseException;
  */
 class CacheDatabaseHelper
 {
-
-
     /**
      * @param array $item
      * @return void
      */
     public static function validateCacheItem(array $item)
     {
-        if (!isset($item['cacheKey']) || !isset($item['cacheData'])) {
-            throw CacheDatabaseException::create("Each item must contain 'cacheKey' and 'cacheData'");
-        }
+        CacheerHelper::validateCacheItem(
+            $item,
+            fn($msg) => CacheDatabaseException::create($msg)
+        );
     }
 
-      /**
+    /**
      * @param array $options
      * @return array
      */
     public static function mergeCacheData($cacheData)
     {
-        if (is_array($cacheData) && is_array(reset($cacheData))) {
-            $merged = [];
-            foreach ($cacheData as $data) {
-                $merged[] = $data;
-            }
-            return $merged;
-        }
-        return (array)$cacheData;
+        return CacheerHelper::mergeCacheData($cacheData);
     }
 
-  /**
-  * @param mixed $currentCacheData
-  * @param mixed $cacheData
-  * @return array
-  */
-  public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData)
-  {
-    if (is_array($currentCacheData) && is_array($cacheData)) {
-      $mergedCacheData = array_merge($currentCacheData, $cacheData);
-    } else {
-      $mergedCacheData = array_merge((array)$currentCacheData, (array)$cacheData);
+    /**
+     * @param mixed $currentCacheData
+     * @param mixed $cacheData
+     * @return array
+     */
+    public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData)
+    {
+        return CacheerHelper::arrayIdentifier($currentCacheData, $cacheData);
     }
-
-    return $mergedCacheData;
-  }
-
 }
 
