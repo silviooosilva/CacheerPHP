@@ -9,7 +9,6 @@ use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\RedisCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\DatabaseCacheStore;
 use Silviooosilva\CacheerPhp\Exceptions\CacheFileException;
-use Silviooosilva\CacheerPhp\Helpers\EnvHelper;
 
 /**
  * Class CacheDriver
@@ -47,9 +46,6 @@ class CacheDriver
      */
     public function useFileDriver()
     {
-        if (!isset($this->cacheer->options['cacheDir'])) {
-            throw CacheFileException::create("The 'cacheDir' option is required for the file driver.");
-        }
         $this->cacheer->options['loggerPath'] = $this->logPath;
         $this->cacheer->cacheStore = new FileCacheStore($this->cacheer->options);
         return $this->cacheer;
