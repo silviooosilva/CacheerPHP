@@ -40,59 +40,6 @@ class DatabaseCacheStore implements CacheerInterface
         $this->cacheRepository = new CacheDatabaseRepository();
     }
 
-
-    /**
-     * @param string $cacheKey
-     * @param string $namespace
-     * @param string|int $ttl
-     * @return mixed
-     */
-    public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
-    {
-        $cacheData = $this->retrieveCache($cacheKey, $namespace);
-        if ($cacheData) {
-            $this->setMessage("Cache retrieved successfully", true);
-            $this->logger->debug("{$this->getMessage()} from database driver.");
-            return $cacheData;
-        }
-        $this->setMessage("CacheData not found, does not exists or expired", false);
-        $this->logger->info("{$this->getMessage()} from database driver.");
-        return null;
-    }
-    /**
-     * @param string $cacheKey
-     * @param mixed  $cacheData
-     * @param string $namespace
-     * @param string|int $ttl
-     * @return bool
-     */
-    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600)
-    {
-        if($this->storeCache($cacheKey, $cacheData, $namespace, $ttl)){
-            $this->logger->debug("{$this->getMessage()} from database driver.");
-            return true;
-        }
-        $this->logger->error("{$this->getMessage()} from database driver.");
-        return false;
-    }
-
-    /**
-     * @param array   $items
-     * @param string  $namespace
-     * @param integer $batchSize
-     * @return void
-     */
-    public function putMany(array $items, string $namespace = '', int $batchSize = 100)
-    {
-        $processedCount = 0;
-        $itemCount = count($items);
-        while ($processedCount < $itemCount) {
-            $batchItems = array_slice($items, $processedCount, $batchSize);
-            $this->processBatchItems($batchItems, $namespace);
-            $processedCount += count($batchItems);
-        }
-    }
-
     /**
      * @param string $cacheKey
      * @param mixed  $cacheData
@@ -111,36 +58,6 @@ class DatabaseCacheStore implements CacheerInterface
 
         $this->logger->error("{$this->getMessage()} from database driver.");
         return false;
-    }
-
-    /**
-     * @param string $cacheKey
-     * @param string $namespace
-     * @return void
-     */
-    public function has(string $cacheKey, string $namespace = '')
-    {
-        $cacheData = $this->getCache($cacheKey, $namespace);
-        if ($cacheData) {
-            $this->logger->debug("Cache key: {$cacheKey} exists and it's available from database driver.");
-        }
-        $this->logger->warning("{$this->getMessage()} from database driver.");
-    }
-
-    /**
-     * @param string $cacheKey
-     * @param string $namespace
-     * @param integer $ttl
-     * @return void
-     */
-    public function renewCache(string $cacheKey, int | string $ttl, string $namespace = '')
-    {
-        $cacheData = $this->getCache($cacheKey, $namespace);
-        if ($cacheData) {
-            $this->renew($cacheKey, $ttl, $namespace);
-            $this->setMessage("Cache with key {$cacheKey} renewed successfully", true);
-            $this->logger->debug("{$this->getMessage()} from database driver.");
-        }
     }
 
     /**
@@ -175,6 +92,152 @@ class DatabaseCacheStore implements CacheerInterface
 
     }
 
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @param string|int $ttl
+     * @return mixed
+     */
+    public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
+    {
+        $cacheData = $this->retrieveCache($cacheKey, $namespace);
+        if ($cacheData) {
+            $this->setMessage("Cache retrieved successfully", true);
+            $this->logger->debug("{$this->getMessage()} from database driver.");
+            return $cacheData;
+        }
+        $this->setMessage("CacheData not found, does not exists or expired", false);
+        $this->logger->info("{$this->getMessage()} from database driver.");
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @return void
+     */
+    public function has(string $cacheKey, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+        if ($cacheData) {
+            $this->logger->debug("Cache key: {$cacheKey} exists and it's available from database driver.");
+        }
+        $this->logger->warning("{$this->getMessage()} from database driver.");
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSuccess()
+    {
+        return $this->success;
+    }
+
+    /**
+     * @param array   $items
+     * @param string  $namespace
+     * @param integer $batchSize
+     * @return void
+     */
+    public function putMany(array $items, string $namespace = '', int $batchSize = 100)
+    {
+        $processedCount = 0;
+        $itemCount = count($items);
+        while ($processedCount < $itemCount) {
+            $batchItems = array_slice($items, $processedCount, $batchSize);
+            $this->processBatchItems($batchItems, $namespace);
+            $processedCount += count($batchItems);
+        }
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param mixed  $cacheData
+     * @param string $namespace
+     * @param string|int $ttl
+     * @return bool
+     */
+    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600)
+    {
+        if($this->storeCache($cacheKey, $cacheData, $namespace, $ttl)){
+            $this->logger->debug("{$this->getMessage()} from database driver.");
+            return true;
+        }
+        $this->logger->error("{$this->getMessage()} from database driver.");
+        return false;
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string|int $ttl
+     * @param string $namespace
+     * @return void
+     */
+    public function renewCache(string $cacheKey, int | string $ttl, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+        if ($cacheData) {
+            $this->renew($cacheKey, $ttl, $namespace);
+            $this->setMessage("Cache with key {$cacheKey} renewed successfully", true);
+            $this->logger->debug("{$this->getMessage()} from database driver.");
+        }
+    }
+
+    /**
+     * @param array  $batchItems
+     * @param string $namespace
+     * @return void
+     */
+    private function processBatchItems(array $batchItems, string $namespace)
+    {
+        foreach($batchItems as $item) {
+            CacheDatabaseHelper::validateCacheItem($item);
+            $cacheKey = $item['cacheKey'];
+            $cacheData = $item['cacheData'];
+            $mergedData = CacheDatabaseHelper::mergeCacheData($cacheData);
+            $this->putCache($cacheKey, $mergedData, $namespace);
+        }
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string|int $ttl
+     * @param string $namespace
+     * @return bool
+     */
+    private function renew(string $cacheKey, string|int $ttl = 3600, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+        if ($cacheData) {
+            $renewedCache = $this->cacheRepository->renew($cacheKey, $ttl, $namespace);
+            if ($renewedCache) {
+                $this->setMessage("Cache with key {$cacheKey} renewed successfully", true);
+                $this->logger->debug("{$this->getMessage()} from database driver.");
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * @param string  $message
+     * @param boolean $success
+     * @return void
+     */
+    private function setMessage(string $message, bool $success)
+    {
+        $this->message = $message;
+        $this->success = $success;
+    }
 
     /**
      * @param string $cacheKey
@@ -204,7 +267,6 @@ class DatabaseCacheStore implements CacheerInterface
         return false;
     }
 
-
     /**
      * @param string $cacheKey
      * @param mixed  $cacheData
@@ -220,71 +282,5 @@ class DatabaseCacheStore implements CacheerInterface
         }
         $this->setMessage("Cache does not exist or update failed!", false);
         return false;
-    }
-
-    /**
-     * @param string $cacheKey
-     * @param string|int $ttl
-     * @param string $namespace
-     * @return bool
-     */
-    private function renew(string $cacheKey, string|int $ttl = 3600, string $namespace = '')
-    {
-        $cacheData = $this->getCache($cacheKey, $namespace);
-        if ($cacheData) {
-            $renewedCache = $this->cacheRepository->renew($cacheKey, $ttl, $namespace);
-            if ($renewedCache) {
-                $this->setMessage("Cache with key {$cacheKey} renewed successfully", true);
-                $this->logger->debug("{$this->getMessage()} from database driver.");
-                return true;
-            }
-            return false;
-        }
-        return false;
-    }
-
-    /**
-     * @param array  $batchItems
-     * @param string $namespace
-     * @return void
-     */
-    private function processBatchItems(array $batchItems, string $namespace)
-    {
-        foreach($batchItems as $item) {
-            CacheDatabaseHelper::validateCacheItem($item);
-            $cacheKey = $item['cacheKey'];
-            $cacheData = $item['cacheData'];
-            $mergedData = CacheDatabaseHelper::mergeCacheData($cacheData);
-            $this->putCache($cacheKey, $mergedData, $namespace);
-        }
-    }
-
-
-    /**
-     * @param string  $message
-     * @param boolean $success
-     * @return void
-     */
-    private function setMessage(string $message, bool $success)
-    {
-        $this->message = $message;
-        $this->success = $success;
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isSuccess()
-    {
-        return $this->success;
     }
 }
