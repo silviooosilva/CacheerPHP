@@ -1,5 +1,5 @@
 ## Exemplo 04
-<p>Uso de Namespaces</p>
+<p>Use of Namespaces</p>
 
 ```php
 <?php
@@ -13,7 +13,7 @@ $options = [
 
 $Cacheer = new Cacheer($options);
 
-// Dados a serem armazenados no cache com namespace
+// Data to be stored in the namespace cache
 $namespace = 'session_data_01';
 $cacheKey = 'session_456';
 $sessionData = [
@@ -21,10 +21,10 @@ $sessionData = [
     'login_time' => time(),
 ];
 
-// Armazenando dados no cache com namespace
+// Caching data with namespace
 $Cacheer->putCache($cacheKey, $sessionData, $namespace);
 
-// Recuperando dados do cache
+// Retrieving data from the cache
 $cachedSessionData = $Cacheer->getCache($cacheKey, $namespace);
 
 if ($Cacheer->isSuccess()) {
@@ -33,6 +33,4 @@ if ($Cacheer->isSuccess()) {
 } else {
     echo $Cacheer->getMessage();
 }
-
-
 ```

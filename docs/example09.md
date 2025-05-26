@@ -1,8 +1,8 @@
 ## Exemplo 09
 
-<p>Limpeza automática do diretório de cache (flushAfter)</p>
+<p>Automatic cleaning of the cache directory (flushAfter)</p>
 
-Para usar a limpeza automática do diretório de cache, precisará configurar as options:
+To use automatic cleaning of the cache directory, you will need to configure the options:
 
 ```php
 
@@ -18,7 +18,7 @@ $options = [
 
 $Cacheer = new  Cacheer($options);
 
-// Dados a serem armazenados no cache
+// Data to be stored in the cache
 
 $cacheKey = 'user_profile_1234';
 
@@ -28,11 +28,11 @@ $userProfile = [
 'email' => 'john.doe@example.com',
 ];
 
-// Armazenando dados no cache
+// Storing data in the cache
 
 $Cacheer->putCache($cacheKey, $userProfile);
 
-// Recuperando dados do cache
+// Retrieving data from the cache
 
 $cachedProfile = $Cacheer->getCache($cacheKey);
 
@@ -45,11 +45,9 @@ echo  $Cacheer->getMessage();
 
 
 ```
-
-Os formatos de tempo aceitos para `flushAfter` são:
+The accepted time formats for `flushAfter` are:
 
 ```php
-
 Segundos: second(s)
 Minutos: minute(s)
 Horas: hour(s)

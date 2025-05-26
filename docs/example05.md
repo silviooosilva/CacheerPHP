@@ -1,5 +1,5 @@
 ## Exemplo 05
-<p>Cache de Resposta de API</p>
+<p>API Response Cache</p>
 
 ```php
 <?php
@@ -14,23 +14,23 @@ $options = [
 
 $Cacheer = new Cacheer($options);
 
-// URL da API e chave de cache
+// API URL and cache key
 $apiUrl = 'https://jsonplaceholder.typicode.com/posts';
 $cacheKey = 'api_response_' . md5($apiUrl);
 
-// Verificando se a resposta da API já está no cache
+// Checking if the API response is already in the cache
 $cachedResponse = $Cacheer->getCache($cacheKey);
 
 if ($Cacheer->isSuccess()) {
-    // Use a resposta do cache
+    // Use the cache response
     $response = $cachedResponse;
 } else {
-    // Faça a chamada à API e armazene a resposta no cache
+    // Call the API and store the response in the cache
     $response = file_get_contents($apiUrl);
     $Cacheer->putCache($cacheKey, $response);
 }
 
-// Usando a resposta da API (do cache ou da chamada)
+// Using the API response (from cache or call)
 $data = json_decode($response, true);
 print_r($data);
 

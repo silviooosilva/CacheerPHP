@@ -6,24 +6,24 @@
 Silviooosilva\CacheerPhp\Cacheer
 ```
 
-A classe principal do pacote, usada para todas as operações de cache.
+The package's main class, used for all caching operations.
 
 
-## **Métodos**
+## **Methods**
 
-### 1. **Configuração**
+### 1. **Configuration**
 
 #### `setConfig()`
-Inicia uma configuração personalizada para o CacheerPHP.
+Starts a customized configuration for CacheerPHP.
 
 [API Reference - setConfig()](API-Reference/setConfig.md)
 
 ### 2. **Drivers**
-Permite definir os diferentes backends disponíveis para utilização.
+It allows you to define the different backends available for use.
 
 [API Reference - setDriver()](API-Reference/setDriver.md)
 
 ### 3. **OptionBuilder**
-O **OptionBuilder** simplifica a configuração do CacheerPHP eliminando erros de digitação e tornando o processo mais intuitivo.
+The **OptionBuilder** simplifies the configuration of CacheerPHP by eliminating typing errors and making the process more intuitive.
 
 [API Reference - OptionBuilder](API-Reference/optionBuilder.md)

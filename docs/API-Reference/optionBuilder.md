@@ -1,24 +1,24 @@
 ## API Reference
 
-O **OptionBuilder** lhe permite definir diferentes parametros para configuração do CacheerPHP, dando-lhe mais segurança, robustez e velocidade de execução, excluindo ainda, possíveis erros, como os de digitação, por exemplo.
+The **OptionBuilder** allows you to define different parameters for configuring CacheerPHP, giving it more security, robustness and speed of execution, as well as excluding possible errors, such as typos, for example.
 
-Confira também o **TimeBuilder**: [TimeBuilder - Introdução](./OptionBuilder/TimeBuilder.md)
+Also check out the **TimeBuilder**: [TimeBuilder - Introduction](./OptionBuilder/TimeBuilder.md)
 
-Atualmente, é apenas compatível com o **FileCacheStore**, visto que é o driver que requer um conjunto de configurações antecipadas para o seu funcionamento.
+Currently, it is only compatible with **FileCacheStore**, as this is the driver that requires a set of configurations in advance for it to work.
 
-Confira alguns exemplos:
+Here are some examples:
 
-[FileCacheStore - Exemplo01](../example01.md)
+[FileCacheStore - Example01](../example01.md)
 
-[FileCacheStore - Exemplo02](../example02.md)
+[FileCacheStore - Example02](../example02.md)
 
-Conseguiu constatar que os parametros são muito suscetíveis a erros de escrita, certo?
-O **OptionBuilder** surge na necessidade de eliminar estes possíveis erros.
+You've seen that parameters are very susceptible to typing errors, right?
+The **OptionBuilder** arises from the need to eliminate these possible errors.
 
 #### `OptionBuilder()`
 
-O **OptionBuilder** possui métodos específicos para configurar cada tipo de driver de cache suportado.
-Cada um deles inicializa a configuração para um determinado driver e retorna uma instância do builder correspondente.
+The **OptionBuilder** has specific methods for configuring each type of cache driver supported.
+Each one initializes the configuration for a given driver and returns an instance of the corresponding builder.
 
 `forFile()`
 
@@ -26,18 +26,18 @@ Cada um deles inicializa a configuração para um determinado driver e retorna u
 <?php
 $Options = OptionBuilder::forFile();
 ```
-Este método inicializa o FileCacheStore, permitindo configurar diretório de cache, tempo de expiração e limpeza periódica do cache.
+This method initializes FileCacheStore, allowing you to configure the cache directory, expiration time and periodic clearing of the cache.
 
-Métodos disponíveis após `forFile()`
+Methods available after `forFile()`
 
+```sh
+dir(string $path) → Defines the directory where the cache files will be stored.
+expirationTime(string $time) → Sets the expiration time of the files in the cache.
+flushAfter(string $interval) → Sets a time to automatically flush the files from the cache.
+build() → Finalizes the configuration and returns an array of options ready for use.
 ```
-dir(string $path) → Define o diretório onde os arquivos de cache serão armazenados.
-expirationTime(string $time) → Define o tempo de expiração dos arquivos no cache.
-flushAfter(string $interval) → Define um tempo para limpar automaticamente os arquivos do cache.
-build() → Finaliza a configuração e retorna um array de opções prontas para uso.
-```
 
-**Exemplo de uso**
+**Example of use**
 
 ```php
 <?php
@@ -53,12 +53,12 @@ $Cacheer = new Cacheer($Options);
 $Cacheer->setDriver()->useFileDriver(); //File Driver
 ```
 
-#### Em breve
+#### Coming soon
 
 ```php
 OptionBuilder::forRedis();
 OptionBuilder::forDatabase();
 ```
 
-O **OptionBuilder** simplifica a configuração do **CacheerPHP** eliminando erros de digitação e tornando o processo mais intuitivo.
-Agora, basta escolher o método correspondente ao driver desejado e definir os parâmetros necessários para garantir um cache eficiente e otimizado. 🚀
+The **OptionBuilder** simplifies the configuration of the **CacheerPHP** by eliminating typing errors and making the process more intuitive.
+Now all you have to do is choose the method corresponding to the desired driver and set the necessary parameters to ensure efficient and optimized caching. 🚀
