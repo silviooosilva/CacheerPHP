@@ -11,7 +11,7 @@ $Cacheer = new Cacheer();
 $Cacheer->setDriver();
 ```
 
-Define o driver de cache como baseado em arquivos:
+Defines the cache driver as file-based:
 ```php
 <?php
 
@@ -21,7 +21,7 @@ $Cacheer = new Cacheer();
 $Cacheer->setDriver()->useFileDriver();
 ```
 
-Define o driver de cache como baseado em banco de dados:
+Defines the cache driver as database-based:
 ```php
 <?php
 
@@ -31,7 +31,7 @@ $Cacheer = new Cacheer();
 $Cacheer->setDriver()->useDatabaseDriver();
 ```
 
-Define o driver de cache como baseado no Redis:
+Sets the cache driver to be based on Redis:
 ```php
 <?php
 
@@ -41,7 +41,7 @@ $Cacheer = new Cacheer();
 $Cacheer->setDriver()->useRedisDriver();
 ```
 
-Define o driver de cache como baseado em Arrays(Memória):
+Sets the cache driver to be based on Arrays (Memory):
 ```php
 <?php
 

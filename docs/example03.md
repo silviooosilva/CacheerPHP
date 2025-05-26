@@ -1,5 +1,5 @@
 ## Exemplo 03
-<p>Limpeza e Flush do Cache</p>
+<p>Cache cleaning and flushing</p>
 
 ```php
 <?php
@@ -14,10 +14,10 @@ $options = [
 
 $Cacheer = new Cacheer($options);
 
-// Chave do cache a ser limpo
+// Key of the cache to be cleared
 $cacheKey = 'user_profile_123';
 
-// Limpando um item específico do cache
+// Clearing a specific item from the cache
 
 $Cacheer->clearCache($cacheKey);
 

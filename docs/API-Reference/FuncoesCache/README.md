@@ -1,71 +1,71 @@
-## Funções de Cache - CacheerPHP
+## Cache functions - CacheerPHP
 
-O CacheerPHP oferece um conjunto robusto de funções para gerenciamento de cache na sua aplicação PHP. Abaixo está a documentação detalhada de cada método disponível:
+CacheerPHP offers a robust set of functions for managing caching in your PHP application. Below is the detailed documentation for each method available:
 
 ---
 
-## Operações Básicas de Cache
+## Basic Cache Operations
 
-### `getCache()` - Recupera dados do cache
+### `getCache()` - Retrieves data from the cache
 
 ```php
 
 /**
-* Obtém um item do cache. Se o item não existir ou estiver expirado, retorna null.
-* @param string $cacheKey Chave única do item
-* @param string $namespace Namespace para organização
-* @param string|int $ttl Tempo de vida em segundos (padrão: 3600)
-* @return CacheDataFormatter|mixed Retorna os dados em formato especial ou valor bruto
+* Gets an item from the cache. If the item doesn't exist or is expired, returns null.
+* @param string $cacheKey Unique item key
+* @param string $namespace Namespace for organization
+* @param string|int $ttl Lifetime in seconds (default: 3600)
+* @return CacheDataFormatter|mixed Returns data in special format or raw value
 */
 $Cacheer->getCache(string $cacheKey, string $namespace, string|int $ttl = 3600);
 ```
 
-### `putCache()` - Armazena dados no cache
+### `putCache()` - Stores data in the cache
 
 ```php
 
 /**
-* Armazena um item no cache com TTL específico.
-* @param string $cacheKey Chave única do item
-* @param mixed $cacheData Dados a serem armazenados (serializáveis)
-* @param string|int $ttl Tempo de vida em segundos (padrão: 3600)
+* Stores an item in the cache with a specific TTL.
+* @param string $cacheKey Unique item key
+* @param mixed $cacheData Data to be stored (serializable)
+* @param string|int $ttl Lifetime in seconds (default: 3600)
 * @return void
 */
 $Cacheer->putCache(string $cacheKey, mixed $cacheData, string|int $ttl = 3600);
 ```
 
-### `putMany()` - Operações em Massa
+### `putMany()` - Mass operations
 
 ```php
 
 /**
-* Armazena múltiplos itens de cache de uma vez com TTL compartilhado.
-* @param array $items Array associativo [chave => valor]
-* @param string $namespace Namespace comum para todos os itens
-* @param int $batchSize número de operações por vez
+* Stores multiple cache items at once with shared TTL.
+* @param array $items Associative array [key => value]
+* @param string $namespace Common namespace for all items
+* @param int $batchSize Number of operations per time
 * @return void
 */
 $Cacheer->putMany(array $items, string $namespace, int $batchSize = 100);
 ```
 
-### `appendCache()` - Acréscimo a cache existente
+### `appendCache()` - Adding to existing cache
 
 ```php
 /**
-* Adiciona dados a um item de cache existente (útil para arrays ou strings).
-* @param string $cacheKey Chave do item existente
-* @param mixed $cacheData Dados a serem acrescentados
-* @param string $namespace Namespace do item
+* Adds data to an existing cache item (useful for arrays or strings).
+* @param string $cacheKey Existing item key
+* @param mixed $cacheData Data to be added
+* @param string $namespace Item namespace
 * @return void
 */
 $Cacheer->appendCache(string $cacheKey, mixed $cacheData, string $namespace);
 ```
 
-### `has()` - Verifica se uma chave existe no cache e ainda é válida (não expirou).
+### `has()` - Checks if a key exists in the cache and is still valid (has not expired).
 
 ```php
 /**
-* Verifica se uma determinada chave de cache existe, e se ainda é válida.
+* Checks whether a particular cache key exists, and whether it is still valid.
 * @param string $cacheKey
 * @param string $namespace
 * @return void
@@ -73,138 +73,138 @@ $Cacheer->appendCache(string $cacheKey, mixed $cacheData, string $namespace);
 $Cacheer->has(string $cacheKey, string $namespace);
 ```
 
-### `renewCache()` - Renova TTL do cache
+### `renewCache()` - Renew cache TTL
 
 
 ```php
 /**
-* Atualiza o tempo de vida de um item existente sem modificar seus dados.
-* @param string $cacheKey Chave do item
-* @param string|int $ttl Novo TTL em segundos (padrão: 3600)
-* @param string $namespace Namespace do item
-* @return mixed Retorna os dados do item ou false se falhar
+* Updates the lifetime of an existing item without modifying its data.
+* @param string $cacheKey Item key
+* @param string|int $ttl New TTL in seconds (default: 3600)
+* @param string $namespace Item namespace
+* @return mixed Returns the item data or false if it fails
 */
 $Cacheer->renewCache(string $cacheKey, string|int $ttl = 3600, string $namespace);
 ```
 
-### `increment()` - Incremento numérico
+### `increment()` - Numeric increment
 
 ```php
 /**
-* Incrementa um valor numérico no cache.
-* @param string $cacheKey Chave do item
-* @param int $amount Valor a incrementar (padrão: 1)
-* @param string $namespace Namespace do item
-* @return bool True se bem-sucedido
+* Increments a numeric value in the cache.
+* @param string $cacheKey Item key
+* @param int $amount Value to increment (default: 1)
+* @param string $namespace Item namespace
+* @return bool True if successful
 */
 $Cacheer->increment(string $cacheKey, int $amount, string $namespace);
 ```
 
-### `decrement()` - Decremento numérico
+### `decrement()` - Numerical decrement
 
 ```php
 /**
-* Decrementa um valor numérico no cache.
-* @param string $cacheKey Chave do item
-* @param int $amount Valor a decrementar (padrão: 1)
-* @param string $namespace Namespace do item
-* @return bool True se bem-sucedido
+* Decrements a numeric value in the cache.
+* @param string $cacheKey Item key
+* @param int $amount Value to decrement (default: 1)
+* @param string $namespace Item namespace
+* @return bool True if successful
 */
 $Cacheer->decrement(string $cacheKey, int $amount, string $namespace);
 ```
 
-### `forever()` - Armazenamento permanente
+### `forever()` - Permanent storage
 
 ```php
 /**
-* Armazena um item no cache sem tempo de expiração.
-* @param string $cacheKey Chave única
-* @param mixed $cacheData Dados a serem armazenados
+* Stores an item in the cache with no expiration time.
+* @param string $cacheKey Unique key
+* @param mixed $cacheData Data to be stored
 * @return void
 */
 $Cacheer->forever(string $cacheKey, mixed $cacheData);
 ```
 
-### `remember()` - Padrão "Obter ou Calcular"
+### `remember()` - Standard “Get or Calculate”
 
 ```php
 /**
-* Obtém o item do cache ou executa a closure e armazena o resultado.
-* @param string $cacheKey Chave do item
-* @param int|string $ttl Tempo de vida em segundos
-* @param Closure $callback Função que retorna os dados se o cache não existir
+* Gets the item from the cache or executes the closure and stores the result.
+* @param string $cacheKey Item key
+* @param int|string $ttl Lifetime in seconds
+* @param Closure $callback Function that returns the data if the cache does not exist
 * @return mixed
 */
 $Cacheer->remember(string $cacheKey, int|string $ttl, Closure $callback);
 ```
 
-### `rememberForever()` - Padrão "Obter ou Calcular" para sempre 
+### `rememberForever()` - Standard “Get or Calculate” forever 
 
 ```php
 /**
-* Semelhante ao remember, mas armazena o resultado sem expiração.
-* @param string $cacheKey Chave do item
-* @param int|string $ttl Tempo de vida em segundos
-* @param Closure $callback Função que retorna os dados se o cache não existir
+* Similar to remember, but stores the result without expiration.
+* @param string $cacheKey Item key
+* @param int|string $ttl Lifetime in seconds
+* @param Closure $callback Function that returns the data if the cache does not exist
 * @return mixed
 */
 $Cacheer->rememberForever(string $cacheKey, int|string $ttl, Closure $callback);
 ```
 
-### `getAndForget()` - Recupera e remove
+### `getAndForget()` - Retrieve and remove
 
 
 ```php
 /**
-* Obtém um item do cache e imediatamente o remove.
-* @param string $cacheKey Chave do item
-* @param string $namespace Namespace do item
-* @return mixed Dados do item ou null se não existir
+* Gets an item from the cache and immediately removes it.
+* @param string $cacheKey Item key
+* @param string $namespace Item namespace
+* @return mixed Item data or null if it doesn't exist
 */
 $Cacheer->getAndForget(string $cacheKey, string $namespace);
 ```
 
-### `add()` - Adição condicional
+### `add()` - Conditional addition
 
 ```php
 /**
-* Adiciona um item ao cache apenas se a chave não existir.
-* @param string $cacheKey Chave do item
-* @param mixed $cacheData Dados a serem armazenados
-* @param string $namespace Namespace do item
-* @param int|string $ttl Tempo de vida em segundos
-* @return bool True se o item foi adicionado, false se já existia
+* Adds an item to the cache only if the key does not exist.
+* @param string $cacheKey Item key
+* @param mixed $cacheData Data to be stored
+* @param string $namespace Item namespace
+* @param int|string $ttl Lifetime in seconds
+* @return bool True if the item was added, false if it already existed
 */
 $Cacheer->add(string $cacheKey, mixed $cacheData, string $namespace, int|string $ttl);
 ```
 
-### `clearCache()` - Limpeza seletiva
+### `clearCache()` - Selective cleaning
 
 
 ```php
 /**
-* Remove um item específico do cache.
-* @param string $cacheKey Chave do item
-* @param string $namespace Namespace do item
+* Removes a specific item from the cache.
+* @param string $cacheKey Item key
+* @param string $namespace Item namespace
 * @return void
 */
 $Cacheer->clearCache(string $cacheKey, string $namespace);
 ```
 
-### `flushCache()` - Limpeza total
+### `flushCache()` - Total cleaning
 
 ```php
 /**
-* Remove todos os itens do cache (limpeza completa).
+* Removes all items from the cache (complete cleaning).
 * @return void
 */
 $Cacheer->flushCache();
 ```
 ---
 
-Cada uma das funções abaixo permite interagir com o cache de formas diferentes. Funções que “retornam void” na verdade definem internamente o status da operação, que pode ser verificado via:
+Each of the functions below allows you to interact with the cache in different ways. Functions that “return void” actually set the status of the operation internally, which can be checked via:
 
 ```php
-$Cacheer->isSuccess(); // Retorna true ou false
-$Cacheer->getMessage(); // Retorna uma mensagem descritiva
+$Cacheer->isSuccess(); // Returns true ou false
+$Cacheer->getMessage(); // Returns a message
 ```

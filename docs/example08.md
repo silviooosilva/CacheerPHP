@@ -1,8 +1,7 @@
-
 ## Exemplo 08
 
-<p>Saída de Dados do Tipo String</p>
-Para configurar o tipo de saída que quiser, terá que habilita - lá no momento que instanciar a classe, passando como true o último parametro:
+<p>String Data Output</p>
+To configure the output type you want, you have to enable it when you instantiate the class, passing the last parameter as true.:
 
 ```php
 
@@ -15,9 +14,9 @@ $options = [
 "cacheDir" => __DIR__  .  "/cache",
 ];
 
-$Cacheer = new  Cacheer($options, $formatted = true); // True o último parametro
+$Cacheer = new  Cacheer($options, $formatted = true); // True last parameter
 
-// Dados a serem armazenados no cache
+// Data to be stored in the cache
 
 $cacheKey = 'user_profile_1234';
 
@@ -27,11 +26,11 @@ $userProfile = [
 'email' => 'john.doe@example.com',
 ];
 
-// Armazenando dados no cache
+// Storing data in the cache
 
 $Cacheer->putCache($cacheKey, $userProfile);
 
-// Recuperando dados do cache no formato JSON
+// Retrieving data from the cache in JSON format
 
 $cachedProfile = $Cacheer->getCache(
 $cacheKey, 

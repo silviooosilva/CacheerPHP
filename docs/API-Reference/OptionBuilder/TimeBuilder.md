@@ -1,17 +1,17 @@
 ## API Reference
 
-O TimeBuilder fornece uma forma fluida e encadeável de definir períodos de tempo de maneira mais intuitiva e sem erros de digitação. 
+TimeBuilder provides a fluid and chainable way of defining time periods in a more intuitive way and without typing errors. 
 
-Ele permite que os valores de expirationTime e flushAfter sejam passados diretamente como inteiros ou definidos usando métodos encadeados, como day(1), week(2), etc.
+It allows expirationTime and flushAfter values to be passed directly as integers or defined using chained methods such as day(1), week(2), etc.
 
-#### Uso Simples
+#### Simple use
 
 ```php
 OptionBuilder::forFile()
     ->expirationTime('1 day')
     ->build();
 ```
-Ou utilizar a abordagem encadeada do TimeBuilder:
+Or use TimeBuilder's chained approach:
 
 ```php
 OptionBuilder::forFile()
@@ -19,11 +19,11 @@ OptionBuilder::forFile()
     ->build();
 ```
 
-#### Métodos Disponíveis
+#### Available methods
 
-Cada método permite definir um intervalo de tempo específico.
+Each method allows you to set a specific time interval.
 
-| Método        | Descrição                      | Exemplo       |
+| Method        | Description                      | Example       |
 |--------------|--------------------------------|--------------|
 | `second($value)` | Define o tempo em segundos  | `->second(30)` |
 | `minute($value)` | Define o tempo em minutos   | `->minute(15)` |
@@ -33,7 +33,7 @@ Cada método permite definir um intervalo de tempo específico.
 | `month($value)`  | Define o tempo em meses     | `->month(1)`   |
 | `year($value)`   | Define o tempo em anos      | `->year(1)`    |
 
-#### Exemplo Completo
+#### Full Example
 
 ```php
 $Options = OptionBuilder::forFile()
@@ -45,14 +45,14 @@ $Options = OptionBuilder::forFile()
 var_dump($Options);
 ```
 
-**Saída Esperada**
+**Expected Output**
 
 ```php
 [
-    "cacheDir" => "/caminho/para/cache",
+    "cacheDir" => "/path/to/cache",
     "expirationTime" => "1 week",
     "flushAfter" => "30 minutes"
 ]
 ```
 
-Agora, você pode definir tempos de expiração e flush sem precisar lembrar de strings exatas. 🚀
+Now you can set expiration and flush times without having to remember exact strings. 🚀

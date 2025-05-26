@@ -1,8 +1,8 @@
 ## API Reference
 
-Defina sempre em primeira instância o driver a ser usado, e só depois defina as configurações, através do **setConfig()**.
+Always define the driver to be used in the first instance, and only then define the settings using **setConfig()**.
 
-Confira abaixo:
+Check it out below:
 [API Reference - setDriver()](setDriver.md)
 
 #### `setConfig()`
@@ -16,7 +16,7 @@ $Cacheer = new Cacheer();
 $Cacheer->setConfig();
 ```
 
-Configura o banco de dados para armazenamento do cache.
+Configures the database for storing the cache.
 ```php
 <?php
 
@@ -26,12 +26,13 @@ $Cacheer = new Cacheer();
 $Cacheer->setConfig()->setDatabaseConnection(string $driver)
 ```
 
-- Parâmetros:
-```
-$driver: Driver do banco de dados. Valores possíveis: 'mysql', 'pgsql', 'sqlite'.
+- Parameters:
+
+```php
+$driver: Database driver. Possible values: 'mysql', 'pgsql', 'sqlite'.
 ```
 
-**Exemplo:**
+**Example:**
 
 ```php
 <?php
@@ -42,7 +43,7 @@ $Cacheer = new Cacheer();
 $Cacheer->setConfig()->setDatabaseConnection('mysql');
 ```
 
-Há ainda uma alternativa, que é definir o driver no arquivo .env, através da variável DB_CONNECTION, passando os mesmos valores.
+There is also an alternative, which is to define the driver in the .env file, through the DB_CONNECTION variable, passing the same values.
 
 Timezone
 ---
@@ -56,38 +57,38 @@ $Cacheer = new Cacheer();
 $Cacheer->setConfig()->setTimeZone(string $timezone);
 ```
 
-Define o fuso horário para operações de cache.
-- Parâmetros
+Sets the time zone for cache operations.
+- Parameters
 
-```
-$timezone: Fuso horário no formato PHP (exemplo: 'UTC', 'Africa/Luanda').
+```php
+$timezone: Time zone in PHP format (example: 'UTC', 'Africa/Luanda').
 ```
 
-**Exemplo:**
+**Example:**
 
-```
+```php
 $Cacheer->setConfig()->setTimeZone('UTC');
 ```
 
-Confira aqui, timezones suportados pelo PHP: 
-https://www.php.net/manual/en/timezones.php 
+Check out the timezones supported by PHP here: 
+https://www.php.net/manual/en/timezones.php
 
 Logger
 ---
 
-```
+```php
 $Cacheer->setConfig()->setLoggerPath(string $path);
 ```
-Define o caminho onde os logs serão armazenados.
+Defines the path where the logs will be stored.
 
-- Parâmetros
+- Parameters
 
-```
+```php
 $path: Caminho completo para o arquivo de logs.
 ```
 
-**Exemplo:**
+**Example:**
 
-```
+```php
 $Cacheer->setConfig()->setLoggerPath('/path/to/logs/CacheerPHP.log');
 ```

@@ -1,5 +1,5 @@
 ## Exemplo 01
-<p>Cache de Dados Simples</p>
+<p>Simple Data Cache</p>
 
 ```php
 <?php
@@ -14,7 +14,7 @@ $options = [
 
 $Cacheer = new Cacheer($options);
 
-// Dados a serem armazenados no cache
+// Data to be stored in the cache
 $cacheKey = 'user_profile_1234';
 $userProfile = [
     'id' => 123,
@@ -22,10 +22,10 @@ $userProfile = [
     'email' => 'john.doe@example.com',
 ];
 
-// Armazenando dados no cache
+// Storing data in the cache
 $Cacheer->putCache($cacheKey, $userProfile);
 
-// Recuperando dados do cache
+// Retrieving data from the cache
 $cachedProfile = $Cacheer->getCache($cacheKey);
 
 if ($Cacheer->isSuccess()) {
