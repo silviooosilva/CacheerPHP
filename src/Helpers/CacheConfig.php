@@ -56,7 +56,7 @@ class CacheConfig
 
     /**
      * @param string $path
-     * @return void
+     * @return mixed
      */
     public function setLoggerPath(string $path)
     {
@@ -66,7 +66,7 @@ class CacheConfig
 
         $cacheDriverInstance = $this->cacheer->cacheStore;
 
-        $cacheDriverInstance = match (get_class($cacheDriverInstance)) {
+        return match (get_class($cacheDriverInstance)) {
             FileCacheStore::class => $cacheDriver->useFileDriver(),
             RedisCacheStore::class => $cacheDriver->useRedisDriver(),
             ArrayCacheStore::class => $cacheDriver->useArrayDriver(),
