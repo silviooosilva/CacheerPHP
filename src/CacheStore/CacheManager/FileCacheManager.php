@@ -20,7 +20,7 @@ class FileCacheManager
     */
     public function createDirectory(string $dir)
     {
-        if ((!file_exists($dir) || !is_dir($dir)) && !mkdir($dir, 0777, true)) {
+        if ((!file_exists($dir) || !is_dir($dir)) && !mkdir($dir, 0755, true)) {
             throw CacheFileException::create("Could not create directory: {$dir}");
         }
     }
@@ -87,11 +87,11 @@ class FileCacheManager
 
     /**
     * @param mixed $data
-    * @param bool $serealize
+    * @param bool $serialize
     */
-    public function serialize(mixed $data, bool $serealize = true)
+    public function serialize(mixed $data, bool $serialize = true)
     {
-        if($serealize) {
+        if($serialize) {
             return serialize($data);
         }
         return unserialize($data);
