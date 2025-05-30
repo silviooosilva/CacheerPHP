@@ -18,20 +18,20 @@ class ArrayCacheStore implements CacheerInterface
   */
   private array $arrayStore = [];
 
-    /**
-     * @param boolean
-     */
-    private bool $success = false;
+  /**
+   * @param boolean
+   */
+  private bool $success = false;
 
-    /**
-     * @param string
-     */
-    private string $message = '';
+  /**
+   * @param string
+   */
+  private string $message = '';
 
-    /**
-     * @var CacheLogger
-     */
-    private $logger = null;
+  /**
+   * @var CacheLogger
+   */
+  private $logger = null;
 
   public function __construct(string $logPath)
   {
@@ -39,14 +39,92 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
-  * @param string $cacheKey
-  * @param string $namespace
-  * @param int|string $ttl
-  * @return mixed
-  */
+   * @param string $cacheKey
+   * @param mixed  $cacheData
+   * @param string $namespace
+   * @return bool
+   */
+  public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
+  {
+      $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
+
+      if (!$this->has($cacheKey, $namespace)) {
+          $this->setMessage("cacheData can't be appended, because doesn't exist or expired", false);
+          $this->logger->debug("{$this->getMessage()} from array driver.");
+          return false;
+      }
+
+      $this->arrayStore[$arrayStoreKey]['cacheData'] = serialize($cacheData);
+      $this->setMessage("Cache appended successfully", true);
+      return true;
+  }
+
+  /**
+   * @param string $cacheKey
+   * @param string $namespace
+   * @return string
+   */
+  private function buildArrayKey(string $cacheKey, string $namespace = '')
+  {
+    return !empty($namespace) ? ($namespace . ':' . $cacheKey) : $cacheKey;
+  }
+
+  /**
+   * @param string $cacheKey
+   * @param string $namespace
+   * @return void
+   */
+  public function clearCache(string $cacheKey, string $namespace = '')
+  {
+    $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
+    unset($this->arrayStore[$arrayStoreKey]);
+    $this->setMessage("Cache cleared successfully", true);
+    $this->logger->debug("{$this->getMessage()} from array driver.");
+  }
+
+  /**
+   * @param string $cacheKey
+   * @param int $amount
+   * @param string $namespace
+   * @return bool
+   */
+  public function decrement(string $cacheKey, int $amount = 1, string $namespace = '')
+  {
+    return $this->increment($cacheKey, ($amount * -1), $namespace);
+  }
+
+  /**
+   * @return void
+   */
+  public function flushCache()
+  {
+    unset($this->arrayStore);
+    $this->arrayStore = [];
+    $this->setMessage("Cache flushed successfully", true);
+    $this->logger->debug("{$this->getMessage()} from array driver.");
+  }
+
+  /**
+   * @param string $cacheKey
+   * @param mixed $cacheData
+   * @param string $namespace
+   * @param int|string $ttl
+   * @return void
+   */
+  public function forever(string $cacheKey, mixed $cacheData)
+  {
+    $this->putCache($cacheKey, $cacheData, ttl: 31536000 * 1000);
+    $this->setMessage($this->getMessage(), $this->isSuccess());
+  }
+
+  /**
+   * @param string $cacheKey
+   * @param string $namespace
+   * @param int|string $ttl
+   * @return mixed
+   */
   public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
   {
-
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
 
     if (!$this->has($cacheKey, $namespace)) {
@@ -73,15 +151,60 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
-  * @param string $cacheKey
-  * @param mixed $cacheData
-  * @param string $namespace
-  * @param int|string $ttl
-  * @return bool
-  */
+   * @param string $cacheKey
+   * @param string $namespace
+   * @return bool
+   */
+  public function has(string $cacheKey, string $namespace = '')
+  {
+    $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
+    return isset($this->arrayStore[$arrayStoreKey]) && time() < $this->arrayStore[$arrayStoreKey]['expirationTime'];
+  }
+
+  /**
+   * @param string $cacheKey
+   * @param int $amount
+   * @param string $namespace
+   * @return bool
+   */
+  public function increment(string $cacheKey, int $amount = 1, string $namespace = '')
+  {
+    $cacheData = $this->getCache($cacheKey, $namespace);
+
+    if(!empty($cacheData) && is_numeric($cacheData)) {
+      $this->putCache($cacheKey, (int)($cacheData + $amount), $namespace);
+      $this->setMessage($this->getMessage(), $this->isSuccess());
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * @return boolean
+   */
+  public function isSuccess()
+  {
+    return $this->success;
+  }
+
+  /**
+   * @return string
+   */
+  public function getMessage()
+  {
+    return $this->message;
+  }
+
+  /**
+   * @param string $cacheKey
+   * @param mixed $cacheData
+   * @param string $namespace
+   * @param int|string $ttl
+   * @return bool
+   */
   public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
   {
-
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
 
     $this->arrayStore[$arrayStoreKey] = [
@@ -95,14 +218,13 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
-  * @param array $items
-  * @param string $namespace
-  * @param int $batchSize
-  * @return void
-  */
+   * @param array $items
+   * @param string $namespace
+   * @param int $batchSize
+   * @return void
+   */
   public function putMany(array $items, string $namespace = '', int $batchSize = 100)
   {
-
     $chunks = array_chunk($items, $batchSize, true);
 
     foreach ($chunks as $chunk) {
@@ -115,45 +237,11 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
-  * @param string $cacheKey
-  * @param mixed  $cacheData
-  * @param string $namespace
-  * @return bool
-  */
-  public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
-  {
-      $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
-
-      if (!$this->has($cacheKey, $namespace)) {
-          $this->setMessage("cacheData can't be appended, because doesn't exist or expired", false);
-          $this->logger->debug("{$this->getMessage()} from array driver.");
-          return false;
-      }
-
-      $this->arrayStore[$arrayStoreKey]['cacheData'] = serialize($cacheData);
-      $this->setMessage("Cache appended successfully", true);
-      return true;
-  }
-
-
-
-  /**
-  * @param string $cacheKey
-  * @param string $namespace
-  * @return bool
-  */
-  public function has(string $cacheKey, string $namespace = '')
-  {
-    $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
-    return isset($this->arrayStore[$arrayStoreKey]) && time() < $this->arrayStore[$arrayStoreKey]['expirationTime'];
-  }
-
-  /**
-  * @param string $cacheKey
-  * @param int|string $ttl
-  * @param string $namespace
-  * @return void
-  */
+   * @param string $cacheKey
+   * @param string|int $ttl
+   * @param string $namespace
+   * @return void
+   */
   public function renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = '')
   {
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
@@ -165,78 +253,25 @@ class ArrayCacheStore implements CacheerInterface
         $this->logger->debug("{$this->getMessage()} from array driver.");
       }
   }
-  
-  /**
-  * @param string $cacheKey
-  * @param string $namespace
-  * @return void
-  */
-  public function clearCache(string $cacheKey, string $namespace = '')
-  {
-    $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
-    unset($this->arrayStore[$arrayStoreKey]);
-    $this->setMessage("Cache cleared successfully", true);
-    $this->logger->debug("{$this->getMessage()} from array driver.");
 
+  /**
+   * @param string  $message
+   * @param boolean $success
+   * @return void
+   */
+  private function setMessage(string $message, bool $success)
+  {
+    $this->message = $message;
+    $this->success = $success;
   }
 
   /**
-  * @return void
-  */
-  public function flushCache()
-  {
-    unset($this->arrayStore);
-    $this->arrayStore = [];
-    $this->setMessage("Cache flushed successfully", true);
-    $this->logger->debug("{$this->getMessage()} from array driver.");
-  }
-    
-    /**
-     * @param string  $message
-     * @param boolean $success
-     * @return void
-     */
-    private function setMessage(string $message, bool $success)
-    {
-        $this->message = $message;
-        $this->success = $success;
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isSuccess()
-    {
-        return $this->success;
-    }
-
-  /**
-  * @param string $cacheKey
-  * @param string $namespace
-  * @return string
-  */
-  private function buildArrayKey(string $cacheKey, string $namespace = '')
-  {
-    return !empty($namespace) ? ($namespace . ':' . $cacheKey) : $cacheKey;
-  }
-
-  /**
-  * @param mixed $data
-  * @param bool $serialize
-  * @return mixed
-  */
+   * @param mixed $data
+   * @param bool $serialize
+   * @return mixed
+   */
   private function serialize(mixed $data, bool $serialize = true)
   {
     return $serialize ? serialize($data) : unserialize($data);
   }
-
 }

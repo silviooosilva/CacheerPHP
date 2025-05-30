@@ -53,6 +53,97 @@ final class Cacheer implements CacheerInterface
 
     /**
      * @param string $cacheKey
+     * @param mixed  $cacheData
+     * @param string $namespace
+     * @param int|string $ttl
+     * @return bool
+     */
+    public function add(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
+    {
+        if (!empty($this->getCache($cacheKey, $namespace))) {
+            return true;
+        }
+
+        $this->putCache($cacheKey, $cacheData, $namespace, $ttl);
+        $this->setMessage($this->getMessage(), $this->isSuccess());
+
+        return false;
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param mixed  $cacheData
+     * @param string $namespace
+     * @return void
+     */
+    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
+    {
+        $this->cacheStore->appendCache($cacheKey, $cacheData, $namespace);
+        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @return void
+     */
+    public function clearCache(string $cacheKey, string $namespace = '')
+    {
+        $this->cacheStore->clearCache($cacheKey, $namespace);
+        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param int $amount
+     * @param string $namespace
+     * @return bool
+     */
+    public function decrement(string $cacheKey, int $amount = 1, string $namespace = '')
+    {
+        return $this->increment($cacheKey, ($amount * -1), $namespace);
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param mixed $cacheData
+     * @return void
+     */
+    public function forever(string $cacheKey, mixed $cacheData)
+    {
+        $this->putCache($cacheKey, $cacheData, ttl: 31536000 * 1000);
+        $this->setMessage($this->getMessage(), $this->isSuccess());
+    }
+
+    /**
+     * @return void
+     */
+    public function flushCache()
+    {
+        $this->cacheStore->flushCache();
+        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @return mixed
+     */
+    public function getAndForget(string $cacheKey, string $namespace = '')
+    {
+        $cachedData = $this->getCache($cacheKey, $namespace);
+
+        if (!empty($cachedData)) {
+            $this->setMessage("Cache retrieved and deleted successfully!", true);
+            $this->clearCache($cacheKey, $namespace);
+            return $cachedData;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $cacheKey
      * @param string $namespace
      * @param string|int $ttl
      * @return CacheDataFormatter|mixed
@@ -62,6 +153,44 @@ final class Cacheer implements CacheerInterface
         $cacheData = $this->cacheStore->getCache($cacheKey, $namespace, $ttl);
         $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
         return $this->formatted ? new CacheDataFormatter($cacheData) : $cacheData;
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @return void
+     */
+    public function has(string $cacheKey, string $namespace = '')
+    {
+        $this->cacheStore->has($cacheKey, $namespace);
+        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param int $amount
+     * @param string $namespace
+     * @return bool
+     */
+    public function increment(string $cacheKey, int $amount = 1, string $namespace = '')
+    {
+        $cacheData = $this->getCache($cacheKey, $namespace);
+
+        if(!empty($cacheData) && is_numeric($cacheData)) {
+            $this->putCache($cacheKey, (int)($cacheData + $amount), $namespace);
+            $this->setMessage($this->getMessage(), $this->isSuccess());
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSuccess()
+    {
+        return $this->success;
     }
 
     /**
@@ -90,29 +219,6 @@ final class Cacheer implements CacheerInterface
 
     /**
      * @param string $cacheKey
-     * @param mixed  $cacheData
-     * @param string $namespace
-     * @return void
-     */
-    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
-    {
-        $this->cacheStore->appendCache($cacheKey, $cacheData, $namespace);
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
-    }
-
-    /**
-     * @param string $cacheKey
-     * @param string $namespace
-     * @return void
-     */
-    public function has(string $cacheKey, string $namespace = '')
-    {
-        $this->cacheStore->has($cacheKey, $namespace);
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
-    }
-
-    /**
-     * @param string $cacheKey
      * @param string|int $ttl
      * @param string $namespace
      * @return mixed
@@ -131,51 +237,11 @@ final class Cacheer implements CacheerInterface
     }
 
     /**
-    * @param string $cacheKey
-    * @param int $amount
-    * @param string $namespace
-    * @return bool
-    */
-    public function increment(string $cacheKey, int $amount = 1, string $namespace = '')
-    {
-        $cacheData = $this->getCache($cacheKey, $namespace);
-
-        if(!empty($cacheData) && is_numeric($cacheData)) {
-            $this->putCache($cacheKey, (int)($cacheData + $amount), $namespace);
-            $this->setMessage($this->getMessage(), $this->isSuccess());
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-    * @param string $cacheKey
-    * @param int $amount
-    * @param string $namespace
-    * @return bool
-    */
-    public function decrement(string $cacheKey, int $amount = 1, string $namespace = '')
-    {
-      return $this->increment($cacheKey, ($amount * -1), $namespace);
-    }
-    /**
-    * @param string $cacheKey
-    * @param mixed $cacheData
-    * @return void
-    */
-    public function forever(string $cacheKey, mixed $cacheData)
-    {
-        $this->putCache($cacheKey, $cacheData, ttl: 31536000 * 1000);
-        $this->setMessage($this->getMessage(), $this->isSuccess());
-    }
-
-    /**
-    * @param string $cacheKey
-    * @param int|string $ttl
-    * @param Closure $callback
-    * @return mixed
-    */
+     * @param string $cacheKey
+     * @param int|string $ttl
+     * @param Closure $callback
+     * @return mixed
+     */
     public function remember(string $cacheKey, int|string $ttl, Closure $callback)
     {
         $cachedData = $this->getCache($cacheKey, ttl: $ttl);
@@ -192,82 +258,30 @@ final class Cacheer implements CacheerInterface
     }
 
     /**
-    * @param string $cacheKey
-    * @param Closure $callback
-    * @return mixed
-    */
+     * @param string $cacheKey
+     * @param Closure $callback
+     * @return mixed
+     */
     public function rememberForever(string $cacheKey, Closure $callback)
     {
         return $this->remember($cacheKey, 31536000 * 1000, $callback);
     }
 
     /**
-    * @param string $cacheKey
-    * @param string $namespace
-    * @return mixed
-    */
-    public function getAndForget(string $cacheKey, string $namespace = '')
-    {
-        $cachedData = $this->getCache($cacheKey, $namespace);
-
-        if (!empty($cachedData)) {
-            $this->setMessage("Cache retrieved and deleted successfully!", true);
-            $this->clearCache($cacheKey, $namespace);
-            return $cachedData;
-        }
-
-        return null;
-    }
-
-    /**
-    * @param string $cacheKey
-    * @param mixed  $cacheData
-    * @param string $namespace
-    * @param int|string $ttl
-    * @return bool
-    */
-    public function add(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
-    {
-        if (!empty($this->getCache($cacheKey, $namespace))) {
-            return true;
-        }
-
-        $this->putCache($cacheKey, $cacheData, $namespace, $ttl);
-        $this->setMessage($this->getMessage(), $this->isSuccess());
-
-        return false;
-    }
-
-    /**
-     * @param string $cacheKey
-     * @param string $namespace
-     * @return void
+     * @return CacheConfig
      */
-    public function clearCache(string $cacheKey, string $namespace = '')
+    public function setConfig()
     {
-        $this->cacheStore->clearCache($cacheKey, $namespace);
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+        return new CacheConfig($this);
     }
 
     /**
-     * @return void
+     * @return CacheDriver
      */
-    public function flushCache()
+    public function setDriver()
     {
-        $this->cacheStore->flushCache();
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+        return new CacheDriver($this);
     }
-
-
-    /**
-     * @param array $options
-     * @return void
-     */
-    private function validateOptions(array $options)
-    {
-        $this->options = $options;
-    }
-
 
     /**
      * @param string  $message
@@ -289,34 +303,19 @@ final class Cacheer implements CacheerInterface
     }
 
     /**
-     * @return boolean
-     */
-    public function isSuccess()
-    {
-        return $this->success;
-    }
-
-    /**
-     * @return CacheDriver
-     */
-    public function setDriver()
-    {
-        return new CacheDriver($this);
-    }
-
-    /**
-     * @return CacheConfig
-     */
-    public function setConfig()
-    {
-        return new CacheConfig($this);
-    }
-
-    /**
      * @return void
      */
     public function useFormatter()
     {
         $this->formatted = !$this->formatted;
+    }
+
+    /**
+     * @param array $options
+     * @return void
+     */
+    private function validateOptions(array $options)
+    {
+        $this->options = $options;
     }
 }

@@ -68,6 +68,92 @@ class FileCacheStore implements CacheerInterface
 
     /**
      * @param string $cacheKey
+     * @param mixed  $cacheData
+     * @param string $namespace
+     * @return void
+     */
+    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
+    {
+        $currentCacheFileData = $this->getCache($cacheKey, $namespace);
+
+        if (!$this->isSuccess()) {
+            return $this->getMessage();
+        }
+
+        $mergedCacheData = CacheFileHelper::arrayIdentifier($currentCacheFileData, $cacheData);
+
+
+        $this->putCache($cacheKey, $mergedCacheData, $namespace);
+        if ($this->isSuccess()) {
+            $this->setMessage("Cache updated successfully", true);
+            $this->logger->debug("{$this->getMessage()} from file driver.");
+        }
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @return string
+     */
+    private function buildCacheFilePath(string $cacheKey, string $namespace)
+    {
+        $namespace = $namespace ? md5($namespace) . '/' : '';
+        $cacheDir = "{$this->cacheDir}/";
+
+        if (!empty($namespace)) {
+            $cacheDir = "{$this->cacheDir}/{$namespace}";
+            $this->fileManager->createDirectory($cacheDir);
+        }
+        return $cacheDir . md5($cacheKey) . ".cache";
+    }
+
+    /**
+     * @param string $cacheKey
+     * @param string $namespace
+     * @return void
+     */
+    public function clearCache(string $cacheKey, string $namespace = '')
+    {
+        $cacheFile = $this->buildCacheFilePath($cacheKey, $namespace);
+        if ($this->fileManager->readFile($cacheFile)) {
+            $this->fileManager->removeFile($cacheFile);
+            $this->setMessage("Cache file deleted successfully!", true);
+        } else {
+            $this->setMessage("Cache file does not exist!", false);
+        }
+        $this->logger->debug("{$this->getMessage()} from file driver.");
+    }
+
+    /**
+     * @return void
+     */
+    public function flushCache()
+    {
+        $this->fileManager->clearDirectory($this->cacheDir);
+        file_put_contents($this->lastFlushTimeFile, time());
+    }
+
+    /**
+     * @param array $options
+     * @return integer
+     */
+    private function getExpirationTime(array $options)
+    {
+        return isset($options['expirationTime'])
+            ? CacheFileHelper::convertExpirationToSeconds($options['expirationTime'])
+            : $this->defaultTTL;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string $cacheKey
      * @param string $namespace
      * @param string|int $ttl
      * @return string
@@ -87,24 +173,6 @@ class FileCacheStore implements CacheerInterface
 
         $this->setMessage("cacheFile not found, does not exists or expired", false);
         $this->logger->info("{$this->getMessage()} from file driver.");
-    }
-
-    /**
-     * @param string $cacheKey
-     * @param mixed  $cacheData
-     * @param string $namespace
-     * @param string|int $ttl
-     * @return void
-     */
-    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600)
-    {
-        $cacheFile = $this->buildCacheFilePath($cacheKey, $namespace);
-        $data = $this->fileManager->serialize($cacheData);
-
-        $this->fileManager->writeFile($cacheFile, $data);
-        $this->setMessage("Cache file created successfully", true);
-
-        $this->logger->debug("{$this->getMessage()} from file driver.");
     }
 
     /**
@@ -129,26 +197,19 @@ class FileCacheStore implements CacheerInterface
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace
+     * @param string|int $ttl
      * @return void
      */
-    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
+    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600)
     {
-        $currentCacheFileData = $this->getCache($cacheKey, $namespace);
+        $cacheFile = $this->buildCacheFilePath($cacheKey, $namespace);
+        $data = $this->fileManager->serialize($cacheData);
 
-        if (!$this->isSuccess()) {
-            return $this->getMessage();
-        }
+        $this->fileManager->writeFile($cacheFile, $data);
+        $this->setMessage("Cache file created successfully", true);
 
-        $mergedCacheData = CacheFileHelper::arrayIdentifier($currentCacheFileData, $cacheData);
-
-
-        $this->putCache($cacheKey, $mergedCacheData, $namespace);
-        if ($this->isSuccess()) {
-            $this->setMessage("Cache updated successfully", true);
-            $this->logger->debug("{$this->getMessage()} from file driver.");
-        }
-    }
-
+    $this->logger->debug("{$this->getMessage()} from file driver.");
+}
 
     /**
      * @param string $cacheKey
@@ -183,37 +244,19 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
-     * @param string $cacheKey
+     * @param array  $batchItems
      * @param string $namespace
      * @return void
      */
-    public function clearCache(string $cacheKey, string $namespace = '')
+    private function processBatchItems(array $batchItems, string $namespace)
     {
-        $cacheFile = $this->buildCacheFilePath($cacheKey, $namespace);
-        if ($this->fileManager->readFile($cacheFile)) {
-            $this->fileManager->removeFile($cacheFile);
-            $this->setMessage("Cache file deleted successfully!", true);
-        } else {
-            $this->setMessage("Cache file does not exist!", false);
+        foreach ($batchItems as $item) {
+            CacheFileHelper::validateCacheItem($item);
+            $cacheKey = $item['cacheKey'];
+            $cacheData = $item['cacheData'];
+            $mergedData = CacheFileHelper::mergeCacheData($cacheData);
+            $this->putCache($cacheKey, $mergedData, $namespace);
         }
-        $this->logger->debug("{$this->getMessage()} from file driver.");
-    }
-
-    /**
-     * @return void
-     */
-    public function flushCache()
-    {
-        $this->fileManager->clearDirectory($this->cacheDir);
-        file_put_contents($this->lastFlushTimeFile, time());
-    }
-
-    /**
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->message;
     }
 
     /**
@@ -222,6 +265,17 @@ class FileCacheStore implements CacheerInterface
     public function isSuccess()
     {
         return $this->success;
+    }
+
+    /**
+     * @param string  $message
+     * @param boolean $success
+     * @return void
+     */
+    private function setMessage(string $message, bool $success)
+    {
+        $this->message = $message;
+        $this->success = $success;
     }
 
     /**
@@ -246,18 +300,6 @@ class FileCacheStore implements CacheerInterface
         $this->cacheDir = realpath($cacheDir) ?: "";
         $this->fileManager->createDirectory($cacheDir);
     }
-
-    /**
-     * @param array $options
-     * @return integer
-     */
-    private function getExpirationTime(array $options)
-    {
-        return isset($options['expirationTime'])
-            ? CacheFileHelper::convertExpirationToSeconds($options['expirationTime'])
-            : $this->defaultTTL;
-    }
-
 
     /**
      * @param array $options
@@ -289,50 +331,6 @@ class FileCacheStore implements CacheerInterface
             $this->flushCache();
             $this->fileManager->writeFile($this->lastFlushTimeFile, time());
         }
-    }
-
-    /**
-     * @param array  $batchItems
-     * @param string $namespace
-     * @return void
-     */
-    private function processBatchItems(array $batchItems, string $namespace)
-    {
-        foreach ($batchItems as $item) {
-            CacheFileHelper::validateCacheItem($item);
-            $cacheKey = $item['cacheKey'];
-            $cacheData = $item['cacheData'];
-            $mergedData = CacheFileHelper::mergeCacheData($cacheData);
-            $this->putCache($cacheKey, $mergedData, $namespace);
-        }
-    }
-
-    /**
-     * @param string  $message
-     * @param boolean $success
-     * @return void
-     */
-    private function setMessage(string $message, bool $success)
-    {
-        $this->message = $message;
-        $this->success = $success;
-    }
-
-    /**
-     * @param string $cacheKey
-     * @param string $namespace
-     * @return string
-     */
-    private function buildCacheFilePath(string $cacheKey, string $namespace)
-    {
-        $namespace = $namespace ? md5($namespace) . '/' : '';
-        $cacheDir = "{$this->cacheDir}/";
-
-        if (!empty($namespace)) {
-            $cacheDir = "{$this->cacheDir}/{$namespace}";
-            $this->fileManager->createDirectory($cacheDir);
-        }
-        return $cacheDir . md5($cacheKey) . ".cache";
     }
 
     /**

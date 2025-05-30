@@ -1,6 +1,6 @@
 {
   "name": "silviooosilva/cacheer-php",
-  "description": "CacheerPHP é um pacote minimalista para caching em PHP, oferecendo uma interface simples para armazenar e recuperar dados em cache utilizando múltiplos backends.",
+  "description": "CacheerPHP is a minimalist package for caching in PHP, offering a simple interface for storing and retrieving cached data using multiple backends.",
   "keywords": [
     "cache",
     "optimizer",
@@ -24,7 +24,7 @@
   "homepage": "https://github.com/silviooosilva",
   "type": "library",
   "license": "MIT",
-  "version": "v3.4.4",
+  "version": "v3.5.0",
   "autoload": {
     "files": [
       "src/Boot/Configs.php"
