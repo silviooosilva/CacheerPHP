@@ -9,7 +9,9 @@ use JsonSerializable;
 
 class BaseException extends Exception implements JsonSerializable
 {
-    /** @param array $details */
+    /** 
+     * @var array 
+     * */
     protected array $details;
 
     public function __construct(string $message = "", int $code = 0, ?Exception $previous = null, array $details = [])
@@ -18,22 +20,29 @@ class BaseException extends Exception implements JsonSerializable
         $this->details = $details;
     }
 
-    /** @return array */
+    /** 
+     * @return array 
+     * */
     public function getDetails()
     {
         return $this->details;
     }
 
-    /** @return void */
+    /** 
+     * @param array $details 
+     * */
     public function setDetails(array $details)
     {
         $this->details = $details;
     }
 
-    /** @return array */
-    public function jsonSerialize(): array
+    /** 
+     * @return array 
+     * */
+    public function toArray()
     {
         return [
+            'type' => static::class,
             'message' => $this->getMessage(),
             'code' => $this->getCode(),
             'details' => $this->getDetails(),
@@ -43,7 +52,26 @@ class BaseException extends Exception implements JsonSerializable
         ];
     }
 
-    public function __toString(): string
+    /** 
+     * @return array 
+     * */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
+
+    /** 
+     * @return string 
+     * */
+    public function toJson(int $options = 0)
+    {
+        return json_encode($this->toArray(), $options | JSON_THROW_ON_ERROR);
+    }
+
+    /** 
+     * @return string 
+     * */
+    public function __toString()
     {
         return sprintf(
             "[%s] %s in %s on line %d\nDetails: %s",
