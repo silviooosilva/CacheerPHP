@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use Silviooosilva\CacheerPhp\Cacheer;
+use Silviooosilva\CacheerPhp\Helpers\EnvHelper;
 use Silviooosilva\CacheerPhp\Utils\CacheDriver;
 
 class FileCacheStoreTest extends TestCase
@@ -395,7 +396,7 @@ class FileCacheStoreTest extends TestCase
         $cacheer = new Cacheer();
         $driver = new CacheDriver($cacheer);
 
-        $projectRoot = dirname(__DIR__, 2);
+        $projectRoot = EnvHelper::getRootPath();
         $expectedCacheDir = $projectRoot . DIRECTORY_SEPARATOR . "CacheerPHP" . DIRECTORY_SEPARATOR . "Cache";
 
         if (is_dir($expectedCacheDir)) {

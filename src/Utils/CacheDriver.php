@@ -9,6 +9,7 @@ use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\RedisCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\DatabaseCacheStore;
 use Silviooosilva\CacheerPhp\Exceptions\CacheFileException;
+use Silviooosilva\CacheerPhp\Helpers\EnvHelper;
 
 /**
  * Class CacheDriver
@@ -75,7 +76,7 @@ class CacheDriver
     public function useDefaultDriver()
     {
         if (!isset($this->cacheer->options['cacheDir'])) {
-            $projectRoot = dirname(__DIR__, 2);
+            $projectRoot = EnvHelper::getRootPath();
             $cacheDir = $projectRoot . DIRECTORY_SEPARATOR . "CacheerPHP" . DIRECTORY_SEPARATOR . "Cache";
             if ($this->isDir($cacheDir)) {
                 $this->cacheer->options['cacheDir'] = $cacheDir;
