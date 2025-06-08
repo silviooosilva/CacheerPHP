@@ -1,5 +1,7 @@
 # CacheerPHP
 
+<p align="center"><a href="https://github.com/silviooosilva/CacheerPHP"><img src="docs/cacheer_php_logo.png" width=500/></a></p>
+
 [![Maintainer](https://img.shields.io/badge/maintainer-@silviooosilva-blue.svg?style=for-the-badge&color=blue)](https://github.com/silviooosilva)
 ![Packagist Dependency Version](https://img.shields.io/packagist/dependency-v/silviooosilva/cacheer-php/PHP?style=for-the-badge&color=blue)
 [![Latest Version](https://img.shields.io/github/release/silviooosilva/CacheerPHP.svg?style=for-the-badge&color=blue)](https://github.com/silviooosilva/CacheerPHP/releases)
