@@ -222,8 +222,9 @@ class FileCacheStore implements CacheerInterface
 
         if ($this->isSuccess()) {
             $this->setMessage("Cache key: {$cacheKey} exists and it's available! from file driver", true);
+        } else {
+            $this->setMessage("Cache key: {$cacheKey} does not exists or it's expired! from file driver", false);
         }
-        $this->setMessage("Cache key: {$cacheKey} does not exists or it's expired! from file driver", false);
     }
 
     /**
@@ -238,6 +239,8 @@ class FileCacheStore implements CacheerInterface
         if ($cacheData) {
             $this->putCache($cacheKey, $cacheData, $namespace, $ttl);
             $this->setMessage("Cache with key {$cacheKey} renewed successfully", true);
+            $this->logger->debug("{$this->getMessage()} from file driver.");
+            return;
         }
         $this->setMessage("Failed to renew Cache with key {$cacheKey}", false);
         $this->logger->debug("{$this->getMessage()} from file driver.");
