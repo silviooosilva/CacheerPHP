@@ -25,7 +25,7 @@ class OptionBuildTest extends TestCase
     $this->cache->flushCache();
   }
 
-  public function test_it_can_set_cache_diretory()
+  public function test_it_can_set_cache_directory()
   {
     $cacheDir = __DIR__ . "/cache";
 
