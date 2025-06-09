@@ -108,7 +108,8 @@ class ArrayCacheStoreTest extends TestCase
     $this->assertEquals("Cache stored successfully", $this->cache->getMessage());
     $this->assertTrue($this->cache->isSuccess());
 
-    $this->cache->has($cacheKey);
+    $result = $this->cache->has($cacheKey);
+    $this->assertTrue($result);
     $this->assertTrue($this->cache->isSuccess());
   }
 
