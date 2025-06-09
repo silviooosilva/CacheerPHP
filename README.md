@@ -8,7 +8,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/silviooosilva/CacheerPHP.svg?style=for-the-badge&color=blue)](https://scrutinizer-ci.com/g/silviooosilva/CacheerPHP)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/silviooosilva/cacheer-php?style=for-the-badge&color=blue)
 
-CacheerPHP is a minimalist package for PHP caching. Now, in version 3.0.0, you get even more flexibility, support for multiple backends (files, database and Redis), as well as new features for monitoring, compression, Encryption (Coming Soon) and a more robust API design.
+CacheerPHP is a minimalist package for PHP caching. Now, in version 3.0.0, you get even more flexibility, support for multiple backends (files, database and Redis), as well as new features for monitoring, compression and encryption and a more robust API design.
 
 ---
 
@@ -19,7 +19,7 @@ CacheerPHP is a minimalist package for PHP caching. Now, in version 3.0.0, you g
 - **Cache cleaning and flushing:** Support for manual and automatic cleaning (via `flushAfter`).
 - **Namespace support:** Organize your cache entries by category.
 - **Customized Data Output:** Options to return data in `JSON`, `Array`, `String` or `Object`.
-- **Compression and Encryption (Coming Soon):** Reduce storage space and increase the security of cached data.
+- **Compression and Encryption:** Reduce storage space and increase the security of cached data.
 - **Cache Statistics and Monitoring:** Track hit and miss statistics and average read/write times (Coming Soon).
 - **Advanced Logging:** Detailed monitoring of the operation of the caching system.
 

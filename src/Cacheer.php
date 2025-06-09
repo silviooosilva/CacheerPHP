@@ -11,6 +11,7 @@ use Silviooosilva\CacheerPhp\CacheStore\ArrayCacheStore;
 use Silviooosilva\CacheerPhp\Helpers\CacheConfig;
 use Silviooosilva\CacheerPhp\Utils\CacheDataFormatter;
 use Silviooosilva\CacheerPhp\Utils\CacheDriver;
+use RuntimeException;
 
 /**
  * Class CacheerPHP
@@ -33,6 +34,16 @@ final class Cacheer implements CacheerInterface
      * @var boolean
      */
     private bool $formatted = false;
+
+    /**
+     * @var bool
+     */
+    private bool $compression = false;
+
+    /**
+     * @var string|null
+     */
+    private ?string $encryptionKey = null;
 
     /**
      * @var FileCacheStore|DatabaseCacheStore|RedisCacheStore|ArrayCacheStore
@@ -152,6 +163,11 @@ final class Cacheer implements CacheerInterface
     {
         $cacheData = $this->cacheStore->getCache($cacheKey, $namespace, $ttl);
         $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+
+        if ($this->cacheStore->isSuccess() && ($this->compression || $this->encryptionKey !== null)) {
+            $cacheData = $this->recoverFromStorage($cacheData);
+        }
+
         return $this->formatted ? new CacheDataFormatter($cacheData) : $cacheData;
     }
 
@@ -202,7 +218,8 @@ final class Cacheer implements CacheerInterface
      */
     public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600)
     {
-        $this->cacheStore->putCache($cacheKey, $cacheData, $namespace, $ttl);
+        $data = $this->prepareForStorage($cacheData);
+        $this->cacheStore->putCache($cacheKey, $data, $namespace, $ttl);
         $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
     }
 
@@ -317,5 +334,83 @@ final class Cacheer implements CacheerInterface
     private function validateOptions(array $options)
     {
         $this->options = $options;
+    }
+
+    /**
+     * Enable or disable data compression
+     *
+     * @param bool $status
+     * @return $this
+     */
+    public function useCompression(bool $status = true)
+    {
+        $this->compression = $status;
+        return $this;
+    }
+
+    /**
+     * Enable encryption for cached data
+     *
+     * @param string $key
+     * @return $this
+     */
+    public function useEncryption(string $key)
+    {
+        $this->encryptionKey = $key;
+        return $this;
+    }
+
+    /**
+     * @param mixed $data
+     * @return mixed
+     */
+    private function prepareForStorage(mixed $data)
+    {
+        if (!$this->compression && is_null($this->encryptionKey)) {
+            return $data;
+        }
+
+        $payload = serialize($data);
+
+        if ($this->compression) {
+            $payload = gzcompress($payload);
+        }
+
+        if (!is_null($this->encryptionKey)) {
+            $iv = substr(hash('sha256', $this->encryptionKey), 0, 16);
+            $encrypted = openssl_encrypt($payload, 'AES-256-CBC', $this->encryptionKey, 0, $iv);
+            if ($encrypted === false) {
+                throw new RuntimeException('Failed to encrypt cache data');
+            }
+            $payload = $encrypted;
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @param mixed $data
+     * @return mixed
+     */
+    private function recoverFromStorage(mixed $data)
+    {
+        if (!$this->compression && is_null($this->encryptionKey)) {
+            return $data;
+        }
+
+        if (!is_null($this->encryptionKey)) {
+            $iv = substr(hash('sha256', $this->encryptionKey), 0, 16);
+            $decrypted = openssl_decrypt($data, 'AES-256-CBC', $this->encryptionKey, 0, $iv);
+            if ($decrypted === false) {
+                throw new RuntimeException('Failed to decrypt cache data');
+            }
+            $data = $decrypted;
+        }
+
+        if ($this->compression) {
+            $data = gzuncompress($data);
+        }
+
+        return unserialize($data);
     }
 }
