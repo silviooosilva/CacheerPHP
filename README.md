@@ -20,8 +20,20 @@ CacheerPHP is a minimalist package for PHP caching. Now, in version 3.0.0, you g
 - **Namespace support:** Organize your cache entries by category.
 - **Customized Data Output:** Options to return data in `JSON`, `Array`, `String` or `Object`.
 - **Compression and Encryption (Coming Soon):** Reduce storage space and increase the security of cached data.
-- **Cache Statistics and Monitoring:** Track hit and miss statistics and average read/write times (Coming Soon).
+- **Cache Statistics and Monitoring:** Track hit and miss statistics and average read/write times.
 - **Advanced Logging:** Detailed monitoring of the operation of the caching system.
+
+### Cache Statistics Usage
+
+Statistics about cache hits, misses and average times can be accessed through the `CacheStats` class:
+
+```php
+$cache = new \Silviooosilva\CacheerPhp\Cacheer(['cacheDir' => '/path/to/cache']);
+$cache->putCache('foo', 'bar');
+$cache->getCache('foo');
+$stats = $cache->getStats();
+echo $stats->getHitCount();
+```
 
 ---
 
