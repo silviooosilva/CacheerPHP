@@ -11,6 +11,8 @@ use Silviooosilva\CacheerPhp\CacheStore\ArrayCacheStore;
 use Silviooosilva\CacheerPhp\Helpers\CacheConfig;
 use Silviooosilva\CacheerPhp\Utils\CacheDataFormatter;
 use Silviooosilva\CacheerPhp\Utils\CacheDriver;
+use Silviooosilva\CacheerPhp\Utils\CacheStats;
+use Silviooosilva\CacheerPhp\Utils\CacheLogger;
 
 /**
  * Class CacheerPHP
@@ -41,14 +43,21 @@ final class Cacheer implements CacheerInterface
 
     /**
      * @var array
-     */
+    */
     public array $options = [];
+
+    /**
+     * @var CacheStats
+     */
+    public CacheStats $stats;
 
     public function __construct(array $options = [], $formatted = false)
     {
         $this->formatted = $formatted;
         $this->validateOptions($options);
         $this->setDriver()->useDefaultDriver();
+        $logPath = $this->options['loggerPath'] ?? 'cacheer.log';
+        $this->stats = new CacheStats(new CacheLogger($logPath));
     }
 
     /**
@@ -150,8 +159,17 @@ final class Cacheer implements CacheerInterface
      */
     public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
     {
+        $start = microtime(true);
         $cacheData = $this->cacheStore->getCache($cacheKey, $namespace, $ttl);
+        $duration = microtime(true) - $start;
         $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+
+        if ($this->cacheStore->isSuccess() && $cacheData !== null && $cacheData !== false) {
+            $this->stats->recordHit($duration);
+        } else {
+            $this->stats->recordMiss($duration);
+        }
+
         return $this->formatted ? new CacheDataFormatter($cacheData) : $cacheData;
     }
 
@@ -202,8 +220,11 @@ final class Cacheer implements CacheerInterface
      */
     public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600)
     {
+        $start = microtime(true);
         $this->cacheStore->putCache($cacheKey, $cacheData, $namespace, $ttl);
+        $duration = microtime(true) - $start;
         $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+        $this->stats->recordWrite($duration);
     }
 
     /**
@@ -308,6 +329,14 @@ final class Cacheer implements CacheerInterface
     public function useFormatter()
     {
         $this->formatted = !$this->formatted;
+    }
+
+    /**
+     * @return CacheStats
+     */
+    public function getStats()
+    {
+        return $this->stats;
     }
 
     /**
