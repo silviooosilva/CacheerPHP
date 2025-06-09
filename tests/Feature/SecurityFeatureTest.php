@@ -16,6 +16,7 @@ class SecurityFeatureTest extends TestCase
         }
 
         $this->cache = new Cacheer(['cacheDir' => $this->cacheDir]);
+        $this->cache->setDriver()->useFileDriver();
     }
 
     protected function tearDown(): void
@@ -44,6 +45,7 @@ class SecurityFeatureTest extends TestCase
         $this->assertTrue($this->cache->isSuccess());
 
         $cached = $this->cache->getCache('encryption_key');
+
         $this->assertEquals($data, $cached);
     }
 
