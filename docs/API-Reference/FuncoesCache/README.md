@@ -200,6 +200,18 @@ $Cacheer->clearCache(string $cacheKey, string $namespace);
 */
 $Cacheer->flushCache();
 ```
+### `useCompression()` - Enable or disable compression
+
+```php
+$Cacheer->useCompression();
+$Cacheer->useCompression(false);
+```
+
+### `useEncryption()` - Enable AES encryption
+
+```php
+$Cacheer->useEncryption('secret-key');
+```
 ---
 
 Each of the functions below allows you to interact with the cache in different ways. Functions that “return void” actually set the status of the operation internally, which can be checked via:

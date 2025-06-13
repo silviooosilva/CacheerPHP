@@ -27,3 +27,7 @@ It allows you to define the different backends available for use.
 The **OptionBuilder** simplifies the configuration of CacheerPHP by eliminating typing errors and making the process more intuitive.
 
 [API Reference - OptionBuilder](API-Reference/optionBuilder.md)
+### 4. **Compression & Encryption**
+Built-in methods to reduce storage space and secure cached data.
+
+[API Reference - Compression & Encryption](API-Reference/compression_encryption.md)
