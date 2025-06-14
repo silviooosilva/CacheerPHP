@@ -238,19 +238,17 @@ final class Cacheer implements CacheerInterface
      * @param string $cacheKey
      * @param string|int $ttl
      * @param string $namespace
-     * @return mixed
+     * @return void
      */
     public function renewCache(string $cacheKey, string|int $ttl = 3600, string $namespace = '')
     {
-        $renewedCache = $this->cacheStore->renewCache($cacheKey, $ttl, $namespace);
+        $this->cacheStore->renewCache($cacheKey, $ttl, $namespace);
 
         if ($this->cacheStore->isSuccess()) {
             $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
         } else {
             $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
         }
-
-        return $renewedCache;
     }
 
     /**
