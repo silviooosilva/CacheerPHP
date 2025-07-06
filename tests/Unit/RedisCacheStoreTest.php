@@ -194,7 +194,7 @@ class RedisCacheStoreTest extends TestCase
     }
 
   public function testFlushCacheDataFromRedis()
-    {
+  {
         $key1 = 'test_key1';
         $data1 = 'test_data1';
 
@@ -376,6 +376,7 @@ class RedisCacheStoreTest extends TestCase
 
     public function test_get_many_cache_items()
     {
+        $this->cache->useFormatter();
         $cacheItems = [
             'key1' => 'value1',
             'key2' => 'value2',
@@ -387,8 +388,8 @@ class RedisCacheStoreTest extends TestCase
         $this->assertTrue($this->cache->isSuccess());
         $retrievedItems = $this->cache->getMany(array_keys($cacheItems));
         $this->assertTrue($this->cache->isSuccess());
-        $this->assertCount(3, $retrievedItems);
-        $this->assertEquals($cacheItems, $retrievedItems);
+        $this->assertCount(3, $retrievedItems->toArray());
+        $this->assertEquals($cacheItems, $retrievedItems->toArray());
     }
 
 }
