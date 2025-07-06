@@ -151,6 +151,21 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * @param array $cacheKeys
+   * @param string $namespace
+   * @param string|int $ttl
+   * @return array
+   */
+  public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600)
+  {
+    $results = [];
+    foreach ($cacheKeys as $cacheKey) {
+      $results[$cacheKey] = $this->getCache($cacheKey, $namespace, $ttl);
+    }
+    return $results;
+  }
+
+  /**
    * @param string $cacheKey
    * @param string $namespace
    * @return bool

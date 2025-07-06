@@ -134,6 +134,32 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * @param array $cacheKeys
+     * @param string $namespace
+     * @param string|int $ttl
+     * @return array
+     */
+    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600)
+    {
+        $results = [];
+        foreach ($cacheKeys as $cacheKey) {
+            $fullCacheKey = $this->buildKey($cacheKey, $namespace);
+            $cacheData = $this->getCache($fullCacheKey, $namespace, $ttl);
+            if ($cacheData !== null) {
+                $results[$cacheKey] = $cacheData;
+            }
+        }
+
+        if (empty($results)) {
+            $this->setMessage("No cache data found for the provided keys", false);
+        } else {
+            $this->setMessage("Cache data retrieved successfully", true);
+        }
+
+        return $results;
+    }
+
+    /**
      * @return string
      */
     public function getMessage()
