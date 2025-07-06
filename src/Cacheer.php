@@ -173,6 +173,26 @@ final class Cacheer implements CacheerInterface
     }
 
     /**
+     * @param array $cacheKeys
+     * @param string $namespace
+     * @param string|int $ttl
+     * @return CacheDataFormatter|array
+     */
+    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600)
+    {
+        $cachedData = $this->cacheStore->getMany($cacheKeys, $namespace, $ttl);
+        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+
+        if ($this->cacheStore->isSuccess() && ($this->compression || $this->encryptionKey !== null)) {
+            foreach ($cachedData as &$data) {
+                $data = CacheerHelper::recoverFromStorage($data, $this->compression, $this->encryptionKey);
+            }
+        }
+
+        return $this->formatted ? new CacheDataFormatter($cachedData) : $cachedData;
+    }
+
+    /**
      * @param string $cacheKey
      * @param string $namespace
      * @return void

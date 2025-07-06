@@ -374,4 +374,21 @@ class RedisCacheStoreTest extends TestCase
 
     }
 
+    public function test_get_many_cache_items()
+    {
+        $cacheItems = [
+            'key1' => 'value1',
+            'key2' => 'value2',
+            'key3' => 'value3'
+        ];
+        foreach ($cacheItems as $key => $value) {
+            $this->cache->putCache($key, $value);
+        }
+        $this->assertTrue($this->cache->isSuccess());
+        $retrievedItems = $this->cache->getMany(array_keys($cacheItems));
+        $this->assertTrue($this->cache->isSuccess());
+        $this->assertCount(3, $retrievedItems);
+        $this->assertEquals($cacheItems, $retrievedItems);
+    }
+
 }

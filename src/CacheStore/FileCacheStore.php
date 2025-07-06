@@ -33,7 +33,7 @@ class FileCacheStore implements CacheerInterface
     /**
      * @param integer $defaultTTL
      */
-    private int $defaultTTL = 3600; // 1 hora por padrão
+    private int $defaultTTL = 3600; // 1 hour default TTL
 
     /**
      * @param boolean $success
@@ -173,6 +173,29 @@ class FileCacheStore implements CacheerInterface
 
         $this->setMessage("cacheFile not found, does not exists or expired", false);
         $this->logger->info("{$this->getMessage()} from file driver.");
+    }
+
+    /**
+     * @param array  $cacheKeys
+     * @param string $namespace
+     * @param string|int $ttl
+     * @return array
+     */
+    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600)
+    {
+        $ttl = CacheFileHelper::ttl($ttl, $this->defaultTTL);
+        $results = [];
+
+        foreach ($cacheKeys as $cacheKey) {
+            $cacheData = $this->getCache($cacheKey, $namespace, $ttl);
+            if ($this->isSuccess()) {
+                $results[$cacheKey] = $cacheData;
+            } else {
+                $results[$cacheKey] = null;
+            }
+        }
+
+        return $results;
     }
 
     /**

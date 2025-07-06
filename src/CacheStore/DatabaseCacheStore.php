@@ -112,6 +112,31 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * @param array  $cacheKeys
+     * @param string $namespace
+     * @param string|int $ttl
+     * @return array
+     */
+    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600)
+    {
+        $cacheData = [];
+        foreach ($cacheKeys as $cacheKey) {
+            $data = $this->getCache($cacheKey, $namespace, $ttl);
+            if ($data) {
+                $cacheData[$cacheKey] = $data;
+            }
+        }
+        if (!empty($cacheData)) {
+            $this->setMessage("Cache retrieved successfully", true);
+            $this->logger->debug("{$this->getMessage()} from database driver.");
+            return $cacheData;
+        }
+        $this->setMessage("No cache data found for the provided keys", false);
+        $this->logger->info("{$this->getMessage()} from database driver.");
+        return [];
+    }
+
+    /**
      * @return string
      */
     public function getMessage()
