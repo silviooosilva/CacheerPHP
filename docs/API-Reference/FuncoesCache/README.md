@@ -20,6 +20,29 @@ CacheerPHP offers a robust set of functions for managing caching in your PHP app
 $Cacheer->getCache(string $cacheKey, string $namespace, string|int $ttl = 3600);
 ```
 
+### `getMany()` - Retrieves multiple items from the cache
+
+```php
+/**
+* Gets multiple items from the cache by their keys.
+* @param array $cacheKeys Array of item keys
+* @param string $namespace Namespace for organization
+* @param string|int $ttl Lifetime in seconds (default: 3600)
+* @return CacheDataFormatter Returns a formatter with the retrieved items
+*/
+$Cacheer->getMany(array $cacheKeys, string $namespace, string|int $ttl = 3600);
+```
+
+### `putCache()` - Stores data in the cache
+
+```php
+
+/**
+* Stores an item in the cache with a specific TTL.
+*/
+$Cacheer->getAll(string $namespace);
+```
+
 ### `putCache()` - Stores data in the cache
 
 ```php
