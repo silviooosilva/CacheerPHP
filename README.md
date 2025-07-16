@@ -8,7 +8,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/silviooosilva/CacheerPHP.svg?style=for-the-badge&color=blue)](https://scrutinizer-ci.com/g/silviooosilva/CacheerPHP)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/silviooosilva/cacheer-php?style=for-the-badge&color=blue)
 
-CacheerPHP is a minimalist package for PHP caching. Now, in version 3.0.0, you get even more flexibility, support for multiple backends (files, database and Redis), as well as new features for monitoring, compression and encryption and a more robust API design.
+CacheerPHP is a minimalist package for PHP caching. Now, in version 4.0.0, you get even more flexibility, support for multiple backends (files, database and Redis), as well as new features for monitoring, compression and encryption and a more robust API design.
 
 ---
 
@@ -27,10 +27,10 @@ CacheerPHP is a minimalist package for PHP caching. Now, in version 3.0.0, you g
 
 ## Installation
 
-CacheerPHP 3.0.0 is available via Composer. Add the following line to your **composer.json** file:
+CacheerPHP 4.0.0 is available via Composer. Add the following line to your **composer.json** file:
 
 ```sh
-  "silviooosilva/cacheer-php": "^3.0"
+  "silviooosilva/cacheer-php": "^4.0"
 ```
 
 Or run the command:
