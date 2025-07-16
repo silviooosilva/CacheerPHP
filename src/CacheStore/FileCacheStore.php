@@ -4,6 +4,7 @@ namespace Silviooosilva\CacheerPhp\CacheStore;
 
 use Silviooosilva\CacheerPhp\Interface\CacheerInterface;
 use Silviooosilva\CacheerPhp\CacheStore\CacheManager\FileCacheManager;
+use Silviooosilva\CacheerPhp\CacheStore\CacheManager\FileCacheFlusher;
 use Silviooosilva\CacheerPhp\Exceptions\CacheFileException;
 use Silviooosilva\CacheerPhp\Helpers\CacheFileHelper;
 use Silviooosilva\CacheerPhp\Utils\CacheLogger;
@@ -40,10 +41,6 @@ class FileCacheStore implements CacheerInterface
      */
     private bool $success = false;
 
-    /**
-     * @param string $lastFlushTimeFile
-     */
-    private string $lastFlushTimeFile;
 
     /**
     * @var CacheLogger
@@ -55,6 +52,11 @@ class FileCacheStore implements CacheerInterface
     */
     private FileCacheManager $fileManager;
 
+    /**
+    * @var FileCacheFlusher
+    */
+    private FileCacheFlusher $flusher;
+
 
     /**
      * FileCacheStore constructor.
@@ -65,9 +67,9 @@ class FileCacheStore implements CacheerInterface
         $this->validateOptions($options);
         $this->fileManager = new FileCacheManager();
         $this->initializeCacheDir($options['cacheDir']);
+        $this->flusher = new FileCacheFlusher($this->fileManager, $this->cacheDir);
         $this->defaultTTL = $this->getExpirationTime($options);
-        $this->lastFlushTimeFile = "{$this->cacheDir}/last_flush_time";
-        $this->handleAutoFlush($options);
+        $this->flusher->handleAutoFlush($options);
         $this->logger = new CacheLogger($options['loggerPath']);
     }
 
@@ -142,8 +144,7 @@ class FileCacheStore implements CacheerInterface
      */
     public function flushCache()
     {
-        $this->fileManager->clearDirectory($this->cacheDir);
-        file_put_contents($this->lastFlushTimeFile, time());
+        $this->flusher->flushCache();
     }
 
     /**
@@ -426,41 +427,7 @@ class FileCacheStore implements CacheerInterface
         $this->fileManager->createDirectory($cacheDir);
     }
 
-    /**
-     * Handles the auto-flush functionality based on options.
-     * 
-     * @param array $options
-     * @return void
-     */
-    private function handleAutoFlush(array $options)
-    {
-        if (isset($options['flushAfter'])) {
-            $this->scheduleFlush($options['flushAfter']);
-        }
-    }
 
-    /**
-     * Schedules a flush operation based on the provided interval.
-     * 
-     * @param string $flushAfter
-     * @return void
-     */
-    private function scheduleFlush(string $flushAfter)
-    {
-        $flushAfterSeconds = CacheFileHelper::convertExpirationToSeconds($flushAfter);
-
-        if(!$this->fileManager->fileExists($this->lastFlushTimeFile)) {
-            $this->fileManager->writeFile($this->lastFlushTimeFile, time());
-            return;
-        }
-
-        $lastFlushTime = (int) $this->fileManager->readFile($this->lastFlushTimeFile);
-
-        if ((time() - $lastFlushTime) >= $flushAfterSeconds) {
-            $this->flushCache();
-            $this->fileManager->writeFile($this->lastFlushTimeFile, time());
-        }
-    }
 
     /**
      * Checks if the cache file is valid based on its existence and modification time.
