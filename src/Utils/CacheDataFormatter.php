@@ -12,12 +12,19 @@ class CacheDataFormatter
     /** @param mixed $data */
     private mixed $data;
 
+    /**
+    * CacheDataFormatter constructor.
+    *
+    * @param mixed $data
+    */
     public function __construct(mixed $data)
     {
         $this->data = $data;
     }
 
     /**
+    * Converts the data to JSON format.
+    *
     * @return string|false
     */
     public function toJson()
@@ -31,6 +38,8 @@ class CacheDataFormatter
     }
 
     /**
+    * Converts the data to an array.
+    * 
     * @return array
     */
     public function toArray()
@@ -39,6 +48,8 @@ class CacheDataFormatter
     }
 
     /**
+    * Converts the data to a string.
+    * 
     * @return string
     */
     public function toString()
@@ -47,6 +58,8 @@ class CacheDataFormatter
     }
 
     /**
+    * Converts the data to an object.
+    * 
     * @return object
     */
     public function toObject()

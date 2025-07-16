@@ -11,7 +11,7 @@ namespace Silviooosilva\CacheerPhp\Utils;
 class CacheLogger
 {
     private $logFile;
-    private $maxFileSize; // Tamanho máximo do arquivo em bytes (5MB)
+    private $maxFileSize; // 5 MB by default
     private $logLevel;
     private $logLevels = ['DEBUG', 'INFO', 'WARNING', 'ERROR'];
 
@@ -23,6 +23,8 @@ class CacheLogger
     }
 
     /**
+    * Logs a info message.
+    * 
     * @return void
     */
     public function info($message)
@@ -31,6 +33,8 @@ class CacheLogger
     }
 
     /**
+    * Logs a warning message.
+    *
     * @return void
     */
     public function warning($message)
@@ -39,6 +43,8 @@ class CacheLogger
     }
 
     /**
+    * Logs an error message.
+    * 
     * @return void
     */
     public function error($message)
@@ -47,6 +53,8 @@ class CacheLogger
     }
 
     /**
+    * Logs a debug message.
+    * 
     * @return void
     */
     public function debug($message)
@@ -55,6 +63,8 @@ class CacheLogger
     }
 
     /**
+    * Checks if the log level is sufficient to log the message.
+    *
     * @param mixed $level
     * @return string|int|false
     */
@@ -64,6 +74,8 @@ class CacheLogger
     }
 
     /**
+    * Rotates the log file if it exceeds the maximum size.
+    * 
     * @return void
     */
     private function rotateLog()
@@ -75,6 +87,8 @@ class CacheLogger
     }
 
     /**
+    * Logs a message to the log file.
+    * 
     * @param mixed $level
     * @param string $message
     * @return void

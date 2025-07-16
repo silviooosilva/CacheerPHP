@@ -12,11 +12,13 @@ use Composer\InstalledVersions;
 class EnvHelper {
 
     /**
+     * Gets the root path of the project.
+     * 
      * @return string
      */
     public static function getRootPath()
     {
-        // Tenta obter a raiz do projeto via Composer, se disponível
+        // Try to get the root path from Composer's installed versions
         if (class_exists(InstalledVersions::class)) {
             $rootPackage = InstalledVersions::getRootPackage();
             if (!empty($rootPackage['install_path'])) {
@@ -24,7 +26,7 @@ class EnvHelper {
             }
         }
 
-        // Fallback: sobe os diretórios a partir do __DIR__ procurando o .env.example
+        // Fallback: traverse directories from __DIR__ looking for .env.example
         $baseDir = __DIR__;
         while (!file_exists($baseDir . DIRECTORY_SEPARATOR . '.env.example') && $baseDir !== dirname($baseDir)) {
             $baseDir = dirname($baseDir);
@@ -32,23 +34,4 @@ class EnvHelper {
 
         return rtrim($baseDir, DIRECTORY_SEPARATOR);
     }
-
-    /**
-    * @return void
-    */
-    public static function copyEnv()
-    {
-        $rootDir = self::getRootPath();
-        $envFile = $rootDir . '/.env';
-        $envExampleFile = $rootDir . '/.env.example';
-
-        if (!file_exists($envFile) && file_exists($envExampleFile)) {
-            if (copy($envExampleFile, $envFile)) {
-                echo ".env file created successfully from .env.example.\n";
-            } else {
-                echo "Failed to create .env file from .env.example.\n";
-            }
-        }
-    }
-
 }

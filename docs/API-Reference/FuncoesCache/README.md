@@ -33,6 +33,17 @@ $Cacheer->getCache(string $cacheKey, string $namespace, string|int $ttl = 3600);
 $Cacheer->getMany(array $cacheKeys, string $namespace, string|int $ttl = 3600);
 ```
 
+### `getAll()` - Retrieves all items in a namespace
+
+```php
+/**
+* Gets all items in a specific namespace.
+* @param string $namespace Namespace for organization
+* @return CacheDataFormatter Returns a formatter with all items in the namespace
+*/
+$Cacheer->getAll(string $namespace);
+```
+
 ### `putCache()` - Stores data in the cache
 
 ```php

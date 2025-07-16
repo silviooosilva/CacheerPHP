@@ -14,6 +14,8 @@ class CacheRedisHelper
 {
 
   /**
+  * serializes or unserializes data based on the $serialize flag.
+  * 
   * @param mixed $data
   * @param bool  $serialize
   * @return mixed
@@ -29,9 +31,11 @@ class CacheRedisHelper
   }
 
     /**
-     * @param array $item
-     * @return void
-     */
+    * Validates a cache item.
+    *  
+    * @param array $item
+    * @return void
+    */
     public static function validateCacheItem(array $item)
     {
         CacheerHelper::validateCacheItem(
@@ -41,19 +45,23 @@ class CacheRedisHelper
     }
 
     /**
-     * @param array $options
-     * @return array
-     */
+    * Merges cache data with existing data.
+    * 
+    * @param array $options
+    * @return array
+    */
     public static function mergeCacheData($cacheData)
     {
         return CacheerHelper::mergeCacheData($cacheData);
     }
 
   /**
-    * @param mixed $currentCacheData
-    * @param mixed $cacheData
-    * @return array
-    */
+  * Generates an array identifier for cache data.
+  * 
+  * @param mixed $currentCacheData
+  * @param mixed $cacheData
+  * @return array
+  */
   public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData)
   {
       return CacheerHelper::arrayIdentifier($currentCacheData, $cacheData);

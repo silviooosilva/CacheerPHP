@@ -9,6 +9,8 @@ class ConnectionException extends BaseException
     private static string $before = "<Connection Exception>";
 
     /**
+     * Creates a new instance of ConnectionException.
+     * 
      * @param string $message
      * @param int $code
      * @param Exception|null $previous
@@ -21,6 +23,8 @@ class ConnectionException extends BaseException
     }
 
     /**
+     * Gets the static text that will be prepended to the exception message.
+     *  
      * @return string
      */
     public static function getBefore(): string
@@ -29,6 +33,8 @@ class ConnectionException extends BaseException
     }
 
     /**
+     * Sets the static text that will be prepended to the exception message.
+     * 
      * @param string $text
      */
     public static function setBefore(string $text): void
@@ -37,6 +43,8 @@ class ConnectionException extends BaseException
     }
 
     /*
+    * Converts the exception to an array representation.
+    *
     * @return array
     */
     public function toArray()
@@ -45,17 +53,21 @@ class ConnectionException extends BaseException
     }
     
     /**
-     * @return string
-     */
+    * Converts the exception to a JSON serializable format.
+    * 
+    * @return string
+    */
     public function jsonSerialize(): array
     {
         return parent::jsonSerialize();
     }
 
     /**
-     * @param int $options
-     * @return string
-     */
+    * Converts the exception to a JSON string.
+    *
+    * @param int $options
+    * @return string
+    */
     public function toJson(int $options = 0)
     {
       return parent::toJson($options);

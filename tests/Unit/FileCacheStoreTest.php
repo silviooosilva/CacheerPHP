@@ -491,4 +491,32 @@ class FileCacheStoreTest extends TestCase
         $this->assertEquals($cacheItems, $retrievedItems);
     }
 
+    public function test_get_all_cache_items()
+    {
+        $cacheItems = [
+            'key1' => 'value1',
+            'key2' => 'value2',
+            'key3' => 'value3'
+        ];
+        foreach ($cacheItems as $key => $value) {
+            $this->cache->putCache($key, $value);
+        }
+        $this->assertTrue($this->cache->isSuccess());
+        $retrievedItems = $this->cache->getAll();
+        $this->assertTrue($this->cache->isSuccess());
+
+        $remapped = [];
+        foreach ($cacheItems as $key => $value) {
+            foreach ($retrievedItems as $retrievedKey => $retrievedValue) {
+                if ($retrievedValue === $value && !in_array($retrievedKey, $remapped)) {
+                    $remapped[$key] = $retrievedValue;
+                    break;
+                }
+            }
+        }
+
+        $this->assertCount(3, $remapped);
+        $this->assertEquals($cacheItems, $remapped);
+    }
+
     }

@@ -24,7 +24,7 @@
   "homepage": "https://github.com/silviooosilva",
   "type": "library",
   "license": "MIT",
-  "version": "v3.7.0",
+  "version": "v4.0.0",
   "autoload": {
     "files": [
       "src/Boot/Configs.php"
@@ -32,14 +32,6 @@
     "psr-4": {
       "Silviooosilva\\CacheerPhp\\": "src/"
     }
-  },
-  "scripts": {
-    "post-install-cmd": [
-      "@php -r \"require 'src/Helpers/EnvHelper.php'; \\Silviooosilva\\CacheerPhp\\Helpers\\EnvHelper::copyEnv();\""
-  ],
-  "post-update-cmd": [
-      "@php -r \"require 'src/Helpers/EnvHelper.php'; \\Silviooosilva\\CacheerPhp\\Helpers\\EnvHelper::copyEnv();\""
-  ]
   },
   "authors": [
     {

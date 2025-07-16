@@ -359,5 +359,18 @@ class DatabaseCacheStoreTest extends TestCase
         $this->assertEquals($cacheItems, $retrievedItems);
     }
 
+    public function test_get_all_cache_items()
+    {
+        $namespace = 'test_namespace';
+        $cacheKey = 'test_key';
+        $cacheData = ['foo' => 'bar'];
 
+        $this->cache->putCache($cacheKey, $cacheData, $namespace);
+        $this->assertTrue($this->cache->isSuccess());
+        $retrievedItems = $this->cache->getAll($namespace);
+        $this->assertTrue($this->cache->isSuccess());
+        $this->assertCount(1, $retrievedItems);
+        $this->assertArrayHasKey($cacheKey, $retrievedItems);
+        $this->assertEquals($cacheData, $retrievedItems[$cacheKey]);
+    }
 }

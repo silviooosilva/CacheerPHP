@@ -7,7 +7,10 @@ use RuntimeException;
 
 class CacheerHelper
 {
+    
     /**
+     * Validates a cache item to ensure it contains the required keys.
+     * 
      * @param array $item
      * @param callable|null $exceptionFactory
      * @return void
@@ -23,6 +26,8 @@ class CacheerHelper
     }
 
     /**
+     * Merges cache data with existing data.
+     * 
      * @param mixed $cacheData
      * @return array
      */
@@ -39,6 +44,8 @@ class CacheerHelper
     }
 
     /**
+     * Generates an array identifier for cache data.
+     * 
      * @param mixed $currentCacheData
      * @param mixed $cacheData
      * @return array
@@ -52,8 +59,8 @@ class CacheerHelper
     }
 
     /**
-     * Prepara os dados para armazenamento, aplicando compressão e/ou encriptação.
-     *
+     * Prepares data for storage, applying compression and/or encryption.
+     * 
      * @param mixed $data
      * @param bool $compression
      * @param string|null $encryptionKey
@@ -84,8 +91,8 @@ class CacheerHelper
     }
 
     /**
-     * Recupera os dados do armazenamento, aplicando decriptação e/ou descompressão.
-     *
+     * Recovers data from storage, applying decompression and/or decryption.
+     * 
      * @param mixed $data
      * @param bool $compression
      * @param string|null $encryptionKey

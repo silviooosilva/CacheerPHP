@@ -26,6 +26,8 @@ class FileOptionBuilder
   private array $options = [];
 
   /**
+  * Directory where cache files will be stored.
+  *
   * @param string $cacheDir
   * @return $this
   */
@@ -36,6 +38,7 @@ class FileOptionBuilder
   }
 
   /**
+  * Sets the expiration time for cache items.
   * @param ?string $expirationTime
   * @return $this|TimeBuilder
   */
@@ -53,6 +56,9 @@ class FileOptionBuilder
   }
 
   /**
+  * Sets the flush time for cache items.
+  * This is the time after which the cache will be flushed.
+  *
   * @param ?string $flushAfter
   * @return $this|TimeBuilder
   */
@@ -70,6 +76,7 @@ class FileOptionBuilder
   }
 
   /**
+  * Builds the options array for file cache configuration.
   * @return array
   */
   public function build()
@@ -78,6 +85,9 @@ class FileOptionBuilder
   }
 
   /**
+  * Validates the properties and returns an array of options.
+  * It checks if each property is valid and not null, then adds it to the options
+  *
   * @return array
   */
   private function validated()
@@ -91,6 +101,9 @@ class FileOptionBuilder
   }
 
   /**
+  * Checks if the provided data is valid and not null.
+  * This is used to ensure that only valid options are included in the final configuration.
+  *
   * @param mixed $data
   * @return bool
   */
@@ -100,6 +113,9 @@ class FileOptionBuilder
   }
 
   /**
+  * Returns the properties of the FileOptionBuilder instance.
+  * This method is used to gather the current state of the instance's properties.
+  *
   * @return array
   */
   private function properties()

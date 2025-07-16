@@ -37,8 +37,11 @@ class RedisCacheStore implements CacheerInterface
      */
     private bool $success = false;
 
+
     /**
-     * @return void
+     * RedisCacheStore constructor.
+     *
+     * @param string $logPath
      */
     public function __construct(string $logPath)
     {
@@ -47,6 +50,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Appends data to an existing cache item.
+     * 
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace
@@ -71,6 +76,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Builds a unique key for the Redis cache.
+     * 
      * @param string $key
      * @param string $namespace
      * @return string
@@ -81,6 +88,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Clears a specific cache item.
+     * 
      * @param string $cacheKey
      * @param string $namespace
      * @return void
@@ -99,6 +108,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Flushes all cache items in Redis.
+     * 
      * @return void
      */
     public function flushCache()
@@ -113,6 +124,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Retrieves a single cache item by its key.
+     * 
      * @param string $cacheKey
      * @param string $namespace
      * @param string|int $ttl
@@ -134,6 +147,35 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Retrieves all cache items in a specific namespace.
+     * 
+     * @param string $namespace
+     * @return array
+     */
+    public function getAll(string $namespace = '')
+    {
+        $keys = $this->redis->keys($this->buildKey('*', $namespace));
+        $results = [];
+
+        foreach ($keys as $key) {
+            $cacheData = $this->getCache($key, $namespace);
+            if ($cacheData !== null) {
+                $results[$key] = $cacheData;
+            }
+        }
+
+        if (empty($results)) {
+            $this->setMessage("No cache data found in the namespace", false);
+        } else {
+            $this->setMessage("Cache data retrieved successfully", true);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Retrieves multiple cache items by their keys.
+     * 
      * @param array $cacheKeys
      * @param string $namespace
      * @param string|int $ttl
@@ -160,6 +202,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Gets the message from the last operation.
+     * 
      * @return string
      */
     public function getMessage()
@@ -168,6 +212,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Gets the serialized dump of a cache item.
+     * 
      * @param string $fullKey
      * @return string|null
      */
@@ -177,6 +223,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Checks if a cache item exists.
+     * 
      * @param string $cacheKey
      * @param string $namespace
      * @return void
@@ -195,6 +243,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Checks if the last operation was successful.
+     * 
      * @return boolean
      */
     public function isSuccess()
@@ -203,6 +253,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Processes a batch of cache items and stores them in Redis.
+     * 
      * @param array  $batchItems
      * @param string $namespace
      * @return void
@@ -219,7 +271,7 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
-     * Armazena um item no cache Redis, com suporte a namespace e TTL opcional.
+     * Stores a cache item in Redis with optional namespace and TTL.
      *
      * @param string $cacheKey
      * @param mixed  $cacheData
@@ -246,6 +298,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Stores multiple cache items in Redis in batches.
+     * 
      * @param array  $items
      * @param string $namespace
      * @param int    $batchSize
@@ -264,6 +318,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Renews the cache for a specific key with a new TTL.
+     * 
      * @param string $cacheKey
      * @param string|int $ttl
      * @param string $namespace
@@ -292,6 +348,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Restores a key in Redis with a given TTL and serialized data.
+     * 
      * @param string $fullKey
      * @param string|int $ttl
      * @param mixed $dump
@@ -308,6 +366,8 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Sets a message and its success status.
+     * 
      * @param string  $message
      * @param boolean $success
      * @return void

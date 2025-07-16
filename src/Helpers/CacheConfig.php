@@ -23,6 +23,11 @@ class CacheConfig
      */
     protected $cacheer;
 
+    /**
+     * CacheConfig constructor.
+     *
+     * @param Cacheer $cacheer
+     */
     public function __construct(Cacheer $cacheer)
     {
         $this->cacheer = $cacheer;
@@ -30,13 +35,16 @@ class CacheConfig
     }
 
     /**
+     * Sets the default timezone for the application.
+     * 
      * @param string $timezone
      * @return $this
      */
     public function setTimeZone($timezone)
     {
         /**
-         * Certifique-se de que o timezone fornecido é válido * 
+         * Make sure the provided timezone is valid
+         * 
          * https://www.php.net/manual/en/timezones.php 
          * */
 
@@ -47,6 +55,8 @@ class CacheConfig
     }
 
     /**
+     * Sets the cache driver for the application.
+     * 
      * @return CacheDriver
      */
     public function setDriver()
@@ -55,6 +65,8 @@ class CacheConfig
     }
 
     /**
+     * Sets the logger path for the cache driver.
+     * 
      * @param string $path
      * @return mixed
      */
@@ -76,6 +88,8 @@ class CacheConfig
     }
 
     /**
+     * Sets the database connection type for the application.
+     * 
      * @param string $driver
      * @return void
      */

@@ -21,6 +21,8 @@ class RedisCacheManager
   private static $namespace;
 
   /**
+   * Connects to the Redis server using the configuration defined in REDIS_CONNECTION_CONFIG.
+   * 
   * @return Client
   */
   public static function connect()
@@ -39,6 +41,8 @@ class RedisCacheManager
   }
 
   /**
+  * Authenticates the Redis connection if a password is provided in the configuration.
+  *
   * @return void
   */
   private static function auth()

@@ -10,8 +10,10 @@ use JsonSerializable;
 class BaseException extends Exception implements JsonSerializable
 {
     /** 
+     * Details about the exception.
+     * 
      * @var array 
-     * */
+     **/
     protected array $details;
 
     public function __construct(string $message = "", int $code = 0, ?Exception $previous = null, array $details = [])
@@ -21,14 +23,18 @@ class BaseException extends Exception implements JsonSerializable
     }
 
     /** 
+     * Get the details of the exception.
+     * 
      * @return array 
-     * */
+     **/
     public function getDetails()
     {
         return $this->details;
     }
 
     /** 
+     * Set the details of the exception.
+     * 
      * @param array $details 
      * */
     public function setDetails(array $details)
@@ -37,6 +43,8 @@ class BaseException extends Exception implements JsonSerializable
     }
 
     /** 
+     * Convert the exception to an array representation.
+     * 
      * @return array 
      * */
     public function toArray()
@@ -53,6 +61,8 @@ class BaseException extends Exception implements JsonSerializable
     }
 
     /** 
+     * Convert the exception to a JSON serializable format.
+     * 
      * @return array 
      * */
     public function jsonSerialize(): array
@@ -61,6 +71,8 @@ class BaseException extends Exception implements JsonSerializable
     }
 
     /** 
+     * Convert the exception to a JSON string.
+     * 
      * @return string 
      * */
     public function toJson(int $options = 0)
@@ -69,6 +81,8 @@ class BaseException extends Exception implements JsonSerializable
     }
 
     /** 
+     * Convert the exception to a string representation.
+     * 
      * @return string 
      * */
     public function __toString()

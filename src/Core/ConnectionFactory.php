@@ -15,8 +15,10 @@ class ConnectionFactory
 {
 
     /**
-      * @param array|null $database
-      * @return PDO|null
+    * Creates a new PDO instance based on the specified database configuration.
+    * 
+    * @param array|null $database
+    * @return PDO|null
     */
     public static function createConnection(?array $database = null)
     {

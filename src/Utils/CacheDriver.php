@@ -20,21 +20,28 @@ class CacheDriver
 {
 
     /**
-     * @var Cacheer
-     */
+    * @var Cacheer
+    */
     protected $cacheer;
 
     /** @param string $logPath */
     public string $logPath = 'cacheer.log';
 
+    /**
+     * CacheDriver constructor.
+     *
+     * @param Cacheer $cacheer
+     */
     public function __construct(Cacheer $cacheer)
     {
         $this->cacheer = $cacheer;
     }
 
     /**
-     * @return Cacheer
-     */
+    * Uses the database driver for caching.
+    * 
+    * @return Cacheer
+    */
     public function useDatabaseDriver()
     {
         $this->cacheer->cacheStore = new DatabaseCacheStore($this->logPath);
@@ -42,9 +49,10 @@ class CacheDriver
     }
 
     /**
-     * @throws \Exception
-     * @return Cacheer
-     */
+    * Uses the file driver for caching.
+    *
+    * @return Cacheer
+    */
     public function useFileDriver()
     {
         $this->cacheer->options['loggerPath'] = $this->logPath;
@@ -53,8 +61,10 @@ class CacheDriver
     }
 
     /**
-     * @return Cacheer
-     */
+    * Uses the Redis driver for caching.
+    * 
+    * @return Cacheer
+    */
     public function useRedisDriver()
     {
         $this->cacheer->cacheStore = new RedisCacheStore($this->logPath);
@@ -62,6 +72,8 @@ class CacheDriver
     }
 
     /**
+    * Uses the array driver for caching.
+    * 
     * @return Cacheer
     */
     public function useArrayDriver()
@@ -71,7 +83,9 @@ class CacheDriver
     }
 
     /**
-     * @return Cacheer
+    * Uses the default driver for caching.
+    * 
+    * @return Cacheer
     */
     public function useDefaultDriver()
     {
@@ -89,6 +103,8 @@ class CacheDriver
     }
 
     /**
+    * Checks if the directory exists or creates it.
+    *
     * @param mixed $dirName
     * @return bool
     */

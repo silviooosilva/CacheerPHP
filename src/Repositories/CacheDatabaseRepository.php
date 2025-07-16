@@ -16,6 +16,12 @@ class CacheDatabaseRepository
     /** @var PDO */
     private $connection = null;
 
+   
+    /**
+     * CacheDatabaseRepository constructor.
+     * Initializes the database connection using the Connect class.
+     * 
+     */
     public function __construct()
     {
         $this->connection = Connect::getInstance();
@@ -23,6 +29,8 @@ class CacheDatabaseRepository
 
 
     /**
+     * Stores cache data in the database.
+     * 
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace
@@ -52,6 +60,8 @@ class CacheDatabaseRepository
     }
 
     /**
+    * Retrieves cache data from the database.
+    * 
     * @param string $cacheKey
     * @param string $namespace
     * @return mixed
@@ -75,8 +85,35 @@ class CacheDatabaseRepository
     }
 
     /**
-     * @return string
-     */
+    * Retrieves multiple cache items by their keys. 
+    * @param array $cacheKeys
+    * @param string $namespace
+    * @return array
+    */
+    public function getAll(string $namespace = '')
+    {
+        $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $nowFunction = $this->getCurrentDateTime($driver);
+
+        $stmt = $this->connection->prepare(
+            "SELECT cacheKey, cacheData FROM cacheer_table 
+            WHERE cacheNamespace = :namespace AND expirationTime > $nowFunction"
+        );
+        $stmt->bindValue(':namespace', $namespace);
+        $stmt->execute();
+
+        $results = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $results[$row['cacheKey']] = $this->serialize($row['cacheData'], false);
+        }
+        return $results;
+    }
+
+    /**
+    * Get Update query based on the database driver.
+    *
+    * @return string
+    */
     private function getUpdateQueryWithDriver()
     {
         $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
@@ -87,8 +124,10 @@ class CacheDatabaseRepository
     }
 
     /**
-     * @return string
-     */
+    * Get Delete query based on the database driver.
+    * 
+    * @return string
+    */
     private function getDeleteQueryWithDriver()
     {
         $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
@@ -99,11 +138,13 @@ class CacheDatabaseRepository
     }
 
     /**
-     * @param string $cacheKey
-     * @param mixed  $cacheData
-     * @param string $namespace
-     * @return bool
-     */
+    * Updates an existing cache item in the database.
+    * 
+    * @param string $cacheKey
+    * @param mixed  $cacheData
+    * @param string $namespace
+    * @return bool
+    */
     public function update(string $cacheKey, mixed $cacheData, string $namespace = '')
     {
         $query = $this->getUpdateQueryWithDriver();
@@ -117,10 +158,12 @@ class CacheDatabaseRepository
     }
 
     /**
-     * @param string $cacheKey
-     * @param string $namespace
-     * @return bool
-     */
+    * Clears a specific cache item from the database.
+    * 
+    * @param string $cacheKey
+    * @param string $namespace
+    * @return bool
+    */
     public function clear(string $cacheKey, string $namespace = '')
     {
         $query = $this->getDeleteQueryWithDriver();
@@ -133,8 +176,10 @@ class CacheDatabaseRepository
     }
 
     /**
-     * @return string
-     */
+    * Gets the query to renew the expiration time of a cache item based on the database driver.
+    *  
+    * @return string
+    */
     private function getRenewExpirationQueryWithDriver(): string
     {
         $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
@@ -149,11 +194,13 @@ class CacheDatabaseRepository
     }
 
     /**
-     * @param string $cacheKey
-     * @param string $namespace
-     * @param string $currentTime
-     * @return bool
-     */
+    * Checks if a cache item is valid based on its key, namespace, and current time.
+    * 
+    * @param string $cacheKey
+    * @param string $namespace
+    * @param string $currentTime
+    * @return bool
+    */
     private function hasValidCache(string $cacheKey, string $namespace, string $currentTime): bool
     {
         $stmt = $this->connection->prepare(
@@ -169,6 +216,8 @@ class CacheDatabaseRepository
     }
 
     /**
+    * Renews the expiration time of a cache item.
+    * 
     * @param string $cacheKey
     * @param string|int $ttl
     * @param string $namespace
@@ -193,23 +242,29 @@ class CacheDatabaseRepository
     }
 
     /**
-     * @return bool
-     */
+    * Flushes all cache items from the database.
+    * 
+    * @return bool
+    */
     public function flush()
     {
         return $this->connection->exec("DELETE FROM cacheer_table") !== false;
     }
 
     /**
-     * @param mixed $data
-     * @return string
-     */
+    * Serializes or unserializes data based on the provided flag.
+    * 
+    * @param mixed $data
+    * @return string
+    */
     private function serialize(mixed $data, bool $serialize = true)
     {
         return $serialize ? serialize($data) : unserialize($data);
     }
 
     /**
+    * Gets the current date and time based on the database driver.
+    * 
     * @param string $driver
     * @return string
     */
