@@ -33,12 +33,19 @@ class ArrayCacheStore implements CacheerInterface
    */
   private $logger = null;
 
+  /**
+   * ArrayCacheStore constructor.
+   * 
+   * @param string $logPath
+   */
   public function __construct(string $logPath)
   {
     $this->logger = new CacheLogger($logPath);
   }
 
   /**
+   * Appends data to an existing cache item.
+   * 
    * @param string $cacheKey
    * @param mixed  $cacheData
    * @param string $namespace
@@ -60,6 +67,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Builds a unique key for the array store.
+   * 
    * @param string $cacheKey
    * @param string $namespace
    * @return string
@@ -70,6 +79,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Clears a specific cache item.
+   * 
    * @param string $cacheKey
    * @param string $namespace
    * @return void
@@ -83,6 +94,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Decrements a cache item by a specified amount.
+   * 
    * @param string $cacheKey
    * @param int $amount
    * @param string $namespace
@@ -94,6 +107,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Flushes all cache items.
+   * 
    * @return void
    */
   public function flushCache()
@@ -105,6 +120,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Stores a cache item permanently.
+   * 
    * @param string $cacheKey
    * @param mixed $cacheData
    * @param string $namespace
@@ -118,6 +135,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Retrieves a single cache item.
+   * 
    * @param string $cacheKey
    * @param string $namespace
    * @param int|string $ttl
@@ -128,20 +147,13 @@ class ArrayCacheStore implements CacheerInterface
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
 
     if (!$this->has($cacheKey, $namespace)) {
-      $this->setMessage("cacheData not found, does not exists or expired", false);
-      $this->logger->debug("{$this->getMessage()} from array driver.");
+      $this->handleCacheNotFound();
       return false;
     }
 
     $cacheData = $this->arrayStore[$arrayStoreKey];
-    $expirationTime = $cacheData['expirationTime'] ?? 0;
-    $now = time();
-
-    if($expirationTime !== 0 && $now >= $expirationTime) {
-      list($np, $key) = explode(':', $arrayStoreKey);
-      $this->clearCache($key, $np);
-      $this->setMessage("cacheKey: {$key} has expired.", false);
-      $this->logger->debug("{$this->getMessage()} from array driver.");
+    if ($this->isExpired($cacheData)) {
+      $this->handleCacheExpired($arrayStoreKey);
       return false;
     }
 
@@ -151,6 +163,69 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Verify if the cache is expired.
+   * 
+   * @param array $cacheData
+   * @return bool
+   */
+  private function isExpired(array $cacheData): bool
+  {
+    $expirationTime = $cacheData['expirationTime'] ?? 0;
+    $now = time();
+    return $expirationTime !== 0 && $now >= $expirationTime;
+  }
+
+  /**
+   * Handles the case when cache data is not found.
+   * 
+   * @return void
+   */
+  private function handleCacheNotFound()
+  {
+    $this->setMessage("cacheData not found, does not exists or expired", false);
+    $this->logger->debug("{$this->getMessage()} from array driver.");
+  }
+
+  /**
+   * Handles the case when cache data has expired.
+   * 
+   * @param string $arrayStoreKey
+   * @return void
+   */
+  private function handleCacheExpired(string $arrayStoreKey)
+  {
+    $parts = explode(':', $arrayStoreKey, 2);
+    if (count($parts) === 2) {
+      list($np, $key) = $parts;
+    } else {
+      $np = '';
+      $key = $arrayStoreKey;
+    }
+    $this->clearCache($key, $np);
+    $this->setMessage("cacheKey: {$key} has expired.", false);
+    $this->logger->debug("{$this->getMessage()} from array driver.");
+  }
+
+  /**
+   * Gets all items in a specific namespace.
+   * 
+   * @param string $namespace
+   * @return array
+   */
+  public function getAll(string $namespace = '')
+  {
+    $results = [];
+    foreach ($this->arrayStore as $key => $data) {
+      if (strpos($key, $namespace . ':') === 0 || empty($namespace)) {
+        $results[$key] = $this->serialize($data['cacheData'], false);
+      }
+    }
+    return $results;
+  }
+
+  /**
+   * Retrieves multiple cache items by their keys.
+   * 
    * @param array $cacheKeys
    * @param string $namespace
    * @param string|int $ttl
@@ -166,6 +241,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Checks if a cache item exists.
+   * 
    * @param string $cacheKey
    * @param string $namespace
    * @return bool
@@ -177,6 +254,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Increments a cache item by a specified amount.
+   * 
    * @param string $cacheKey
    * @param int $amount
    * @param string $namespace
@@ -196,6 +275,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Checks if the operation was successful.
+   * 
    * @return boolean
    */
   public function isSuccess()
@@ -204,6 +285,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Gets the last message.
+   * 
    * @return string
    */
   public function getMessage()
@@ -212,6 +295,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Stores an item in the cache with a specific TTL.
+   * 
    * @param string $cacheKey
    * @param mixed $cacheData
    * @param string $namespace
@@ -233,6 +318,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Stores multiple items in the cache in batches.
+   * 
    * @param array $items
    * @param string $namespace
    * @param int $batchSize
@@ -252,6 +339,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Renews the expiration time of a cache item.
+   * 
    * @param string $cacheKey
    * @param string|int $ttl
    * @param string $namespace
@@ -270,6 +359,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Sets a message and its success status.
+   * 
    * @param string  $message
    * @param boolean $success
    * @return void
@@ -281,6 +372,8 @@ class ArrayCacheStore implements CacheerInterface
   }
 
   /**
+   * Serializes or unserializes data based on the flag.
+   * 
    * @param mixed $data
    * @param bool $serialize
    * @return mixed

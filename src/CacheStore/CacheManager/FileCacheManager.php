@@ -96,4 +96,38 @@ class FileCacheManager
         }
         return unserialize($data);
     }
+
+    /**
+     * @param string $dir
+     * @return array
+     * @throws CacheFileException
+     */
+    public function getFilesInDirectory(string $dir)
+    {
+        if (!is_dir($dir)) {
+            throw CacheFileException::create("Directory does not exist: {$dir}");
+        }
+
+        $files = [];
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS)
+        );
+
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $files[] = $file->getPathname();
+            }
+        }
+
+        return $files;
+    }
+
+    /**
+     * @param string $dir
+     * @return bool
+     */
+    public function directoryExists(string $dir)
+    {
+        return is_dir($dir);
+    }
 }

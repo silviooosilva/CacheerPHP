@@ -12,20 +12,24 @@ class SqliteHelper
 {
 
     /**
-     * @param string $database
-     * @param ?string $path
-     * @return string
-     */
+    * Gets the path to the SQLite database file.
+    *  
+    * @param string $database
+    * @param ?string $path
+    * @return string
+    */
     public static function database(string $database = 'database.sqlite', ?string $path = null)
     {
         return self::getDynamicSqliteDbPath($database, $path);
     }
 
     /**
-     * @param  string $database
-     * @param ?string $path
-     * @return string
-     */
+    * Gets the path to the SQLite database file dynamically.
+    *
+    * @param  string $database
+    * @param ?string $path
+    * @return string
+    */
     private static function getDynamicSqliteDbPath(string $database, ?string $path = null)
     {
         $rootPath = EnvHelper::getRootPath();
@@ -43,6 +47,8 @@ class SqliteHelper
     }
 
     /**
+    * Creates the database directory if it does not exist.
+    * 
     * @param string $databaseDir
     * @return void
     */
@@ -54,6 +60,8 @@ class SqliteHelper
     }
 
     /**
+    * Creates the SQLite database file if it does not exist.
+    *
     * @param string $dbFile
     * @return void
     */
@@ -65,6 +73,9 @@ class SqliteHelper
     }
 
     /**
+    * Checks if the database name has the correct extension.
+    * If not, appends '.sqlite' to the name.
+    *
     * @param string $database
     * @return string
     */

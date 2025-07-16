@@ -34,6 +34,11 @@ class DatabaseCacheStore implements CacheerInterface
      */
     private $cacheRepository;
 
+    /**
+     * DatabaseCacheStore constructor.
+     *
+     * @param string $logPath
+     */
     public function __construct(string $logPath)
     {
         $this->logger = new CacheLogger($logPath);
@@ -41,6 +46,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Appends data to an existing cache item.
+     * 
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace
@@ -61,6 +68,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Clears a specific cache item.
+     * 
      * @param string $cacheKey
      * @param string $namespace
      * @return void
@@ -78,6 +87,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Flushes all cache items.
+     * 
      * @return void
      */
     public function flushCache()
@@ -93,6 +104,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Gets a single cache item.
+     * 
      * @param string $cacheKey
      * @param string $namespace
      * @param string|int $ttl
@@ -112,6 +125,27 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Gets all items in a specific namespace.
+     * 
+     * @param string $namespace
+     * @return array
+     */
+    public function getAll(string $namespace = '')
+    {
+        $cacheData = $this->cacheRepository->getAll($namespace);
+        if ($cacheData) {
+            $this->setMessage("Cache retrieved successfully", true);
+            $this->logger->debug("{$this->getMessage()} from database driver.");
+            return $cacheData;
+        }
+        $this->setMessage("No cache data found for the provided namespace", false);
+        $this->logger->info("{$this->getMessage()} from database driver.");
+        return [];
+    }
+
+    /**
+     * Retrieves multiple cache items by their keys.
+     * 
      * @param array  $cacheKeys
      * @param string $namespace
      * @param string|int $ttl
@@ -137,6 +171,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Checks if a cache item exists.
+     * 
      * @return string
      */
     public function getMessage()
@@ -145,6 +181,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Checks if a cache item exists.
+     * 
      * @param string $cacheKey
      * @param string $namespace
      * @return void
@@ -159,6 +197,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Checks if the last operation was successful.
+     * 
      * @return boolean
      */
     public function isSuccess()
@@ -167,6 +207,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Store multiple items in the cache.
+     * 
      * @param array   $items
      * @param string  $namespace
      * @param integer $batchSize
@@ -184,6 +226,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Stores an item in the cache with a specific TTL.
+     * 
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace
@@ -201,6 +245,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Renews the cache for a specific key with a new TTL.
+     * 
      * @param string $cacheKey
      * @param string|int $ttl
      * @param string $namespace
@@ -217,6 +263,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Processes a batch of cache items.
+     * 
      * @param array  $batchItems
      * @param string $namespace
      * @return void
@@ -233,6 +281,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Renews the expiration time of a cache item.
+     * 
      * @param string $cacheKey
      * @param string|int $ttl
      * @param string $namespace
@@ -254,6 +304,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Sets a message and its success status.
+     * 
      * @param string  $message
      * @param boolean $success
      * @return void
@@ -265,6 +317,7 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Retrieves a cache item by its key.
      * @param string $cacheKey
      * @param string $namespace
      * @return mixed
@@ -275,6 +328,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Stores a cache item.
+     * 
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace
@@ -293,6 +348,8 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Updates an existing cache item.
+     * 
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace

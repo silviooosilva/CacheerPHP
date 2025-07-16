@@ -14,6 +14,8 @@ class CacheFileHelper
 {
 
     /**
+    * Converts a string expiration format to seconds.
+    *
     * @param string $expiration
     * @return int
     */
@@ -37,15 +39,19 @@ class CacheFileHelper
     }
 
     /**
-     * @param array $options
-     * @return array
-     */
+    * Merges cache data with existing data.
+    * 
+    * @param array $options
+    * @return array
+    */
     public static function mergeCacheData($cacheData)
     {
         return CacheerHelper::mergeCacheData($cacheData);
     }
 
     /**
+     * Validates a cache item.
+     * 
      * @param array $item
      * @return void
      */
@@ -58,6 +64,8 @@ class CacheFileHelper
     }
 
     /**
+    * Calculates the TTL (Time To Live) for cache items.
+    *
     * @param string|int $ttl
     * @param int $defaultTTL
     * @return mixed
@@ -72,6 +80,8 @@ class CacheFileHelper
     }
 
   /**
+  * Generates an array identifier for cache data.
+  * 
   * @param mixed $currentCacheData
   * @param mixed $cacheData
   * @return array

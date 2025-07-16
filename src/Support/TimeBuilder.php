@@ -25,6 +25,13 @@ class TimeBuilder
   /** @param FileOptionBuilder */
   private $builder = null;
 
+  /**
+  * TimeBuilder constructor.
+  * @param Closure $callback
+  * @param FileOptionBuilder $builder
+  *
+  * @return void
+  */
   public function __construct(Closure $callback, $builder)
   {
     $this->callback = $callback;
@@ -32,61 +39,75 @@ class TimeBuilder
   }
 
   /**
-  * @param int $value
+  * Sets the time in seconds.
+  * 
+  * @param int $seconds
   * @return FileOptionBuilder|mixed
   */
-  public function second(int $value) 
+  public function second(int $seconds) 
   {
-    return $this->setTime($value, "seconds");
+    return $this->setTime($seconds, "seconds");
   }
 
   /**
-  * @param int $value
+  * Sets the time in minutes.
+  *
+  * @param int $minutes
   * @return FileOptionBuilder|mixed
   */
-  public function minute(int $value) 
+  public function minute(int $minutes) 
   {
-    return $this->setTime($value, "minutes");
+    return $this->setTime($minutes, "minutes");
   }
 
   /**
-  * @param int $value
+  * Sets the time in hours.
+  * 
+  * @param int $hours
   * @return FileOptionBuilder|mixed
   */
-  public function hour(int $value) 
+  public function hour(int $hours) 
   {
-    return $this->setTime($value, "hours");
+    return $this->setTime($hours, "hours");
   }
 
   /**
-  * @param int $value
+  * Sets the time in days.
+  *
+  * @param int $days
   * @return FileOptionBuilder|mixed
   */
-  public function day(int $value) 
+  public function day(int $days) 
   {
-    return $this->setTime($value, "days");
+    return $this->setTime($days, "days");
   }
 
   /**
-  * @param int $value
+  * Sets the time in weeks.
+  *
+  * @param int $weeks
   * @return FileOptionBuilder|mixed
   */
-  public function week(int $value) 
+  public function week(int $weeks) 
   {
-    return $this->setTime($value, "weeks");
+    return $this->setTime($weeks, "weeks");
   }
 
   /**
-  * @param int $value
+  * Sets the time in months.
+  *
+  * @param int $months
   * @return FileOptionBuilder|mixed
   */
-  public function month(int $value) 
+  public function month(int $months) 
   {
-    return $this->setTime($value, "months");
+    return $this->setTime($months, "months");
   }
   
 
-  /**
+  /** 
+  * This method sets the time value and unit, and invokes the callback with the formatted string. 
+  *
   * @param int $value
   * @param string $unit
   * @return FileOptionBuilder

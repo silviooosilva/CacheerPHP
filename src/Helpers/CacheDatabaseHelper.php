@@ -13,6 +13,8 @@ use Silviooosilva\CacheerPhp\Exceptions\CacheDatabaseException;
 class CacheDatabaseHelper
 {
     /**
+     * Validates a cache item.
+     * 
      * @param array $item
      * @return void
      */
@@ -25,6 +27,8 @@ class CacheDatabaseHelper
     }
 
     /**
+     * Merges cache data with existing data.
+     * 
      * @param array $options
      * @return array
      */
@@ -34,6 +38,8 @@ class CacheDatabaseHelper
     }
 
     /**
+     * Generates an array identifier for cache data.
+     * 
      * @param mixed $currentCacheData
      * @param mixed $cacheData
      * @return array

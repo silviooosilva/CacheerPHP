@@ -13,11 +13,25 @@ use Silviooosilva\CacheerPhp\Exceptions\ConnectionException;
  */
 class Connect
 {
+    /**
+    * The default connection type.
+    * Currently, it supports 'mysql', 'sqlite', and 'pgsql'.
+    *
+    * @var string
+    */
     public static string $connection = 'sqlite';
+
+    /**
+    * Holds the last error encountered during connection attempts.
+    *
+    * @var PDOException|null
+    */
     private static ?PDOException $error = null;
 
 
     /**
+    * Creates a new PDO instance based on the specified database configuration.
+    * 
     * @param array|null $database
     * @return PDO|null
     */
@@ -31,6 +45,8 @@ class Connect
     }
 
     /**
+    * Sets the connection type for the database.
+    * 
     * @param string $connection
     * @return void
     */
@@ -44,6 +60,8 @@ class Connect
     }
 
     /**
+    * Gets the current connection type.
+    *
     * @return string
     */
     public static function getConnection()
@@ -52,13 +70,27 @@ class Connect
     }
 
     /**
+    * Returns the last error encountered during connection attempts.\
+    * 
     * @return PDOException|null
     */
     public static function getError()
     {
         return self::$error;
     }
-
+    
+    /**
+     * Prevents instantiation of the Connect class.
+     * This class is designed to be used statically, so it cannot be instantiated.
+     * 
+     * @return void
+    */    
     private function __construct() {}
+
+    /**
+    * Prevents cloning of the Connect instance.
+    *
+    * @return void
+    */
     private function __clone() {}
 }

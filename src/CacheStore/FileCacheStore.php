@@ -55,6 +55,11 @@ class FileCacheStore implements CacheerInterface
     */
     private FileCacheManager $fileManager;
 
+
+    /**
+     * FileCacheStore constructor.
+     * @param array $options
+     */
     public function __construct(array $options = [])
     {
         $this->validateOptions($options);
@@ -67,6 +72,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Appends data to an existing cache item.
+     * 
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace
@@ -91,6 +98,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Builds the cache file path based on the cache key and namespace.
+     * 
      * @param string $cacheKey
      * @param string $namespace
      * @return string
@@ -108,6 +117,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Clears a specific cache item.
+     * 
      * @param string $cacheKey
      * @param string $namespace
      * @return void
@@ -125,6 +136,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Flushes all cache items.
+     * 
      * @return void
      */
     public function flushCache()
@@ -134,6 +147,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Retrieves the expiration time from options or uses the default TTL.
+     * 
      * @param array $options
      * @return integer
      */
@@ -145,6 +160,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Retrieves a message indicating the status of the last operation.
+     * 
      * @return string
      */
     public function getMessage()
@@ -153,6 +170,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Retrieves a single cache item.
+     * 
      * @param string $cacheKey
      * @param string $namespace
      * @param string|int $ttl
@@ -176,6 +195,68 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * @param string $namespace
+     * @return array
+     */
+    public function getAll(string $namespace = '')
+    {
+        $cacheDir = $this->getNamespaceCacheDir($namespace);
+
+        if (!$this->fileManager->directoryExists($cacheDir)) {
+            $this->setMessage("Cache directory does not exist", false);
+            $this->logger->info("{$this->getMessage()} from file driver.");
+            return [];
+        }
+
+        $results = $this->getAllCacheFiles($cacheDir);
+
+        if (!empty($results)) {
+            $this->setMessage("Cache retrieved successfully", true);
+            $this->logger->debug("{$this->getMessage()} from file driver.");
+            return $results;
+        }
+
+        $this->setMessage("No cache data found for the provided namespace", false);
+        $this->logger->info("{$this->getMessage()} from file driver.");
+        return [];
+    }
+
+    /**
+     * Return the cache directory for the given namespace.
+     * 
+     * @param string $namespace
+     * @return string
+     */
+    private function getNamespaceCacheDir(string $namespace)
+    {
+        $namespace = $namespace ? md5($namespace) . '/' : '';
+        return "{$this->cacheDir}/{$namespace}";
+    }
+
+    /**
+     * Return all valid cache files from the specified directory.
+     * 
+     * @param string $cacheDir
+     * @return array
+     */
+    private function getAllCacheFiles(string $cacheDir)
+    {
+        $files = $this->fileManager->getFilesInDirectory($cacheDir);
+        $results = [];
+
+        foreach ($files as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'cache') {
+                $cacheKey = basename($file, '.cache');
+                $cacheData = $this->fileManager->serialize($this->fileManager->readFile($file), false);
+                $results[$cacheKey] = $cacheData;
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Gets the cache data for multiple keys.
+     * 
      * @param array  $cacheKeys
      * @param string $namespace
      * @param string|int $ttl
@@ -199,6 +280,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Stores multiple cache items in batches.
+     * 
      * @param array   $items
      * @param string  $namespace
      * @param integer $batchSize
@@ -217,6 +300,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Stores an item in the cache with a specific TTL.
+     * 
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace
@@ -235,6 +320,8 @@ class FileCacheStore implements CacheerInterface
 }
 
     /**
+     * Checks if a cache key exists.
+     * 
      * @param string $cacheKey
      * @param string $namespace
      * @return void
@@ -251,6 +338,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Renews the cache for a specific key.
+     * 
      * @param string $cacheKey
      * @param string|int $ttl
      * @param string $namespace
@@ -270,6 +359,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Processes a batch of cache items.
+     * 
      * @param array  $batchItems
      * @param string $namespace
      * @return void
@@ -286,6 +377,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Checks if the last operation was successful.
+     * 
      * @return boolean
      */
     public function isSuccess()
@@ -294,6 +387,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Sets a message indicating the status of the last operation.
+     * 
      * @param string  $message
      * @param boolean $success
      * @return void
@@ -305,6 +400,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Validates the options provided to the cache store.
+     * 
      * @param array $options
      * @return void
      */
@@ -318,6 +415,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Initializes the cache directory.
+     * 
      * @param string $cacheDir
      * @return void
      */
@@ -328,6 +427,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Handles the auto-flush functionality based on options.
+     * 
      * @param array $options
      * @return void
      */
@@ -339,6 +440,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Schedules a flush operation based on the provided interval.
+     * 
      * @param string $flushAfter
      * @return void
      */
@@ -360,6 +463,8 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Checks if the cache file is valid based on its existence and modification time.
+     * 
      * @param string  $cacheFile
      * @param integer $ttl
      * @return boolean

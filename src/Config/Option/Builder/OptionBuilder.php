@@ -11,7 +11,10 @@ use Silviooosilva\CacheerPhp\CacheStore\CacheManager\OptionBuilders\FileOptionBu
  */
 class OptionBuilder
 {
+  
   /**
+  * Creates a FileOptionBuilder instance for file-based cache options.
+  *
   * @return FileOptionBuilder
   */
   public static function forFile() 
