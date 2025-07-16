@@ -6,14 +6,32 @@ use Silviooosilva\CacheerPhp\Helpers\CacheFileHelper;
 
 /**
  * Class FileCacheFlusher
- * Manages flushing and auto-flush scheduling for file cache.
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
  */
 class FileCacheFlusher
 {
+    /**
+    * @var FileCacheManager
+    */
     private FileCacheManager $fileManager;
+
+    /**
+    * @var string $cacheDir
+    */
     private string $cacheDir;
+
+    /**
+    * @var string $lastFlushTimeFile
+    */
     private string $lastFlushTimeFile;
 
+    /**
+     * FileCacheFlusher constructor.
+     *
+     * @param FileCacheManager $fileManager
+     * @param string $cacheDir
+     */
     public function __construct(FileCacheManager $fileManager, string $cacheDir)
     {
         $this->fileManager = $fileManager;
@@ -22,18 +40,23 @@ class FileCacheFlusher
     }
 
     /**
-     * Flushes all cache items and updates the last flush timestamp.
-     */
-    public function flushCache(): void
+    * Flushes all cache items and updates the last flush timestamp.
+    *
+    * @return void
+    */
+    public function flushCache()
     {
         $this->fileManager->clearDirectory($this->cacheDir);
         file_put_contents($this->lastFlushTimeFile, time());
     }
 
     /**
-     * Handles the auto-flush functionality based on options.
-     */
-    public function handleAutoFlush(array $options): void
+    * Handles the auto-flush functionality based on options.
+    *
+    * @param array $options
+    * @return void
+    */
+    public function handleAutoFlush(array $options)
     {
         if (isset($options['flushAfter'])) {
             $this->scheduleFlush($options['flushAfter']);
@@ -41,9 +64,12 @@ class FileCacheFlusher
     }
 
     /**
-     * Schedules a flush operation based on the provided interval.
-     */
-    private function scheduleFlush(string $flushAfter): void
+    * Schedules a flush operation based on the provided interval.
+    *
+    * @param string $flushAfter
+    * @return void
+    */
+    private function scheduleFlush(string $flushAfter)
     {
         $flushAfterSeconds = CacheFileHelper::convertExpirationToSeconds($flushAfter);
 
