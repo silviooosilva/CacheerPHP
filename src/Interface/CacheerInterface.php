@@ -8,7 +8,7 @@ namespace Silviooosilva\CacheerPhp\Interface;
  * @package Silviooosilva\CacheerPhp
  */
 interface CacheerInterface
-{   
+{
     
     /**
      * Appends data to an existing cache item.
@@ -16,7 +16,7 @@ interface CacheerInterface
      * @param string $cacheKey Unique item key
      * @param mixed $cacheData Data to be appended (serializable)
      * @param string $namespace Namespace for organization
-     * @return bool True on success, false on failure
+     * @return mixed True on success, false on failure
      */
     public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '');
     
@@ -40,7 +40,7 @@ interface CacheerInterface
      * Gets all items in a specific namespace.
      *
      * @param string $namespace Namespace for organization
-     * @return CacheDataFormatter Returns a formatter with all items in the namespace
+     * @return CacheDataFormatter|mixed Returns a formatter with all items in the namespace
      */
     public function getAll(string $namespace);
 
@@ -60,7 +60,7 @@ interface CacheerInterface
      * @param array $cacheKeys Array of item keys
      * @param string $namespace Namespace for organization
      * @param string|int $ttl Lifetime in seconds (default: 3600)
-     * @return CacheDataFormatter Returns a formatter with the retrieved items
+     * @return CacheDataFormatter|mixed Returns a formatter with the retrieved items
      */
     public function getMany(array $cacheKeys, string $namespace, string|int $ttl = 3600);
 
