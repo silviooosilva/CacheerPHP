@@ -56,7 +56,7 @@ class FileCacheStoreTest extends TestCase
 
         // Recuperar cache fora do período de expiração
         sleep(2);
-        $cachedData = $this->cache->getCache($cacheKey, '', '2 seconds');
+        $this->cache->getCache($cacheKey, '', '2 seconds');
         $this->assertFalse($this->cache->isSuccess());
         $this->assertEquals('cacheFile not found, does not exists or expired', $this->cache->getMessage());
     }
@@ -115,7 +115,7 @@ class FileCacheStoreTest extends TestCase
         $this->cache = new Cacheer($options);
 
         // Verifica se o cache foi limpo automaticamente
-        $cachedData = $this->cache->getCache('test_key');
+        $this->cache->getCache('test_key');
         $this->assertFalse($this->cache->isSuccess());
         $this->assertEquals('cacheFile not found, does not exists or expired', $this->cache->getMessage());
     }

@@ -179,7 +179,7 @@ final class Cacheer implements CacheerInterface
     * Gets all items in a specific namespace.
     * 
     * @param string $namespace
-    * @return CacheDataFormatter|array
+    * @return CacheDataFormatter|mixed
     */
     public function getAll(string $namespace = '')
     {
@@ -221,7 +221,7 @@ final class Cacheer implements CacheerInterface
     * @param array $cacheKeys
     * @param string $namespace
     * @param string|int $ttl
-    * @return CacheDataFormatter|array
+    * @return CacheDataFormatter|mixed
     */
     public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600)
     {
