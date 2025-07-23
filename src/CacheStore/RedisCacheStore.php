@@ -157,10 +157,14 @@ class RedisCacheStore implements CacheerInterface
         $keys = $this->redis->keys($this->buildKey('*', $namespace));
         $results = [];
 
-        foreach ($keys as $key) {
-            $cacheData = $this->getCache($key, $namespace);
+        $prefix = $this->buildKey('', $namespace);
+        $prefixLen = strlen($prefix);
+
+        foreach ($keys as $fullKey) {
+            $cacheKey = substr($fullKey, $prefixLen);
+            $cacheData = $this->getCache($cacheKey, $namespace);
             if ($cacheData !== null) {
-                $results[$key] = $cacheData;
+                $results[$cacheKey] = $cacheData;
             }
         }
 
