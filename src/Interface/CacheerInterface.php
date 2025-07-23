@@ -8,7 +8,7 @@ namespace Silviooosilva\CacheerPhp\Interface;
  * @package Silviooosilva\CacheerPhp
  */
 interface CacheerInterface
-{   
+{
     
     /**
      * Appends data to an existing cache item.
@@ -16,7 +16,7 @@ interface CacheerInterface
      * @param string $cacheKey Unique item key
      * @param mixed $cacheData Data to be appended (serializable)
      * @param string $namespace Namespace for organization
-     * @return bool True on success, false on failure
+     * @return mixed True on success, false on failure
      */
     public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '');
     
