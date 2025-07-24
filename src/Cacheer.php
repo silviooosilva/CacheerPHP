@@ -58,7 +58,14 @@ final class Cacheer implements CacheerInterface
     */
     public array $options = [];
 
+    /**
+    * @var CacheRetriever
+    */
     private CacheRetriever $retriever;
+
+    /**
+    * @var CacheMutator
+    */
     private CacheMutator $mutator;
 
 /**

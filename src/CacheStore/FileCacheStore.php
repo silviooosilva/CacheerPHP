@@ -33,7 +33,14 @@ class FileCacheStore implements CacheerInterface
      */
     private string $message = '';
 
+    /**
+     * @var FileCachePathBuilder
+     */
     private FileCachePathBuilder $pathBuilder;
+    
+    /**
+     * @var FileCacheBatchProcessor
+     */
     private FileCacheBatchProcessor $batchProcessor;
     /**
      * @param integer $defaultTTL

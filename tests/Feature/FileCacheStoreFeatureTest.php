@@ -2,12 +2,18 @@
 
 use PHPUnit\Framework\TestCase;
 use Silviooosilva\CacheerPhp\Cacheer;
-use Silviooosilva\CacheerPhp\Helpers\EnvHelper;
-use Silviooosilva\CacheerPhp\Utils\CacheDriver;
 
 class FileCacheStoreFeatureTest extends TestCase
 {
+    
+    /**
+     * @var Cacheer
+     */
     private $cache;
+    
+    /**
+     * @var string
+     */
     private $cacheDir;
 
     protected function setUp(): void
