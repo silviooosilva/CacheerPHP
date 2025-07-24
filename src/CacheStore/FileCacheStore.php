@@ -8,6 +8,8 @@ use Silviooosilva\CacheerPhp\CacheStore\CacheManager\FileCacheFlusher;
 use Silviooosilva\CacheerPhp\Exceptions\CacheFileException;
 use Silviooosilva\CacheerPhp\Helpers\CacheFileHelper;
 use Silviooosilva\CacheerPhp\Utils\CacheLogger;
+use Silviooosilva\CacheerPhp\CacheStore\Support\FileCachePathBuilder;
+use Silviooosilva\CacheerPhp\CacheStore\Support\FileCacheBatchProcessor;
 
 /**
  * Class FileCacheStore
@@ -31,6 +33,8 @@ class FileCacheStore implements CacheerInterface
      */
     private string $message = '';
 
+    private FileCachePathBuilder $pathBuilder;
+    private FileCacheBatchProcessor $batchProcessor;
     /**
      * @param integer $defaultTTL
      */
@@ -67,6 +71,8 @@ class FileCacheStore implements CacheerInterface
         $this->validateOptions($options);
         $this->fileManager = new FileCacheManager();
         $this->initializeCacheDir($options['cacheDir']);
+        $this->pathBuilder = new FileCachePathBuilder($this->fileManager, $this->cacheDir);
+        $this->batchProcessor = new FileCacheBatchProcessor($this);
         $this->flusher = new FileCacheFlusher($this->fileManager, $this->cacheDir);
         $this->defaultTTL = $this->getExpirationTime($options);
         $this->flusher->handleAutoFlush($options);
@@ -108,14 +114,7 @@ class FileCacheStore implements CacheerInterface
      */
     private function buildCacheFilePath(string $cacheKey, string $namespace)
     {
-        $namespace = $namespace ? md5($namespace) . '/' : '';
-        $cacheDir = "{$this->cacheDir}/";
-
-        if (!empty($namespace)) {
-            $cacheDir = "{$this->cacheDir}/{$namespace}";
-            $this->fileManager->createDirectory($cacheDir);
-        }
-        return $cacheDir . md5($cacheKey) . ".cache";
+        return $this->pathBuilder->build($cacheKey, $namespace);
     }
 
     /**
@@ -230,8 +229,7 @@ class FileCacheStore implements CacheerInterface
      */
     private function getNamespaceCacheDir(string $namespace)
     {
-        $namespace = $namespace ? md5($namespace) . '/' : '';
-        return "{$this->cacheDir}/{$namespace}";
+        return $this->pathBuilder->namespaceDir($namespace);
     }
 
     /**
@@ -368,13 +366,7 @@ class FileCacheStore implements CacheerInterface
      */
     private function processBatchItems(array $batchItems, string $namespace)
     {
-        foreach ($batchItems as $item) {
-            CacheFileHelper::validateCacheItem($item);
-            $cacheKey = $item['cacheKey'];
-            $cacheData = $item['cacheData'];
-            $mergedData = CacheFileHelper::mergeCacheData($cacheData);
-            $this->putCache($cacheKey, $mergedData, $namespace);
-        }
+        $this->batchProcessor->process($batchItems, $namespace);
     }
 
     /**

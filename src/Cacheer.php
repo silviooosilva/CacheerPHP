@@ -13,6 +13,8 @@ use Silviooosilva\CacheerPhp\Utils\CacheDataFormatter;
 use Silviooosilva\CacheerPhp\Utils\CacheDriver;
 use Silviooosilva\CacheerPhp\Helpers\CacheerHelper;
 use RuntimeException;
+use Silviooosilva\CacheerPhp\Service\CacheRetriever;
+use Silviooosilva\CacheerPhp\Service\CacheMutator;
 
 /**
 * Class CacheerPHP
@@ -56,7 +58,10 @@ final class Cacheer implements CacheerInterface
     */
     public array $options = [];
 
-    /**
+    private CacheRetriever $retriever;
+    private CacheMutator $mutator;
+
+/**
     * Cacheer constructor.
     *
     * @param array $options
@@ -67,6 +72,8 @@ final class Cacheer implements CacheerInterface
     {
         $this->formatted = $formatted;
         $this->validateOptions($options);
+        $this->retriever = new CacheRetriever($this);
+        $this->mutator = new CacheMutator($this);
         $this->setDriver()->useDefaultDriver();
     }
 
@@ -81,14 +88,7 @@ final class Cacheer implements CacheerInterface
     */
     public function add(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
     {
-        if (!empty($this->getCache($cacheKey, $namespace))) {
-            return true;
-        }
-
-        $this->putCache($cacheKey, $cacheData, $namespace, $ttl);
-        $this->setMessage($this->getMessage(), $this->isSuccess());
-
-        return false;
+        return $this->mutator->add($cacheKey, $cacheData, $namespace, $ttl);
     }
 
     /**
@@ -99,10 +99,9 @@ final class Cacheer implements CacheerInterface
     * @param string $namespace
     * @return void
     */
-    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
+    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = ''): void
     {
-        $this->cacheStore->appendCache($cacheKey, $cacheData, $namespace);
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+        $this->mutator->appendCache($cacheKey, $cacheData, $namespace);
     }
 
     /**
@@ -112,10 +111,9 @@ final class Cacheer implements CacheerInterface
     * @param string $namespace
     * @return void
     */
-    public function clearCache(string $cacheKey, string $namespace = '')
+    public function clearCache(string $cacheKey, string $namespace = ''): void
     {
-        $this->cacheStore->clearCache($cacheKey, $namespace);
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+        $this->mutator->clearCache($cacheKey, $namespace);
     }
 
     /**
@@ -128,7 +126,7 @@ final class Cacheer implements CacheerInterface
     */
     public function decrement(string $cacheKey, int $amount = 1, string $namespace = '')
     {
-        return $this->increment($cacheKey, ($amount * -1), $namespace);
+        return $this->mutator->decrement($cacheKey, $amount, $namespace);
     }
 
     /**
@@ -138,10 +136,9 @@ final class Cacheer implements CacheerInterface
     * @param mixed $cacheData
     * @return void
     */
-    public function forever(string $cacheKey, mixed $cacheData)
+    public function forever(string $cacheKey, mixed $cacheData): void
     {
-        $this->putCache($cacheKey, $cacheData, ttl: 31536000 * 1000);
-        $this->setMessage($this->getMessage(), $this->isSuccess());
+        $this->mutator->forever($cacheKey, $cacheData);
     }
 
     /**
@@ -149,10 +146,9 @@ final class Cacheer implements CacheerInterface
     * 
     * @return void
     */
-    public function flushCache()
+    public function flushCache(): void
     {
-        $this->cacheStore->flushCache();
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+        $this->mutator->flushCache();
     }
 
     /**
@@ -164,15 +160,7 @@ final class Cacheer implements CacheerInterface
     */
     public function getAndForget(string $cacheKey, string $namespace = '')
     {
-        $cachedData = $this->getCache($cacheKey, $namespace);
-
-        if (!empty($cachedData)) {
-            $this->setMessage("Cache retrieved and deleted successfully!", true);
-            $this->clearCache($cacheKey, $namespace);
-            return $cachedData;
-        }
-
-        return null;
+        return $this->retriever->getAndForget($cacheKey, $namespace);
     }
 
     /**
@@ -183,16 +171,7 @@ final class Cacheer implements CacheerInterface
     */
     public function getAll(string $namespace = '')
     {
-        $cachedData = $this->cacheStore->getAll($namespace);
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
-
-        if ($this->cacheStore->isSuccess() && ($this->compression || $this->encryptionKey !== null)) {
-            foreach ($cachedData as &$data) {
-                $data = CacheerHelper::recoverFromStorage($data, $this->compression, $this->encryptionKey);
-            }
-        }
-
-        return $this->formatted ? new CacheDataFormatter($cachedData) : $cachedData;
+        return $this->retriever->getAll($namespace);
     }
 
     /**
@@ -205,14 +184,7 @@ final class Cacheer implements CacheerInterface
     */
     public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
     {
-        $cacheData = $this->cacheStore->getCache($cacheKey, $namespace, $ttl);
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
-
-        if ($this->cacheStore->isSuccess() && ($this->compression || $this->encryptionKey !== null)) {
-            $cacheData = CacheerHelper::recoverFromStorage($cacheData, $this->compression, $this->encryptionKey);
-        }
-
-        return $this->formatted ? new CacheDataFormatter($cacheData) : $cacheData;
+        return $this->retriever->getCache($cacheKey, $namespace, $ttl);
     }
 
     /**
@@ -225,16 +197,7 @@ final class Cacheer implements CacheerInterface
     */
     public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600)
     {
-        $cachedData = $this->cacheStore->getMany($cacheKeys, $namespace, $ttl);
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
-
-        if ($this->cacheStore->isSuccess() && ($this->compression || $this->encryptionKey !== null)) {
-            foreach ($cachedData as &$data) {
-                $data = CacheerHelper::recoverFromStorage($data, $this->compression, $this->encryptionKey);
-            }
-        }
-
-        return $this->formatted ? new CacheDataFormatter($cachedData) : $cachedData;
+        return $this->retriever->getMany($cacheKeys, $namespace, $ttl);
     }
 
     /**
@@ -244,10 +207,9 @@ final class Cacheer implements CacheerInterface
     * @param string $namespace
     * @return void
     */
-    public function has(string $cacheKey, string $namespace = '')
+    public function has(string $cacheKey, string $namespace = ''): void
     {
-        $this->cacheStore->has($cacheKey, $namespace);
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+        $this->retriever->has($cacheKey, $namespace);
     }
 
     /**
@@ -260,15 +222,7 @@ final class Cacheer implements CacheerInterface
     */
     public function increment(string $cacheKey, int $amount = 1, string $namespace = '')
     {
-        $cacheData = $this->getCache($cacheKey, $namespace);
-
-        if(!empty($cacheData) && is_numeric($cacheData)) {
-            $this->putCache($cacheKey, (int)($cacheData + $amount), $namespace);
-            $this->setMessage($this->getMessage(), $this->isSuccess());
-            return true;
-        }
-
-        return false;
+        return $this->mutator->increment($cacheKey, $amount, $namespace);
     }
 
     /**
@@ -290,11 +244,9 @@ final class Cacheer implements CacheerInterface
     * @param string|int $ttl
     * @return void
     */
-    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600)
+    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600): void
     {
-        $data = CacheerHelper::prepareForStorage($cacheData, $this->compression, $this->encryptionKey);
-        $this->cacheStore->putCache($cacheKey, $data, $namespace, $ttl);
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+        $this->mutator->putCache($cacheKey, $cacheData, $namespace, $ttl);
     }
 
     /**
@@ -305,9 +257,9 @@ final class Cacheer implements CacheerInterface
     * @param integer $batchSize
     * @return void
     */
-    public function putMany(array $items, string $namespace = '', int $batchSize = 100)
+    public function putMany(array $items, string $namespace = '', int $batchSize = 100): void
     {
-        $this->cacheStore->putMany($items, $namespace, $batchSize);
+        $this->mutator->putMany($items, $namespace, $batchSize);
     }
 
     /**
@@ -318,15 +270,9 @@ final class Cacheer implements CacheerInterface
     * @param string $namespace
     * @return void
     */
-    public function renewCache(string $cacheKey, string|int $ttl = 3600, string $namespace = '')
+    public function renewCache(string $cacheKey, string|int $ttl = 3600, string $namespace = ''): void
     {
-        $this->cacheStore->renewCache($cacheKey, $ttl, $namespace);
-
-        if ($this->cacheStore->isSuccess()) {
-            $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
-        } else {
-            $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
-        }
+        $this->mutator->renewCache($cacheKey, $ttl, $namespace);
     }
 
     /**
@@ -339,17 +285,7 @@ final class Cacheer implements CacheerInterface
     */
     public function remember(string $cacheKey, int|string $ttl, Closure $callback)
     {
-        $cachedData = $this->getCache($cacheKey, ttl: $ttl);
-
-        if(!empty($cachedData)) {
-            return $cachedData;
-        }
-
-        $cacheData = $callback();
-        $this->putCache($cacheKey, $cacheData, ttl: $ttl);
-        $this->setMessage($this->getMessage(), $this->isSuccess());
-
-        return $cacheData;
+        return $this->retriever->remember($cacheKey, $ttl, $callback);
     }
 
     /**
@@ -361,7 +297,7 @@ final class Cacheer implements CacheerInterface
     */
     public function rememberForever(string $cacheKey, Closure $callback)
     {
-        return $this->remember($cacheKey, 31536000 * 1000, $callback);
+        return $this->retriever->rememberForever($cacheKey, $callback);
     }
 
     /**
@@ -405,6 +341,31 @@ final class Cacheer implements CacheerInterface
     public function getMessage()
     {
         return $this->message;
+    }
+
+    public function syncState(): void
+    {
+        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+    }
+
+    public function setInternalState(string $message, bool $success): void
+    {
+        $this->setMessage($message, $success);
+    }
+
+    public function isFormatted(): bool
+    {
+        return $this->formatted;
+    }
+
+    public function isCompressionEnabled(): bool
+    {
+        return $this->compression;
+    }
+
+    public function getEncryptionKey(): ?string
+    {
+        return $this->encryptionKey;
     }
 
     /**
