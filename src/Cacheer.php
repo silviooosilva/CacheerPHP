@@ -75,7 +75,7 @@ final class Cacheer implements CacheerInterface
     * @param bool  $formatted
     * @throws RuntimeException
     */
-    public function __construct(array $options = [], $formatted = false)
+    public function __construct(array $options = [], bool $formatted = false)
     {
         $this->formatted = $formatted;
         $this->validateOptions($options);
@@ -93,7 +93,7 @@ final class Cacheer implements CacheerInterface
     * @param int|string $ttl
     * @return bool
     */
-    public function add(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
+    public function add(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600): bool
     {
         return $this->mutator->add($cacheKey, $cacheData, $namespace, $ttl);
     }
@@ -131,7 +131,7 @@ final class Cacheer implements CacheerInterface
     * @param string $namespace
     * @return bool
     */
-    public function decrement(string $cacheKey, int $amount = 1, string $namespace = '')
+    public function decrement(string $cacheKey, int $amount = 1, string $namespace = ''): bool
     {
         return $this->mutator->decrement($cacheKey, $amount, $namespace);
     }
@@ -165,7 +165,7 @@ final class Cacheer implements CacheerInterface
     * @param string $namespace
     * @return mixed
     */
-    public function getAndForget(string $cacheKey, string $namespace = '')
+    public function getAndForget(string $cacheKey, string $namespace = ''): mixed
     {
         return $this->retriever->getAndForget($cacheKey, $namespace);
     }
@@ -176,7 +176,7 @@ final class Cacheer implements CacheerInterface
     * @param string $namespace
     * @return CacheDataFormatter|mixed
     */
-    public function getAll(string $namespace = '')
+    public function getAll(string $namespace = ''): mixed
     {
         return $this->retriever->getAll($namespace);
     }
@@ -189,7 +189,7 @@ final class Cacheer implements CacheerInterface
     * @param string|int $ttl
     * @return CacheDataFormatter|mixed
     */
-    public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
+    public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600): mixed
     {
         return $this->retriever->getCache($cacheKey, $namespace, $ttl);
     }
@@ -202,7 +202,7 @@ final class Cacheer implements CacheerInterface
     * @param string|int $ttl
     * @return CacheDataFormatter|mixed
     */
-    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600)
+    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600): mixed
     {
         return $this->retriever->getMany($cacheKeys, $namespace, $ttl);
     }
@@ -227,7 +227,7 @@ final class Cacheer implements CacheerInterface
     * @param string $namespace
     * @return bool
     */
-    public function increment(string $cacheKey, int $amount = 1, string $namespace = '')
+    public function increment(string $cacheKey, int $amount = 1, string $namespace = ''): bool
     {
         return $this->mutator->increment($cacheKey, $amount, $namespace);
     }
@@ -235,9 +235,9 @@ final class Cacheer implements CacheerInterface
     /**
     * Checks if the last operation was successful.
     * 
-    * @return boolean
+    * @return bool
     */
-    public function isSuccess()
+    public function isSuccess(): bool
     {
         return $this->success;
     }
@@ -290,7 +290,7 @@ final class Cacheer implements CacheerInterface
     * @param Closure $callback
     * @return mixed
     */
-    public function remember(string $cacheKey, int|string $ttl, Closure $callback)
+    public function remember(string $cacheKey, int|string $ttl, Closure $callback): mixed
     {
         return $this->retriever->remember($cacheKey, $ttl, $callback);
     }
@@ -302,7 +302,7 @@ final class Cacheer implements CacheerInterface
     * @param Closure $callback
     * @return mixed
     */
-    public function rememberForever(string $cacheKey, Closure $callback)
+    public function rememberForever(string $cacheKey, Closure $callback): mixed
     {
         return $this->retriever->rememberForever($cacheKey, $callback);
     }
@@ -312,7 +312,7 @@ final class Cacheer implements CacheerInterface
     * 
     * @return CacheConfig
     */
-    public function setConfig()
+    public function setConfig(): CacheConfig
     {
         return new CacheConfig($this);
     }
@@ -322,7 +322,7 @@ final class Cacheer implements CacheerInterface
     * 
     * @return CacheDriver
     */
-    public function setDriver()
+    public function setDriver(): CacheDriver
     {
         return new CacheDriver($this);
     }
@@ -334,7 +334,7 @@ final class Cacheer implements CacheerInterface
     * @param boolean $success
     * @return void
     */
-    private function setMessage(string $message, bool $success)
+    private function setMessage(string $message, bool $success): void
     {
         $this->message = $message;
         $this->success = $success;
@@ -345,31 +345,48 @@ final class Cacheer implements CacheerInterface
     * 
     * @return string
     */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
+    /**
+     * @return void
+     */
     public function syncState(): void
     {
         $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
     }
 
+    /**
+     * @param string $message
+     * @param bool $success
+     * @return void
+     */
     public function setInternalState(string $message, bool $success): void
     {
         $this->setMessage($message, $success);
     }
 
+    /**
+     * @return bool
+     */
     public function isFormatted(): bool
     {
         return $this->formatted;
     }
 
+    /**
+     * @return bool
+     */
     public function isCompressionEnabled(): bool
     {
         return $this->compression;
     }
 
+    /**
+     * @return string|null
+     */
     public function getEncryptionKey(): ?string
     {
         return $this->encryptionKey;
@@ -380,7 +397,7 @@ final class Cacheer implements CacheerInterface
     * 
     * @return void
     */
-    public function useFormatter()
+    public function useFormatter(): void
     {
         $this->formatted = !$this->formatted;
     }
@@ -391,7 +408,7 @@ final class Cacheer implements CacheerInterface
     * @param array $options
     * @return void
     */
-    private function validateOptions(array $options)
+    private function validateOptions(array $options): void
     {
         $this->options = $options;
     }
@@ -402,7 +419,7 @@ final class Cacheer implements CacheerInterface
     * @param bool $status
     * @return $this
     */
-    public function useCompression(bool $status = true)
+    public function useCompression(bool $status = true): Cacheer
     {
         $this->compression = $status;
         return $this;
@@ -414,7 +431,7 @@ final class Cacheer implements CacheerInterface
     * @param string $key
     * @return $this
     */
-    public function useEncryption(string $key)
+    public function useEncryption(string $key): Cacheer
     {
         $this->encryptionKey = $key;
         return $this;
