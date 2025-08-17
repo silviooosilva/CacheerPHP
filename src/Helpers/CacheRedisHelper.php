@@ -20,7 +20,7 @@ class CacheRedisHelper
   * @param bool  $serialize
   * @return mixed
   */
-  public static function serialize(mixed $data, bool $serialize = true)
+  public static function serialize(mixed $data, bool $serialize = true): mixed
   {
     if($serialize) {
       return serialize($data);
@@ -36,7 +36,7 @@ class CacheRedisHelper
     * @param array $item
     * @return void
     */
-    public static function validateCacheItem(array $item)
+    public static function validateCacheItem(array $item): void
     {
         CacheerHelper::validateCacheItem(
             $item,
@@ -45,12 +45,12 @@ class CacheRedisHelper
     }
 
     /**
-    * Merges cache data with existing data.
-    * 
-    * @param array $options
-    * @return array
-    */
-    public static function mergeCacheData($cacheData)
+     * Merges cache data with existing data.
+     *
+     * @param $cacheData
+     * @return array
+     */
+    public static function mergeCacheData($cacheData): array
     {
         return CacheerHelper::mergeCacheData($cacheData);
     }
@@ -62,7 +62,7 @@ class CacheRedisHelper
   * @param mixed $cacheData
   * @return array
   */
-  public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData)
+  public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData): array
   {
       return CacheerHelper::arrayIdentifier($currentCacheData, $cacheData);
   }

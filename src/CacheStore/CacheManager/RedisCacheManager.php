@@ -45,7 +45,7 @@ class RedisCacheManager
   *
   * @return void
   */
-  private static function auth()
+  private static function auth(): void
   {
     if(is_string(REDIS_CONNECTION_CONFIG['REDIS_PASSWORD']) && REDIS_CONNECTION_CONFIG['REDIS_PASSWORD'] !== '') {
       self::$redis->auth(REDIS_CONNECTION_CONFIG['REDIS_PASSWORD']);

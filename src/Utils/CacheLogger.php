@@ -10,10 +10,10 @@ namespace Silviooosilva\CacheerPhp\Utils;
  */
 class CacheLogger
 {
-    private $logFile;
-    private $maxFileSize; // 5 MB by default
-    private $logLevel;
-    private $logLevels = ['DEBUG', 'INFO', 'WARNING', 'ERROR'];
+    private mixed $logFile;
+    private mixed $maxFileSize; // 5 MB by default
+    private string $logLevel;
+    private array $logLevels = ['DEBUG', 'INFO', 'WARNING', 'ERROR'];
 
     public function __construct($logFile = 'cacheer.log', $maxFileSize = 5 * 1024 * 1024, $logLevel = 'DEBUG')
     {
@@ -27,7 +27,7 @@ class CacheLogger
     * 
     * @return void
     */
-    public function info($message)
+    public function info($message): void
     {
         $this->log('INFO', $message);
     }
@@ -37,7 +37,7 @@ class CacheLogger
     *
     * @return void
     */
-    public function warning($message)
+    public function warning($message): void
     {
         $this->log('WARNING', $message);
     }
@@ -47,7 +47,7 @@ class CacheLogger
     * 
     * @return void
     */
-    public function error($message)
+    public function error($message): void
     {
         $this->log('ERROR', $message);
     }
@@ -57,18 +57,18 @@ class CacheLogger
     * 
     * @return void
     */
-    public function debug($message)
+    public function debug($message): void
     {
         $this->log('DEBUG', $message);
     }
 
     /**
-    * Checks if the log level is sufficient to log the message.
-    *
-    * @param mixed $level
-    * @return string|int|false
-    */
-    private function shouldLog(mixed $level)
+     * Checks if the log level is sufficient to log the message.
+     *
+     * @param mixed $level
+     * @return bool
+     */
+    private function shouldLog(mixed $level): bool
     {
         return array_search($level, $this->logLevels) >= array_search($this->logLevel, $this->logLevels);
     }
@@ -78,7 +78,7 @@ class CacheLogger
     * 
     * @return void
     */
-    private function rotateLog()
+    private function rotateLog(): void
     {
         if (file_exists($this->logFile) && filesize($this->logFile) >= $this->maxFileSize) {
             $date = date('Y-m-d_H-i-s');
@@ -93,7 +93,7 @@ class CacheLogger
     * @param string $message
     * @return void
     */
-    private function log($level, $message)
+    private function log(mixed $level, string $message): void
     {
         if (!$this->shouldLog($level)) {
             return;

@@ -18,7 +18,7 @@ class SqliteHelper
     * @param ?string $path
     * @return string
     */
-    public static function database(string $database = 'database.sqlite', ?string $path = null)
+    public static function database(string $database = 'database.sqlite', ?string $path = null): string
     {
         return self::getDynamicSqliteDbPath($database, $path);
     }
@@ -30,7 +30,7 @@ class SqliteHelper
     * @param ?string $path
     * @return string
     */
-    private static function getDynamicSqliteDbPath(string $database, ?string $path = null)
+    private static function getDynamicSqliteDbPath(string $database, ?string $path = null): string
     {
         $rootPath = EnvHelper::getRootPath();
         $databaseDir = is_null($path) ? $rootPath . '/database' : $rootPath . '/' . $path;
@@ -52,7 +52,7 @@ class SqliteHelper
     * @param string $databaseDir
     * @return void
     */
-    private static function createDatabaseDir(string $databaseDir)
+    private static function createDatabaseDir(string $databaseDir): void
     {
         if (!is_dir($databaseDir)) {
             mkdir($databaseDir, 0755, true);
@@ -65,7 +65,7 @@ class SqliteHelper
     * @param string $dbFile
     * @return void
     */
-    private static function createDatabaseFile(string $dbFile)
+    private static function createDatabaseFile(string $dbFile): void
     {
         if (!file_exists($dbFile)) {
             file_put_contents($dbFile, '');
@@ -79,9 +79,9 @@ class SqliteHelper
     * @param string $database
     * @return string
     */
-    private static function checkExtension(string $database)
+    private static function checkExtension(string $database): string
     {
-        if (strpos($database, '.sqlite') === false) {
+        if (!str_contains($database, '.sqlite')) {
             return $database . '.sqlite';
         }
         return $database;

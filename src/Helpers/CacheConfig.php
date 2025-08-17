@@ -8,6 +8,7 @@ use Silviooosilva\CacheerPhp\CacheStore\DatabaseCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\RedisCacheStore;
 use Silviooosilva\CacheerPhp\Core\Connect;
+use Silviooosilva\CacheerPhp\Exceptions\ConnectionException;
 use Silviooosilva\CacheerPhp\Utils\CacheDriver;
 
 /**
@@ -21,7 +22,7 @@ class CacheConfig
     /**
      * @var Cacheer
      */
-    protected $cacheer;
+    protected Cacheer $cacheer;
 
     /**
      * CacheConfig constructor.
@@ -40,7 +41,7 @@ class CacheConfig
      * @param string $timezone
      * @return $this
      */
-    public function setTimeZone($timezone)
+    public function setTimeZone(string $timezone): CacheConfig
     {
         /**
          * Make sure the provided timezone is valid
@@ -59,7 +60,7 @@ class CacheConfig
      * 
      * @return CacheDriver
      */
-    public function setDriver()
+    public function setDriver(): CacheDriver
     {
         return new CacheDriver($this->cacheer);
     }
@@ -68,9 +69,9 @@ class CacheConfig
      * Sets the logger path for the cache driver.
      * 
      * @param string $path
-     * @return mixed
+     * @return Cacheer
      */
-    public function setLoggerPath(string $path)
+    public function setLoggerPath(string $path): Cacheer
     {
         
         $cacheDriver = $this->setDriver();
@@ -82,18 +83,18 @@ class CacheConfig
             FileCacheStore::class => $cacheDriver->useFileDriver(),
             RedisCacheStore::class => $cacheDriver->useRedisDriver(),
             ArrayCacheStore::class => $cacheDriver->useArrayDriver(),
-            DatabaseCacheStore::class => $cacheDriver->useDatabaseDriver(),
             default => $cacheDriver->useDatabaseDriver(),
         };
     }
 
     /**
      * Sets the database connection type for the application.
-     * 
+     *
      * @param string $driver
      * @return void
+     * @throws ConnectionException
      */
-    public function setDatabaseConnection(string $driver)
+    public function setDatabaseConnection(string $driver): void
     {
         Connect::setConnection($driver);
     }

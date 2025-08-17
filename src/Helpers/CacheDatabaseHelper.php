@@ -18,7 +18,7 @@ class CacheDatabaseHelper
      * @param array $item
      * @return void
      */
-    public static function validateCacheItem(array $item)
+    public static function validateCacheItem(array $item): void
     {
         CacheerHelper::validateCacheItem(
             $item,
@@ -28,11 +28,11 @@ class CacheDatabaseHelper
 
     /**
      * Merges cache data with existing data.
-     * 
-     * @param array $options
+     *
+     * @param $cacheData
      * @return array
      */
-    public static function mergeCacheData($cacheData)
+    public static function mergeCacheData($cacheData): array
     {
         return CacheerHelper::mergeCacheData($cacheData);
     }
@@ -44,7 +44,7 @@ class CacheDatabaseHelper
      * @param mixed $cacheData
      * @return array
      */
-    public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData)
+    public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData): array
     {
         return CacheerHelper::arrayIdentifier($currentCacheData, $cacheData);
     }

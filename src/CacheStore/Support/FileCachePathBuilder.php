@@ -3,6 +3,7 @@
 namespace Silviooosilva\CacheerPhp\CacheStore\Support;
 
 use Silviooosilva\CacheerPhp\CacheStore\CacheManager\FileCacheManager;
+use Silviooosilva\CacheerPhp\Exceptions\CacheFileException;
 
 /**
  * Class FileCachePathBuilder
@@ -27,8 +28,9 @@ class FileCachePathBuilder
      * @param string $cacheKey
      * @param string $namespace
      * @return string
+     * @throws CacheFileException
      */
-    public function build(string $cacheKey, string $namespace = '')
+    public function build(string $cacheKey, string $namespace = ''): string
     {
         $dir = $this->namespaceDir($namespace);
         if (!empty($namespace)) {
@@ -43,7 +45,7 @@ class FileCachePathBuilder
      * @param string $namespace
      * @return string
      */
-    public function namespaceDir(string $namespace = '')
+    public function namespaceDir(string $namespace = ''): string
     {
         $namespace = $namespace ? md5($namespace) . '/' : '';
         $cacheDir = rtrim($this->baseDir, '/') . '/';

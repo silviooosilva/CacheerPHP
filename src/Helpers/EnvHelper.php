@@ -16,7 +16,7 @@ class EnvHelper {
      * 
      * @return string
      */
-    public static function getRootPath()
+    public static function getRootPath(): string
     {
         // Try to get the root path from Composer's installed versions
         if (class_exists(InstalledVersions::class)) {
