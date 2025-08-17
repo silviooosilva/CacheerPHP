@@ -15,10 +15,11 @@ class FileCacheManager
 {
 
     /**
-    * @param string $dir
-    * @return void
-    */
-    public function createDirectory(string $dir)
+     * @param string $dir
+     * @return void
+     * @throws CacheFileException
+     */
+    public function createDirectory(string $dir): void
     {
         if ((!file_exists($dir) || !is_dir($dir)) && !mkdir($dir, 0755, true)) {
             throw CacheFileException::create("Could not create directory: {$dir}");
@@ -26,11 +27,12 @@ class FileCacheManager
     }
 
     /**
-    * @param string $filename
-    * @param string $data
-    * @return void
-    */
-    public function writeFile(string $filename, string $data)
+     * @param string $filename
+     * @param string $data
+     * @return void
+     * @throws CacheFileException
+     */
+    public function writeFile(string $filename, string $data): void
     {
         if (!@file_put_contents($filename, $data, LOCK_EX)) {
             throw CacheFileException::create("Could not write file: {$filename}");
@@ -38,10 +40,11 @@ class FileCacheManager
     }
 
     /**
-    * @param string $filename
-    * @return string
-    */
-    public function readFile(string $filename)
+     * @param string $filename
+     * @return string|bool
+     * @throws CacheFileException
+     */
+    public function readFile(string $filename): string|bool
     {
         if (!$this->fileExists($filename)) {
             throw CacheFileException::create("File not found: {$filename}");
@@ -53,7 +56,7 @@ class FileCacheManager
     * @param string $filename
     * @return bool
     */
-    public function fileExists(string $filename)
+    public function fileExists(string $filename): bool
     {
         return file_exists($filename);
     }
@@ -62,7 +65,7 @@ class FileCacheManager
     * @param string $filename
     * @return void
     */
-    public function removeFile(string $filename)
+    public function removeFile(string $filename): void
     {
         if (file_exists($filename)) {
             unlink($filename);
@@ -73,7 +76,7 @@ class FileCacheManager
     * @param string $dir
     * @return void
     */
-    public function clearDirectory(string $dir)
+    public function clearDirectory(string $dir): void
     {
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
@@ -86,10 +89,11 @@ class FileCacheManager
     }
 
     /**
-    * @param mixed $data
-    * @param bool $serialize
-    */
-    public function serialize(mixed $data, bool $serialize = true)
+     * @param mixed $data
+     * @param bool $serialize
+     * @return mixed|string
+     */
+    public function serialize(mixed $data, bool $serialize = true): mixed
     {
         if($serialize) {
             return serialize($data);
@@ -102,7 +106,7 @@ class FileCacheManager
      * @return array
      * @throws CacheFileException
      */
-    public function getFilesInDirectory(string $dir)
+    public function getFilesInDirectory(string $dir): array
     {
         if (!is_dir($dir)) {
             throw CacheFileException::create("Directory does not exist: {$dir}");
@@ -126,7 +130,7 @@ class FileCacheManager
      * @param string $dir
      * @return bool
      */
-    public function directoryExists(string $dir)
+    public function directoryExists(string $dir): bool
     {
         return is_dir($dir);
     }

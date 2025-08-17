@@ -112,3 +112,4 @@ CacheerPHP is open-sourced software licensed under the [MIT license](https://ope
 ## Support
 
 If this project helps you, consider [buying the maintainer a coffee](https://buymeacoffee.com/silviooosilva).
+<p><a href="https://buymeacoffee.com/silviooosilva"> <img align="left" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="50" width="210" alt="silviooosilva" /></a></p><br><br>

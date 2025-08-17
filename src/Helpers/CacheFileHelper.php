@@ -14,12 +14,13 @@ class CacheFileHelper
 {
 
     /**
-    * Converts a string expiration format to seconds.
-    *
-    * @param string $expiration
-    * @return int
-    */
-    public static function convertExpirationToSeconds(string $expiration)
+     * Converts a string expiration format to seconds.
+     *
+     * @param string $expiration
+     * @return float|int
+     * @throws CacheFileException
+     */
+    public static function convertExpirationToSeconds(string $expiration): float|int
     {
         $units = [
             'second' => 1,
@@ -31,7 +32,7 @@ class CacheFileHelper
             'year'   => 31536000,
         ];
         foreach ($units as $unit => $value) {
-            if (strpos($expiration, $unit) !== false) {
+            if (str_contains($expiration, $unit)) {
                 return (int)$expiration * $value;
             }
         }
@@ -39,12 +40,12 @@ class CacheFileHelper
     }
 
     /**
-    * Merges cache data with existing data.
-    * 
-    * @param array $options
-    * @return array
-    */
-    public static function mergeCacheData($cacheData)
+     * Merges cache data with existing data.
+     *
+     * @param $cacheData
+     * @return array
+     */
+    public static function mergeCacheData($cacheData): array
     {
         return CacheerHelper::mergeCacheData($cacheData);
     }
@@ -55,7 +56,7 @@ class CacheFileHelper
      * @param array $item
      * @return void
      */
-    public static function validateCacheItem(array $item)
+    public static function validateCacheItem(array $item): void
     {
         CacheerHelper::validateCacheItem(
             $item,
@@ -64,13 +65,15 @@ class CacheFileHelper
     }
 
     /**
-    * Calculates the TTL (Time To Live) for cache items.
-    *
-    * @param string|int $ttl
-    * @param int $defaultTTL
-    * @return mixed
-    */
-    public static function ttl($ttl = null, ?int $defaultTTL = null) {
+     * Calculates the TTL (Time To Live) for cache items.
+     *
+     * @param null $ttl
+     * @param int|null $defaultTTL
+     * @return mixed
+     * @throws CacheFileException
+     */
+    public static function ttl($ttl = null, ?int $defaultTTL = null): mixed
+    {
         if ($ttl) {
             $ttl = is_string($ttl) ? self::convertExpirationToSeconds($ttl) : $ttl;
         } else {
@@ -86,7 +89,7 @@ class CacheFileHelper
   * @param mixed $cacheData
   * @return array
   */
-  public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData)
+  public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData): array
   {
     return CacheerHelper::arrayIdentifier($currentCacheData, $cacheData);
   }

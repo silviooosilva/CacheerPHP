@@ -19,19 +19,19 @@ class ArrayCacheStore implements CacheerInterface
   private array $arrayStore = [];
 
   /**
-   * @param boolean
+   * @var boolean
    */
   private bool $success = false;
 
   /**
-   * @param string
+   * @var string
    */
   private string $message = '';
 
   /**
-   * @var CacheLogger
+   * @var ?CacheLogger
    */
-  private $logger = null;
+  private ?CacheLogger $logger = null;
 
   /**
    * ArrayCacheStore constructor.
@@ -51,7 +51,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param string $namespace
    * @return bool
    */
-  public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
+  public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = ''): bool
   {
       $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
 
@@ -73,7 +73,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param string $namespace
    * @return string
    */
-  private function buildArrayKey(string $cacheKey, string $namespace = '')
+  private function buildArrayKey(string $cacheKey, string $namespace = ''): string
   {
     return !empty($namespace) ? ($namespace . ':' . $cacheKey) : $cacheKey;
   }
@@ -85,7 +85,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param string $namespace
    * @return void
    */
-  public function clearCache(string $cacheKey, string $namespace = '')
+  public function clearCache(string $cacheKey, string $namespace = ''): void
   {
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
     unset($this->arrayStore[$arrayStoreKey]);
@@ -101,7 +101,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param string $namespace
    * @return bool
    */
-  public function decrement(string $cacheKey, int $amount = 1, string $namespace = '')
+  public function decrement(string $cacheKey, int $amount = 1, string $namespace = ''): bool
   {
     return $this->increment($cacheKey, ($amount * -1), $namespace);
   }
@@ -111,7 +111,7 @@ class ArrayCacheStore implements CacheerInterface
    * 
    * @return void
    */
-  public function flushCache()
+  public function flushCache(): void
   {
     unset($this->arrayStore);
     $this->arrayStore = [];
@@ -119,16 +119,14 @@ class ArrayCacheStore implements CacheerInterface
     $this->logger->debug("{$this->getMessage()} from array driver.");
   }
 
-  /**
-   * Stores a cache item permanently.
-   * 
-   * @param string $cacheKey
-   * @param mixed $cacheData
-   * @param string $namespace
-   * @param int|string $ttl
-   * @return void
-   */
-  public function forever(string $cacheKey, mixed $cacheData)
+    /**
+     * Stores a cache item permanently.
+     *
+     * @param string $cacheKey
+     * @param mixed $cacheData
+     * @return void
+     */
+  public function forever(string $cacheKey, mixed $cacheData): void
   {
     $this->putCache($cacheKey, $cacheData, ttl: 31536000 * 1000);
     $this->setMessage($this->getMessage(), $this->isSuccess());
@@ -142,7 +140,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param int|string $ttl
    * @return mixed
    */
-  public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
+  public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600): mixed
   {
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
 
@@ -180,7 +178,7 @@ class ArrayCacheStore implements CacheerInterface
    * 
    * @return void
    */
-  private function handleCacheNotFound()
+  private function handleCacheNotFound(): void
   {
     $this->setMessage("cacheData not found, does not exists or expired", false);
     $this->logger->debug("{$this->getMessage()} from array driver.");
@@ -192,7 +190,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param string $arrayStoreKey
    * @return void
    */
-  private function handleCacheExpired(string $arrayStoreKey)
+  private function handleCacheExpired(string $arrayStoreKey): void
   {
     $parts = explode(':', $arrayStoreKey, 2);
     if (count($parts) === 2) {
@@ -212,11 +210,11 @@ class ArrayCacheStore implements CacheerInterface
    * @param string $namespace
    * @return array
    */
-  public function getAll(string $namespace = '')
+  public function getAll(string $namespace = ''): array
   {
     $results = [];
     foreach ($this->arrayStore as $key => $data) {
-      if (strpos($key, $namespace . ':') === 0 || empty($namespace)) {
+      if (str_starts_with($key, $namespace . ':') || empty($namespace)) {
         $results[$key] = $this->serialize($data['cacheData'], false);
       }
     }
@@ -231,7 +229,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param string|int $ttl
    * @return array
    */
-  public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600)
+  public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600): array
   {
     $results = [];
     foreach ($cacheKeys as $cacheKey) {
@@ -247,7 +245,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param string $namespace
    * @return bool
    */
-  public function has(string $cacheKey, string $namespace = '')
+  public function has(string $cacheKey, string $namespace = ''): bool
   {
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
     return isset($this->arrayStore[$arrayStoreKey]) && time() < $this->arrayStore[$arrayStoreKey]['expirationTime'];
@@ -261,7 +259,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param string $namespace
    * @return bool
    */
-  public function increment(string $cacheKey, int $amount = 1, string $namespace = '')
+  public function increment(string $cacheKey, int $amount = 1, string $namespace = ''): bool
   {
     $cacheData = $this->getCache($cacheKey, $namespace);
 
@@ -279,7 +277,7 @@ class ArrayCacheStore implements CacheerInterface
    * 
    * @return boolean
    */
-  public function isSuccess()
+  public function isSuccess(): bool
   {
     return $this->success;
   }
@@ -289,7 +287,7 @@ class ArrayCacheStore implements CacheerInterface
    * 
    * @return string
    */
-  public function getMessage()
+  public function getMessage(): string
   {
     return $this->message;
   }
@@ -303,7 +301,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param int|string $ttl
    * @return bool
    */
-  public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
+  public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600): bool
   {
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
 
@@ -325,7 +323,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param int $batchSize
    * @return void
    */
-  public function putMany(array $items, string $namespace = '', int $batchSize = 100)
+  public function putMany(array $items, string $namespace = '', int $batchSize = 100): void
   {
     $chunks = array_chunk($items, $batchSize, true);
 
@@ -346,7 +344,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param string $namespace
    * @return void
    */
-  public function renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = '')
+  public function renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = ''): void
   {
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
 
@@ -365,7 +363,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param boolean $success
    * @return void
    */
-  private function setMessage(string $message, bool $success)
+  private function setMessage(string $message, bool $success): void
   {
     $this->message = $message;
     $this->success = $success;
@@ -378,7 +376,7 @@ class ArrayCacheStore implements CacheerInterface
    * @param bool $serialize
    * @return mixed
    */
-  private function serialize(mixed $data, bool $serialize = true)
+  private function serialize(mixed $data, bool $serialize = true): mixed
   {
     return $serialize ? serialize($data) : unserialize($data);
   }

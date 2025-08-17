@@ -30,12 +30,13 @@ class Connect
 
 
     /**
-    * Creates a new PDO instance based on the specified database configuration.
-    * 
-    * @param array|null $database
-    * @return PDO|null
-    */
-    public static function getInstance(?array $database = null)
+     * Creates a new PDO instance based on the specified database configuration.
+     *
+     * @param array|null $database
+     * @return PDO|null
+     * @throws ConnectionException
+     */
+    public static function getInstance(?array $database = null): ?PDO
     {
         $pdo = ConnectionFactory::createConnection($database);
         if ($pdo) {
@@ -45,12 +46,13 @@ class Connect
     }
 
     /**
-    * Sets the connection type for the database.
-    * 
-    * @param string $connection
-    * @return void
-    */
-    public static function setConnection(string $connection)
+     * Sets the connection type for the database.
+     *
+     * @param string $connection
+     * @return void
+     * @throws ConnectionException
+     */
+    public static function setConnection(string $connection): void
     {
         $drivers = ['mysql', 'sqlite', 'pgsql'];
         if (!in_array($connection, $drivers)) {
@@ -64,7 +66,7 @@ class Connect
     *
     * @return string
     */
-    public static function getConnection()
+    public static function getConnection(): string
     {
         return self::$connection;
     }
@@ -74,7 +76,7 @@ class Connect
     * 
     * @return PDOException|null
     */
-    public static function getError()
+    public static function getError(): ?PDOException
     {
         return self::$error;
     }

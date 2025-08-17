@@ -22,7 +22,7 @@ class CacheDriver
     /**
     * @var Cacheer
     */
-    protected $cacheer;
+    protected Cacheer $cacheer;
 
     /** @param string $logPath */
     public string $logPath = 'cacheer.log';
@@ -42,7 +42,7 @@ class CacheDriver
     * 
     * @return Cacheer
     */
-    public function useDatabaseDriver()
+    public function useDatabaseDriver(): Cacheer
     {
         $this->cacheer->cacheStore = new DatabaseCacheStore($this->logPath);
         return $this->cacheer;
@@ -53,7 +53,7 @@ class CacheDriver
     *
     * @return Cacheer
     */
-    public function useFileDriver()
+    public function useFileDriver(): Cacheer
     {
         $this->cacheer->options['loggerPath'] = $this->logPath;
         $this->cacheer->cacheStore = new FileCacheStore($this->cacheer->options);
@@ -65,7 +65,7 @@ class CacheDriver
     * 
     * @return Cacheer
     */
-    public function useRedisDriver()
+    public function useRedisDriver(): Cacheer
     {
         $this->cacheer->cacheStore = new RedisCacheStore($this->logPath);
         return $this->cacheer;
@@ -76,7 +76,7 @@ class CacheDriver
     * 
     * @return Cacheer
     */
-    public function useArrayDriver()
+    public function useArrayDriver(): Cacheer
     {
         $this->cacheer->cacheStore = new ArrayCacheStore($this->logPath);
         return $this->cacheer;
@@ -87,7 +87,7 @@ class CacheDriver
     * 
     * @return Cacheer
     */
-    public function useDefaultDriver()
+    public function useDefaultDriver(): Cacheer
     {
         if (!isset($this->cacheer->options['cacheDir'])) {
             $projectRoot = EnvHelper::getRootPath();
@@ -108,7 +108,7 @@ class CacheDriver
     * @param mixed $dirName
     * @return bool
     */
-    private function isDir(mixed $dirName)
+    private function isDir(mixed $dirName): bool
     {
       if (is_dir($dirName)) {
           return true;

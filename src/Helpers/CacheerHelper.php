@@ -15,7 +15,7 @@ class CacheerHelper
      * @param callable|null $exceptionFactory
      * @return void
      */
-    public static function validateCacheItem(array $item, ?callable $exceptionFactory = null)
+    public static function validateCacheItem(array $item, ?callable $exceptionFactory = null): void
     {
         if (!isset($item['cacheKey']) || !isset($item['cacheData'])) {
             if ($exceptionFactory) {
@@ -31,7 +31,7 @@ class CacheerHelper
      * @param mixed $cacheData
      * @return array
      */
-    public static function mergeCacheData($cacheData)
+    public static function mergeCacheData(mixed $cacheData): array
     {
         if (is_array($cacheData) && is_array(reset($cacheData))) {
             $merged = [];
@@ -50,7 +50,7 @@ class CacheerHelper
      * @param mixed $cacheData
      * @return array
      */
-    public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData)
+    public static function arrayIdentifier(mixed $currentCacheData, mixed $cacheData): array
     {
         if (is_array($currentCacheData) && is_array($cacheData)) {
             return array_merge($currentCacheData, $cacheData);
@@ -66,7 +66,7 @@ class CacheerHelper
      * @param string|null $encryptionKey
      * @return mixed
      */
-    public static function prepareForStorage(mixed $data, bool $compression = false, ?string $encryptionKey = null)
+    public static function prepareForStorage(mixed $data, bool $compression = false, ?string $encryptionKey = null): mixed
     {
         if (!$compression && is_null($encryptionKey)) {
             return $data;
@@ -98,7 +98,7 @@ class CacheerHelper
      * @param string|null $encryptionKey
      * @return mixed
      */
-    public static function recoverFromStorage(mixed $data, bool $compression = false, ?string $encryptionKey = null)
+    public static function recoverFromStorage(mixed $data, bool $compression = false, ?string $encryptionKey = null): mixed
     {
         if (!$compression && is_null($encryptionKey)) {
             return $data;

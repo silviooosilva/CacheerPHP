@@ -13,8 +13,8 @@ use Silviooosilva\CacheerPhp\Core\Connect;
 class CacheDatabaseRepository
 {
 
-    /** @var PDO */
-    private $connection = null;
+    /** @var ?PDO */
+    private ?PDO $connection = null;
 
    
     /**
@@ -37,7 +37,7 @@ class CacheDatabaseRepository
      * @param string|int $ttl
      * @return bool
      */
-    public function store(string $cacheKey, mixed $cacheData, string $namespace, string|int $ttl = 3600)
+    public function store(string $cacheKey, mixed $cacheData, string $namespace, string|int $ttl = 3600): bool
     {
         if (!empty($this->retrieve($cacheKey, $namespace))) {
             return $this->update($cacheKey, $cacheData, $namespace);
@@ -65,8 +65,8 @@ class CacheDatabaseRepository
     * @param string $cacheKey
     * @param string $namespace
     * @return mixed
-    */
-    public function retrieve(string $cacheKey, string $namespace = '')
+     */
+    public function retrieve(string $cacheKey, string $namespace = ''): mixed
     {
         $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         $nowFunction = $this->getCurrentDateTime($driver);
@@ -85,12 +85,11 @@ class CacheDatabaseRepository
     }
 
     /**
-    * Retrieves multiple cache items by their keys. 
-    * @param array $cacheKeys
-    * @param string $namespace
-    * @return array
-    */
-    public function getAll(string $namespace = '')
+     * Retrieves multiple cache items by their keys.
+     * @param string $namespace
+     * @return array
+     */
+    public function getAll(string $namespace = ''): array
     {
         $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         $nowFunction = $this->getCurrentDateTime($driver);
@@ -114,7 +113,7 @@ class CacheDatabaseRepository
     *
     * @return string
     */
-    private function getUpdateQueryWithDriver()
+    private function getUpdateQueryWithDriver(): string
     {
         $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driver === 'mysql' || $driver === 'mariadb') {
@@ -128,7 +127,7 @@ class CacheDatabaseRepository
     * 
     * @return string
     */
-    private function getDeleteQueryWithDriver()
+    private function getDeleteQueryWithDriver(): string
     {
         $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driver === 'mysql' || $driver === 'mariadb') {
@@ -145,7 +144,7 @@ class CacheDatabaseRepository
     * @param string $namespace
     * @return bool
     */
-    public function update(string $cacheKey, mixed $cacheData, string $namespace = '')
+    public function update(string $cacheKey, mixed $cacheData, string $namespace = ''): bool
     {
         $query = $this->getUpdateQueryWithDriver();
         $stmt = $this->connection->prepare($query);
@@ -164,7 +163,7 @@ class CacheDatabaseRepository
     * @param string $namespace
     * @return bool
     */
-    public function clear(string $cacheKey, string $namespace = '')
+    public function clear(string $cacheKey, string $namespace = ''): bool
     {
         $query = $this->getDeleteQueryWithDriver();
         $stmt = $this->connection->prepare($query);
@@ -223,7 +222,7 @@ class CacheDatabaseRepository
     * @param string $namespace
     * @return bool
     */
-    public function renew(string $cacheKey, string|int $ttl, string $namespace = '')
+    public function renew(string $cacheKey, string|int $ttl, string $namespace = ''): bool
     {
         $currentTime = date('Y-m-d H:i:s');
         if (!$this->hasValidCache($cacheKey, $namespace, $currentTime)) {
@@ -246,18 +245,19 @@ class CacheDatabaseRepository
     * 
     * @return bool
     */
-    public function flush()
+    public function flush(): bool
     {
         return $this->connection->exec("DELETE FROM cacheer_table") !== false;
     }
 
     /**
-    * Serializes or unserializes data based on the provided flag.
-    * 
-    * @param mixed $data
-    * @return string
-    */
-    private function serialize(mixed $data, bool $serialize = true)
+     * Serializes or unserializes data based on the provided flag.
+     *
+     * @param mixed $data
+     * @param bool $serialize
+     * @return mixed
+     */
+    private function serialize(mixed $data, bool $serialize = true): mixed
     {
         return $serialize ? serialize($data) : unserialize($data);
     }
@@ -268,7 +268,7 @@ class CacheDatabaseRepository
     * @param string $driver
     * @return string
     */
-    private function getCurrentDateTime(string $driver)
+    private function getCurrentDateTime(string $driver): string
     {
         return ($driver === 'sqlite') ? "DATETIME('now', 'localtime')" : "NOW()";
     }

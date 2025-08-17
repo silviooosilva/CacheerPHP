@@ -2,6 +2,7 @@
 
 namespace Silviooosilva\CacheerPhp\CacheStore\CacheManager;
 
+use Silviooosilva\CacheerPhp\Exceptions\CacheFileException;
 use Silviooosilva\CacheerPhp\Helpers\CacheFileHelper;
 
 /**
@@ -44,7 +45,7 @@ class FileCacheFlusher
     *
     * @return void
     */
-    public function flushCache()
+    public function flushCache(): void
     {
         $this->fileManager->clearDirectory($this->cacheDir);
         file_put_contents($this->lastFlushTimeFile, time());
@@ -56,7 +57,7 @@ class FileCacheFlusher
     * @param array $options
     * @return void
     */
-    public function handleAutoFlush(array $options)
+    public function handleAutoFlush(array $options): void
     {
         if (isset($options['flushAfter'])) {
             $this->scheduleFlush($options['flushAfter']);
@@ -64,12 +65,13 @@ class FileCacheFlusher
     }
 
     /**
-    * Schedules a flush operation based on the provided interval.
-    *
-    * @param string $flushAfter
-    * @return void
-    */
-    private function scheduleFlush(string $flushAfter)
+     * Schedules a flush operation based on the provided interval.
+     *
+     * @param string $flushAfter
+     * @return void
+     * @throws CacheFileException
+     */
+    private function scheduleFlush(string $flushAfter): void
     {
         $flushAfterSeconds = CacheFileHelper::convertExpirationToSeconds($flushAfter);
 

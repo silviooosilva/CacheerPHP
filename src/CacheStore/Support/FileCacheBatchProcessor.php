@@ -3,6 +3,7 @@
 namespace Silviooosilva\CacheerPhp\CacheStore\Support;
 
 use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
+use Silviooosilva\CacheerPhp\Exceptions\CacheFileException;
 use Silviooosilva\CacheerPhp\Helpers\CacheFileHelper;
 
 /**
@@ -21,15 +22,16 @@ class FileCacheBatchProcessor
     public function __construct(private FileCacheStore $store)
     {
     }
-    
+
     /**
      * Processes a batch of cache items and stores them.
      *
      * @param array $batchItems
      * @param string $namespace
      * @return void
+     * @throws CacheFileException
      */
-    public function process(array $batchItems, string $namespace)
+    public function process(array $batchItems, string $namespace): void
     {
         foreach ($batchItems as $item) {
             CacheFileHelper::validateCacheItem($item);

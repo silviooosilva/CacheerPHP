@@ -18,7 +18,7 @@ class MigrationManager
      * @param PDO $connection
      * @return void
      */
-    public static function migrate(PDO $connection)
+    public static function migrate(PDO $connection): void
     {
         try {
             self::prepareDatabase($connection);

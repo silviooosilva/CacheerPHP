@@ -11,7 +11,6 @@ use Silviooosilva\CacheerPhp\CacheStore\ArrayCacheStore;
 use Silviooosilva\CacheerPhp\Helpers\CacheConfig;
 use Silviooosilva\CacheerPhp\Utils\CacheDataFormatter;
 use Silviooosilva\CacheerPhp\Utils\CacheDriver;
-use Silviooosilva\CacheerPhp\Helpers\CacheerHelper;
 use RuntimeException;
 use Silviooosilva\CacheerPhp\Service\CacheRetriever;
 use Silviooosilva\CacheerPhp\Service\CacheMutator;
@@ -51,7 +50,7 @@ final class Cacheer implements CacheerInterface
     /**
     * @var FileCacheStore|DatabaseCacheStore|RedisCacheStore|ArrayCacheStore
     */
-    public $cacheStore;
+    public RedisCacheStore|DatabaseCacheStore|ArrayCacheStore|FileCacheStore $cacheStore;
 
     /**
     * @var array
@@ -73,8 +72,8 @@ final class Cacheer implements CacheerInterface
     *
     * @param array $options
     * @param bool  $formatted
-    * @throws RuntimeException
-    */
+    * @throws RuntimeException|Exceptions\CacheFileException
+ */
     public function __construct(array $options = [], bool $formatted = false)
     {
         $this->formatted = $formatted;
@@ -200,9 +199,9 @@ final class Cacheer implements CacheerInterface
     * @param array $cacheKeys
     * @param string $namespace
     * @param string|int $ttl
-    * @return CacheDataFormatter|mixed
-    */
-    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600): mixed
+    * @return CacheDataFormatter|array
+     */
+    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600): CacheDataFormatter|array
     {
         return $this->retriever->getMany($cacheKeys, $namespace, $ttl);
     }

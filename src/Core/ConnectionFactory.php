@@ -15,12 +15,13 @@ class ConnectionFactory
 {
 
     /**
-    * Creates a new PDO instance based on the specified database configuration.
-    * 
-    * @param array|null $database
-    * @return PDO|null
-    */
-    public static function createConnection(?array $database = null)
+     * Creates a new PDO instance based on the specified database configuration.
+     *
+     * @param array|null $database
+     * @return PDO|null
+     * @throws ConnectionException
+     */
+    public static function createConnection(?array $database = null): ?PDO
     {
         $dbConf = $database ?? CACHEER_DATABASE_CONFIG[Connect::getConnection()];
 
