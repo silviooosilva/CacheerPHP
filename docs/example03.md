@@ -14,6 +14,9 @@ $options = [
 
 $Cacheer = new Cacheer($options);
 
+// Static call example
+Cacheer::flushCache();
+
 // Key of the cache to be cleared
 $cacheKey = 'user_profile_123';
 

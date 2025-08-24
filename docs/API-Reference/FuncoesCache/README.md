@@ -4,6 +4,8 @@ CacheerPHP offers a robust set of functions for managing caching in your PHP app
 
 ---
 
+> **Note:** Each method can be called statically using `Cacheer::method()` or dynamically via an instance `$cache->method()`.
+
 ## Basic Cache Operations
 
 ### `getCache()` - Retrieves data from the cache
