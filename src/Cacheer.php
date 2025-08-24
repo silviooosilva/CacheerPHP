@@ -3,7 +3,6 @@
 namespace Silviooosilva\CacheerPhp;
 
 use Closure;
-use Silviooosilva\CacheerPhp\Interface\CacheerInterface;
 use Silviooosilva\CacheerPhp\CacheStore\DatabaseCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\RedisCacheStore;
@@ -17,11 +16,47 @@ use Silviooosilva\CacheerPhp\Service\CacheMutator;
 use BadMethodCallException;
 
 /**
-* Class CacheerPHP
-* @author Sílvio Silva <https://github.com/silviooosilva>
-* @package Silviooosilva\CacheerPhp
-*/
-final class Cacheer implements CacheerInterface
+ * Class CacheerPHP
+ *
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ *
+ * @method static bool add(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
+ * @method bool add(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
+ * @method static bool appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
+ * @method bool appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
+ * @method static bool clearCache(string $cacheKey, string $namespace = '')
+ * @method bool clearCache(string $cacheKey, string $namespace = '')
+ * @method static bool decrement(string $cacheKey, int $amount = 1, string $namespace = '')
+ * @method bool decrement(string $cacheKey, int $amount = 1, string $namespace = '')
+ * @method static bool forever(string $cacheKey, mixed $cacheData)
+ * @method bool forever(string $cacheKey, mixed $cacheData)
+ * @method static bool flushCache()
+ * @method bool flushCache()
+ * @method static bool increment(string $cacheKey, int $amount = 1, string $namespace = '')
+ * @method bool increment(string $cacheKey, int $amount = 1, string $namespace = '')
+ * @method static bool putCache(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
+ * @method bool putCache(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600)
+ * @method static bool putMany(array $items, string $namespace = '', int $batchSize = 100)
+ * @method bool putMany(array $items, string $namespace = '', int $batchSize = 100)
+ * @method static bool renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = '')
+ * @method bool renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = '')
+ * @method static mixed getCache(string $cacheKey, string $namespace = '', int|string $ttl = 3600)
+ * @method mixed getCache(string $cacheKey, string $namespace = '', int|string $ttl = 3600)
+ * @method static array|CacheDataFormatter getMany(array $cacheKeys, string $namespace = '', int|string $ttl = 3600)
+ * @method array|CacheDataFormatter getMany(array $cacheKeys, string $namespace = '', int|string $ttl = 3600)
+ * @method static CacheDataFormatter|mixed getAll(string $namespace = '')
+ * @method CacheDataFormatter|mixed getAll(string $namespace = '')
+ * @method static mixed getAndForget(string $cacheKey, string $namespace = '')
+ * @method mixed getAndForget(string $cacheKey, string $namespace = '')
+ * @method static mixed remember(string $cacheKey, int|string $ttl, Closure $callback)
+ * @method mixed remember(string $cacheKey, int|string $ttl, Closure $callback)
+ * @method static mixed rememberForever(string $cacheKey, Closure $callback)
+ * @method mixed rememberForever(string $cacheKey, Closure $callback)
+ * @method static bool has(string $cacheKey, string $namespace = '')
+ * @method bool has(string $cacheKey, string $namespace = '')
+ */
+final class Cacheer
 {
     /**
     * @var string
@@ -95,154 +130,6 @@ final class Cacheer implements CacheerInterface
     }
 
     /**
-    * Adds data to the cache if it does not already exist.
-    *
-    * @param string $cacheKey
-    * @param mixed  $cacheData
-    * @param string $namespace
-    * @param int|string $ttl
-    * @return bool
-    */
-    public function add(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600): bool
-    {
-        return $this->mutator->add($cacheKey, $cacheData, $namespace, $ttl);
-    }
-
-    /**
-    * Appends data to an existing cache item.
-    * 
-    * @param string $cacheKey
-    * @param mixed  $cacheData
-    * @param string $namespace
-    * @return bool
-    */
-    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = ''): bool
-    {
-        return $this->mutator->appendCache($cacheKey, $cacheData, $namespace);
-    }
-
-    /**
-    * Clears a specific cache item.
-    * 
-    * @param string $cacheKey
-    * @param string $namespace
-    * @return bool
-    */
-    public function clearCache(string $cacheKey, string $namespace = ''): bool
-    {
-        return $this->mutator->clearCache($cacheKey, $namespace);
-    }
-
-    /**
-    * Decrements a cache item by a specified amount.
-    *  
-    * @param string $cacheKey
-    * @param int $amount
-    * @param string $namespace
-    * @return bool
-    */
-    public function decrement(string $cacheKey, int $amount = 1, string $namespace = ''): bool
-    {
-        return $this->mutator->decrement($cacheKey, $amount, $namespace);
-    }
-
-    /**
-    * Store data in the cache permanently.
-    *
-    * @param string $cacheKey
-    * @param mixed $cacheData
-    * @return bool
-    */
-    public function forever(string $cacheKey, mixed $cacheData): bool
-    {
-        return $this->mutator->forever($cacheKey, $cacheData);
-    }
-
-    /**
-    * Flushes all cache items.
-    *
-    * @return bool
-    */
-    public function flushCache(): bool
-    {
-        return $this->mutator->flushCache();
-    }
-
-    /**
-    * Retrieves a cache item and deletes it from the cache.
-    * 
-    * @param string $cacheKey
-    * @param string $namespace
-    * @return mixed
-    */
-    public function getAndForget(string $cacheKey, string $namespace = ''): mixed
-    {
-        return $this->retriever->getAndForget($cacheKey, $namespace);
-    }
-
-    /**
-    * Gets all items in a specific namespace.
-    * 
-    * @param string $namespace
-    * @return CacheDataFormatter|mixed
-    */
-    public function getAll(string $namespace = ''): mixed
-    {
-        return $this->retriever->getAll($namespace);
-    }
-
-    /**
-    * Retrieves a single cache item.
-    * 
-    * @param string $cacheKey
-    * @param string $namespace
-    * @param string|int $ttl
-    * @return CacheDataFormatter|mixed
-    */
-    public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600): mixed
-    {
-        return $this->retriever->getCache($cacheKey, $namespace, $ttl);
-    }
-
-    /**
-    * Retrieves multiple cache items by their keys.
-    * 
-    * @param array $cacheKeys
-    * @param string $namespace
-    * @param string|int $ttl
-    * @return CacheDataFormatter|array
-     */
-    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600): CacheDataFormatter|array
-    {
-        return $this->retriever->getMany($cacheKeys, $namespace, $ttl);
-    }
-
-    /**
-    * Checks if a cache item exists.
-    *
-    * @param string $cacheKey
-    * @param string $namespace
-    * @return bool
-    */
-    public function has(string $cacheKey, string $namespace = ''): bool
-    {
-        return $this->retriever->has($cacheKey, $namespace);
-    }
-
-    /**
-    * Increments a cache item by a specified amount.
-    * 
-    * @param string $cacheKey
-    * @param int $amount
-    * @param string $namespace
-    * @return bool
-    */
-    public function increment(string $cacheKey, int $amount = 1, string $namespace = ''): bool
-    {
-        return $this->mutator->increment($cacheKey, $amount, $namespace);
-    }
-
-    /**
     * Checks if the last operation was successful.
     * 
     * @return bool
@@ -250,71 +137,6 @@ final class Cacheer implements CacheerInterface
     public function isSuccess(): bool
     {
         return $this->success;
-    }
-
-    /**
-    * Stores an item in the cache with a specific TTL.
-    * 
-    * @param string $cacheKey
-    * @param mixed  $cacheData
-    * @param string $namespace
-    * @param string|int $ttl
-    * @return bool
-    */
-    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600): bool
-    {
-        return $this->mutator->putCache($cacheKey, $cacheData, $namespace, $ttl);
-    }
-
-    /**
-    * Stores multiple items in the cache.
-    *  
-    * @param array   $items
-    * @param string  $namespace
-    * @param integer $batchSize
-    * @return bool
-    */
-    public function putMany(array $items, string $namespace = '', int $batchSize = 100): bool
-    {
-        return $this->mutator->putMany($items, $namespace, $batchSize);
-    }
-
-    /**
-    * Renews the cache for a specific key with a new TTL.
-    * 
-    * @param string $cacheKey
-    * @param string|int $ttl
-    * @param string $namespace
-    * @return bool
-    */
-    public function renewCache(string $cacheKey, string|int $ttl = 3600, string $namespace = ''): bool
-    {
-        return $this->mutator->renewCache($cacheKey, $ttl, $namespace);
-    }
-
-    /**
-    * Retrieves a cache item or executes a callback to store it if not found.
-    * 
-    * @param string $cacheKey
-    * @param int|string $ttl
-    * @param Closure $callback
-    * @return mixed
-    */
-    public function remember(string $cacheKey, int|string $ttl, Closure $callback): mixed
-    {
-        return $this->retriever->remember($cacheKey, $ttl, $callback);
-    }
-
-    /**
-    * Retrieves a cache item or executes a callback to store it permanently if not found.
-    * 
-    * @param string $cacheKey
-    * @param Closure $callback
-    * @return mixed
-    */
-    public function rememberForever(string $cacheKey, Closure $callback): mixed
-    {
-        return $this->retriever->rememberForever($cacheKey, $callback);
     }
 
     /**
@@ -448,7 +270,27 @@ final class Cacheer implements CacheerInterface
     }
 
     /**
-    * Handle dynamic static calls by creating an instance internally.
+    * Dynamically handle calls to missing instance methods.
+    *
+    * @param string $method
+    * @param array $parameters
+    * @return mixed
+    */
+    public function __call(string $method, array $parameters): mixed
+    {
+        if (method_exists($this->mutator, $method)) {
+            return $this->mutator->{$method}(...$parameters);
+        }
+
+        if (method_exists($this->retriever, $method)) {
+            return $this->retriever->{$method}(...$parameters);
+        }
+
+        throw new BadMethodCallException("Method {$method} does not exist");
+    }
+
+    /**
+    * Handle dynamic static calls by routing them through an instance.
     *
     * @param string $method
     * @param array $parameters
@@ -457,9 +299,7 @@ final class Cacheer implements CacheerInterface
     public static function __callStatic(string $method, array $parameters): mixed
     {
         $instance = self::instance();
-        if (!method_exists($instance, $method)) {
-            throw new BadMethodCallException("Method {$method} does not exist");
-        }
-        return $instance->{$method}(...$parameters);
+
+        return $instance->__call($method, $parameters);
     }
 }
