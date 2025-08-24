@@ -145,10 +145,10 @@ class CacheRetriever
      */
     public function has(string $cacheKey, string $namespace = ''): bool
     {
-        $this->cacheer->cacheStore->has($cacheKey, $namespace);
+        $result = $this->cacheer->cacheStore->has($cacheKey, $namespace);
         $this->cacheer->syncState();
 
-        return $this->cacheer->isSuccess();
+        return $result;
     }
 
     /**
