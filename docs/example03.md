@@ -18,20 +18,17 @@ $Cacheer = new Cacheer($options);
 $cacheKey = 'user_profile_123';
 
 // Clearing a specific item from the cache
-
-$Cacheer->clearCache($cacheKey);
-
-if ($Cacheer->isSuccess()) {
-    echo $Cacheer->getMessage();
-} else {
+if ($Cacheer->clearCache($cacheKey)) {
     echo $Cacheer->getMessage();
 }
 
-$Cacheer->flushCache();
-
-if ($Cacheer->isSuccess()) {
+if ($Cacheer->flushCache()) {
     echo $Cacheer->getMessage();
-} else {
+}
+
+// Utilizando isSuccess()
+$Cacheer->clearCache($cacheKey);
+if ($Cacheer->isSuccess()) {
     echo $Cacheer->getMessage();
 }
 

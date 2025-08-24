@@ -140,13 +140,15 @@ class CacheRetriever
      *
      * @param string $cacheKey
      * @param string $namespace
-     * @return void
+     * @return bool
      * @throws CacheFileException
      */
-    public function has(string $cacheKey, string $namespace = ''): void
+    public function has(string $cacheKey, string $namespace = ''): bool
     {
         $this->cacheer->cacheStore->has($cacheKey, $namespace);
         $this->cacheer->syncState();
+
+        return $this->cacheer->isSuccess();
     }
 
     /**

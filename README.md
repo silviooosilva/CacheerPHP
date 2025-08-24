@@ -66,13 +66,19 @@ $value = ['id' => 123, 'name' => 'John Doe'];
 // Store data
 $cache->putCache($key, $value);
 
-// Retrieve data
-$cached = $cache->getCache($key);
-
-if ($cache->isSuccess()) {
+// Retrieve data using boolean return
+if ($cache->has($key)) {
+    $cached = $cache->getCache($key);
     var_dump($cached);
 } else {
     echo $cache->getMessage();
+}
+
+// Alternatively, check the state via isSuccess()
+$cache->has($key);
+if ($cache->isSuccess()) {
+    $cached = $cache->getCache($key);
+    var_dump($cached);
 }
 ```
 
