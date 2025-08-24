@@ -22,17 +22,27 @@ $userProfile = [
     'email' => 'john.doe@example.com',
 ];
 
+// Static call example
+Cacheer::putCache($cacheKey, $userProfile);
+
 // Storing data in the cache
 $Cacheer->putCache($cacheKey, $userProfile);
 
 // Retrieving data from the cache
 $cachedProfile = $Cacheer->getCache($cacheKey);
 
-if ($Cacheer->isSuccess()) {
+if ($Cacheer->has($cacheKey)) {
     echo "Cache Found: ";
     print_r($cachedProfile);
 } else {
     echo $Cacheer->getMessage();
+}
+
+// Alternatively, using the previous style
+$Cacheer->has($cacheKey);
+if ($Cacheer->isSuccess()) {
+    echo "Cache Found: ";
+    print_r($cachedProfile);
 }
 
 ```

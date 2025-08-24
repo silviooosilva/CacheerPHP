@@ -56,20 +56,23 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use Silviooosilva\CacheerPhp\Cacheer;
 
-$cache = new Cacheer([
-    'cacheDir' => __DIR__ . '/cache',
-]);
-
 $key   = 'user_profile_1234';
 $value = ['id' => 123, 'name' => 'John Doe'];
 
-// Store data
-$cache->putCache($key, $value);
+// Static usage with boolean return
+Cacheer::putCache($key, $value);
+if (Cacheer::has($key)) {
+    $cached = Cacheer::getCache($key);
+    var_dump($cached);
+}
 
-// Retrieve data
-$cached = $cache->getCache($key);
-
+// Dynamic usage and isSuccess()
+$cache = new Cacheer([
+    'cacheDir' => __DIR__ . '/cache',
+]);
+$cache->has($key);
 if ($cache->isSuccess()) {
+    $cached = $cache->getCache($key);
     var_dump($cached);
 } else {
     echo $cache->getMessage();
