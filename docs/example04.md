@@ -21,6 +21,9 @@ $sessionData = [
     'login_time' => time(),
 ];
 
+// Static call example
+Cacheer::putCache($cacheKey, $sessionData, $namespace);
+
 // Caching data with namespace
 $Cacheer->putCache($cacheKey, $sessionData, $namespace);
 

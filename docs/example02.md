@@ -23,6 +23,9 @@ $dailyStats = [
     'revenue' => 500.75,
 ];
 
+// Static call example
+Cacheer::putCache($cacheKey, $dailyStats, 'namespace', '2 hours');
+
 // Armazenando dados no cache
 $Cacheer->putCache($cacheKey, $dailyStats);
 

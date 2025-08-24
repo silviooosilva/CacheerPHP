@@ -22,6 +22,9 @@ $userProfile = [
     'email' => 'john.doe@example.com',
 ];
 
+// Static call example
+Cacheer::putCache($cacheKey, $userProfile);
+
 // Storing data in the cache
 $Cacheer->putCache($cacheKey, $userProfile);
 

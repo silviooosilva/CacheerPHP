@@ -18,6 +18,9 @@ $Cacheer = new Cacheer($options);
 $apiUrl = 'https://jsonplaceholder.typicode.com/posts';
 $cacheKey = 'api_response_' . md5($apiUrl);
 
+// Static call example
+$cachedResponse = Cacheer::getCache($cacheKey);
+
 // Checking if the API response is already in the cache
 $cachedResponse = $Cacheer->getCache($cacheKey);
 

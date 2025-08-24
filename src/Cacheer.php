@@ -14,6 +14,7 @@ use Silviooosilva\CacheerPhp\Utils\CacheDriver;
 use RuntimeException;
 use Silviooosilva\CacheerPhp\Service\CacheRetriever;
 use Silviooosilva\CacheerPhp\Service\CacheMutator;
+use BadMethodCallException;
 
 /**
 * Class CacheerPHP
@@ -67,6 +68,11 @@ final class Cacheer implements CacheerInterface
     */
     private CacheMutator $mutator;
 
+    /**
+    * @var Cacheer|null
+    */
+    private static ?Cacheer $staticInstance = null;
+
 /**
     * Cacheer constructor.
     *
@@ -81,6 +87,11 @@ final class Cacheer implements CacheerInterface
         $this->retriever = new CacheRetriever($this);
         $this->mutator = new CacheMutator($this);
         $this->setDriver()->useDefaultDriver();
+    }
+
+    private static function instance(): Cacheer
+    {
+        return self::$staticInstance ??= new self();
     }
 
     /**
@@ -434,5 +445,21 @@ final class Cacheer implements CacheerInterface
     {
         $this->encryptionKey = $key;
         return $this;
+    }
+
+    /**
+    * Handle dynamic static calls by creating an instance internally.
+    *
+    * @param string $method
+    * @param array $parameters
+    * @return mixed
+    */
+    public static function __callStatic(string $method, array $parameters): mixed
+    {
+        $instance = self::instance();
+        if (!method_exists($instance, $method)) {
+            throw new BadMethodCallException("Method {$method} does not exist");
+        }
+        return $instance->{$method}(...$parameters);
     }
 }
