@@ -16,6 +16,8 @@ $Cacheer = new Cacheer();
 $Cacheer->setConfig();
 ```
 
+> **Note:** Configuration methods can also be called statically, e.g. `Cacheer::setConfig()->setDatabaseConnection('mysql');`
+
 Configures the database for storing the cache.
 ```php
 <?php

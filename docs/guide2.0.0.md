@@ -70,6 +70,8 @@ $Cacheer->setDriver()->useDatabaseDriver();
 
 ```
 
+> These configuration steps can also be performed statically using `Cacheer::setConfig()->setDatabaseConnection('mysql');`
+
 #### 3) Configure Timezone
 
 - To avoid issues with cache expiration, set the timezone:

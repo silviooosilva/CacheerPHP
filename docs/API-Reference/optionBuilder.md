@@ -53,6 +53,8 @@ $Cacheer = new Cacheer($Options);
 $Cacheer->setDriver()->useFileDriver(); //File Driver
 ```
 
+> **Note:** Cacheer methods may also be called statically, e.g. `Cacheer::setDriver()->useFileDriver();`
+
 #### Coming soon
 
 ```php

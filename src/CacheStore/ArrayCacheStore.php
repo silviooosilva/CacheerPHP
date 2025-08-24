@@ -248,7 +248,15 @@ class ArrayCacheStore implements CacheerInterface
   public function has(string $cacheKey, string $namespace = ''): bool
   {
     $arrayStoreKey = $this->buildArrayKey($cacheKey, $namespace);
-    return isset($this->arrayStore[$arrayStoreKey]) && time() < $this->arrayStore[$arrayStoreKey]['expirationTime'];
+    $exists = isset($this->arrayStore[$arrayStoreKey]) && time() < $this->arrayStore[$arrayStoreKey]['expirationTime'];
+
+    $this->setMessage(
+      $exists ? "Cache key: {$cacheKey} exists and it's available!" : "Cache key: {$cacheKey} does not exist or it's expired!",
+      $exists
+    );
+    $this->logger->debug("{$this->getMessage()} from array driver.");
+
+    return $exists;
   }
 
   /**
