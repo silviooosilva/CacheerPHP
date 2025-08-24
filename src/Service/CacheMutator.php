@@ -54,12 +54,14 @@ class CacheMutator
     * @param string $cacheKey
     * @param mixed $cacheData
     * @param string $namespace
-    * @return void
+    * @return bool
     */
-    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = ''): void
+    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = ''): bool
     {
         $this->cacheer->cacheStore->appendCache($cacheKey, $cacheData, $namespace);
         $this->cacheer->syncState();
+
+        return $this->cacheer->isSuccess();
     }
 
     /**
@@ -67,12 +69,14 @@ class CacheMutator
     *
     * @param string $cacheKey
     * @param string $namespace
-    * @return void
+    * @return bool
     */
-    public function clearCache(string $cacheKey, string $namespace = ''): void
+    public function clearCache(string $cacheKey, string $namespace = ''): bool
     {
         $this->cacheer->cacheStore->clearCache($cacheKey, $namespace);
         $this->cacheer->syncState();
+
+        return $this->cacheer->isSuccess();
     }
 
     /**
@@ -93,23 +97,27 @@ class CacheMutator
      *
      * @param string $cacheKey
      * @param mixed $cacheData
-     * @return void
+     * @return bool
      */
-    public function forever(string $cacheKey, mixed $cacheData): void
+    public function forever(string $cacheKey, mixed $cacheData): bool
     {
         $this->putCache($cacheKey, $cacheData, ttl: 31536000 * 1000);
         $this->cacheer->setInternalState($this->cacheer->getMessage(), $this->cacheer->isSuccess());
+
+        return $this->cacheer->isSuccess();
     }
 
     /**
     * Flushes the entire cache.
     *
-    * @return void
+    * @return bool
     */
-    public function flushCache(): void
+    public function flushCache(): bool
     {
         $this->cacheer->cacheStore->flushCache();
         $this->cacheer->syncState();
+
+        return $this->cacheer->isSuccess();
     }
 
     /**
@@ -140,13 +148,15 @@ class CacheMutator
      * @param mixed $cacheData
      * @param string $namespace
      * @param int|string $ttl
-     * @return void
+     * @return bool
      */
-    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600): void
+    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', int|string $ttl = 3600): bool
     {
         $data = CacheerHelper::prepareForStorage($cacheData, $this->cacheer->isCompressionEnabled(), $this->cacheer->getEncryptionKey());
         $this->cacheer->cacheStore->putCache($cacheKey, $data, $namespace, $ttl);
         $this->cacheer->syncState();
+
+        return $this->cacheer->isSuccess();
     }
 
     /**
@@ -155,11 +165,14 @@ class CacheMutator
     * @param array $items
     * @param string $namespace
     * @param int $batchSize
-    * @return void
+    * @return bool
     */
-    public function putMany(array $items, string $namespace = '', int $batchSize = 100): void
+    public function putMany(array $items, string $namespace = '', int $batchSize = 100): bool
     {
         $this->cacheer->cacheStore->putMany($items, $namespace, $batchSize);
+        $this->cacheer->syncState();
+
+        return $this->cacheer->isSuccess();
     }
 
     /**
@@ -168,11 +181,13 @@ class CacheMutator
     * @param string $cacheKey
     * @param int|string $ttl
     * @param string $namespace
-    * @return void
+    * @return bool
     */
-    public function renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = ''): void
+    public function renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = ''): bool
     {
         $this->cacheer->cacheStore->renewCache($cacheKey, $ttl, $namespace);
         $this->cacheer->syncState();
+
+        return $this->cacheer->isSuccess();
     }
 }

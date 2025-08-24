@@ -11,6 +11,8 @@ $Cacheer = new Cacheer();
 $Cacheer->setDriver();
 ```
 
+> **Note:** The driver methods can also be called statically, e.g. `Cacheer::setDriver()->useFileDriver();`
+
 Defines the cache driver as file-based:
 ```php
 <?php

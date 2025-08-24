@@ -21,16 +21,26 @@ $sessionData = [
     'login_time' => time(),
 ];
 
+// Static call example
+Cacheer::putCache($cacheKey, $sessionData, $namespace);
+
 // Caching data with namespace
 $Cacheer->putCache($cacheKey, $sessionData, $namespace);
 
 // Retrieving data from the cache
 $cachedSessionData = $Cacheer->getCache($cacheKey, $namespace);
 
-if ($Cacheer->isSuccess()) {
+if ($Cacheer->has($cacheKey, $namespace)) {
     echo "Cache Found: ";
     print_r($cachedSessionData);
 } else {
     echo $Cacheer->getMessage();
+}
+
+// Alternativamente
+$Cacheer->has($cacheKey, $namespace);
+if ($Cacheer->isSuccess()) {
+    echo "Cache Found: ";
+    print_r($cachedSessionData);
 }
 ```
