@@ -71,7 +71,7 @@ interface CacheerInterface
      * @param string $namespace Namespace for organization
      * @return bool True if the item exists, false otherwise
      */
-    public function has(string $cacheKey, string $namespace = '');
+    public function has(string $cacheKey, string $namespace = ''): bool;
 
     /**
      * Stores an item in the cache with a specific TTL.

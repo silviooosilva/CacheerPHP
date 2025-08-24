@@ -4,6 +4,8 @@ CacheerPHP offers a robust set of functions for managing caching in your PHP app
 
 ---
 
+> **Note:** Each method can be called statically using `Cacheer::method()` or dynamically via an instance `$cache->method()`.
+
 ## Basic Cache Operations
 
 ### `getCache()` - Retrieves data from the cache
@@ -248,9 +250,9 @@ $Cacheer->useEncryption('secret-key');
 ```
 ---
 
-Each of the functions below allows you to interact with the cache in different ways. Functions that “return void” actually set the status of the operation internally, which can be checked via:
+Each of the functions below now returns a boolean indicating the success of the operation. If you prefer, you can still check the status separately:
 
 ```php
-$Cacheer->isSuccess(); // Returns true ou false
+$Cacheer->isSuccess(); // Returns true or false
 $Cacheer->getMessage(); // Returns a message
 ```

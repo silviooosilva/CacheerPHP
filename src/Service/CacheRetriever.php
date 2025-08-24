@@ -4,6 +4,7 @@ namespace Silviooosilva\CacheerPhp\Service;
 
 use Closure;
 use Silviooosilva\CacheerPhp\Cacheer;
+use Silviooosilva\CacheerPhp\Exceptions\CacheFileException;
 use Silviooosilva\CacheerPhp\Helpers\CacheerHelper;
 use Silviooosilva\CacheerPhp\Utils\CacheDataFormatter;
 
@@ -30,14 +31,15 @@ class CacheRetriever
     }
 
     /**
-    * Retrieves a cache item by its key.
-    *
-    * @param string $cacheKey
-    * @param string $namespace
-    * @param int|string $ttl
-    * @return mixed
-    */
-    public function getCache(string $cacheKey, string $namespace = '', int|string $ttl = 3600)
+     * Retrieves a cache item by its key.
+     *
+     * @param string $cacheKey
+     * @param string $namespace
+     * @param int|string $ttl
+     * @return mixed
+     * @throws CacheFileException
+     */
+    public function getCache(string $cacheKey, string $namespace = '', int|string $ttl = 3600): mixed
     {
         $cacheData = $this->cacheer->cacheStore->getCache($cacheKey, $namespace, $ttl);
         $this->cacheer->syncState();
@@ -50,55 +52,42 @@ class CacheRetriever
     }
 
     /**
-    * Retrieves multiple cache items by their keys.
-    *
-    * @param array $cacheKeys
-    * @param string $namespace
-    * @param int|string $ttl
-    * @return array|CacheDataFormatter
-    */
-    public function getMany(array $cacheKeys, string $namespace = '', int|string $ttl = 3600)
+     * Retrieves multiple cache items by their keys.
+     *
+     * @param array $cacheKeys
+     * @param string $namespace
+     * @param int|string $ttl
+     * @return array|CacheDataFormatter
+     * @throws CacheFileException
+     */
+    public function getMany(array $cacheKeys, string $namespace = '', int|string $ttl = 3600): array|CacheDataFormatter
     {
         $cachedData = $this->cacheer->cacheStore->getMany($cacheKeys, $namespace, $ttl);
-        $this->cacheer->syncState();
-
-        if ($this->cacheer->isSuccess() && ($this->cacheer->isCompressionEnabled() || $this->cacheer->getEncryptionKey() !== null)) {
-            foreach ($cachedData as &$data) {
-                $data = CacheerHelper::recoverFromStorage($data, $this->cacheer->isCompressionEnabled(), $this->cacheer->getEncryptionKey());
-            }
-        }
-
-        return $this->cacheer->isFormatted() ? new CacheDataFormatter($cachedData) : $cachedData;
+        return $this->getCachedDatum($cachedData);
     }
 
     /**
-    * Retrieves all cache items in a namespace.
-    *
-    * @param string $namespace
-    * @return CacheDataFormatter|mixed
-    */
-    public function getAll(string $namespace = '')
+     * Retrieves all cache items in a namespace.
+     *
+     * @param string $namespace
+     * @return CacheDataFormatter|mixed
+     * @throws CacheFileException
+     */
+    public function getAll(string $namespace = ''): mixed
     {
         $cachedData = $this->cacheer->cacheStore->getAll($namespace);
-        $this->cacheer->syncState();
-
-        if ($this->cacheer->isSuccess() && ($this->cacheer->isCompressionEnabled() || $this->cacheer->getEncryptionKey() !== null)) {
-            foreach ($cachedData as &$data) {
-                $data = CacheerHelper::recoverFromStorage($data, $this->cacheer->isCompressionEnabled(), $this->cacheer->getEncryptionKey());
-            }
-        }
-
-        return $this->cacheer->isFormatted() ? new CacheDataFormatter($cachedData) : $cachedData;
+        return $this->getCachedDatum($cachedData);
     }
 
     /**
-    * Retrieves a cache item, deletes it, and returns its data.
-    *
-    * @param string $cacheKey
-    * @param string $namespace
-    * @return mixed|null
-    */
-    public function getAndForget(string $cacheKey, string $namespace = '')
+     * Retrieves a cache item, deletes it, and returns its data.
+     *
+     * @param string $cacheKey
+     * @param string $namespace
+     * @return mixed|null
+     * @throws CacheFileException
+     */
+    public function getAndForget(string $cacheKey, string $namespace = ''): mixed
     {
         $cachedData = $this->getCache($cacheKey, $namespace);
 
@@ -112,14 +101,15 @@ class CacheRetriever
     }
 
     /**
-    * Retrieves a cache item, or executes a callback to store it if not found.
-    *
-    * @param string $cacheKey
-    * @param int|string $ttl
-    * @param Closure $callback
-    * @return mixed
-    */
-    public function remember(string $cacheKey, int|string $ttl, Closure $callback)
+     * Retrieves a cache item, or executes a callback to store it if not found.
+     *
+     * @param string $cacheKey
+     * @param int|string $ttl
+     * @param Closure $callback
+     * @return mixed
+     * @throws CacheFileException
+     */
+    public function remember(string $cacheKey, int|string $ttl, Closure $callback): mixed
     {
         $cachedData = $this->getCache($cacheKey, ttl: $ttl);
 
@@ -133,27 +123,48 @@ class CacheRetriever
     }
 
     /**
-    * Retrieves a cache item indefinitely, or executes a callback to store it if not found.
-    *
-    * @param string $cacheKey
-    * @param Closure $callback
-    * @return mixed
-    */
-    public function rememberForever(string $cacheKey, Closure $callback)
+     * Retrieves a cache item indefinitely, or executes a callback to store it if not found.
+     *
+     * @param string $cacheKey
+     * @param Closure $callback
+     * @return mixed
+     * @throws CacheFileException
+     */
+    public function rememberForever(string $cacheKey, Closure $callback): mixed
     {
         return $this->remember($cacheKey, 31536000 * 1000, $callback);
     }
 
     /**
-    * Checks if a cache item exists.
-    *
-    * @param string $cacheKey
-    * @param string $namespace
-    * @return void
-    */
-    public function has(string $cacheKey, string $namespace = '')
+     * Checks if a cache item exists.
+     *
+     * @param string $cacheKey
+     * @param string $namespace
+     * @return bool
+     * @throws CacheFileException
+     */
+    public function has(string $cacheKey, string $namespace = ''): bool
     {
-        $this->cacheer->cacheStore->has($cacheKey, $namespace);
+        $result = $this->cacheer->cacheStore->has($cacheKey, $namespace);
         $this->cacheer->syncState();
+
+        return $result;
+    }
+
+    /**
+     * @param mixed $cachedData
+     * @return mixed|CacheDataFormatter
+     */
+    public function getCachedDatum(mixed $cachedData): mixed
+    {
+        $this->cacheer->syncState();
+
+        if ($this->cacheer->isSuccess() && ($this->cacheer->isCompressionEnabled() || $this->cacheer->getEncryptionKey() !== null)) {
+            foreach ($cachedData as &$data) {
+                $data = CacheerHelper::recoverFromStorage($data, $this->cacheer->isCompressionEnabled(), $this->cacheer->getEncryptionKey());
+            }
+        }
+
+        return $this->cacheer->isFormatted() ? new CacheDataFormatter($cachedData) : $cachedData;
     }
 }

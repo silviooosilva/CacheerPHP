@@ -3,6 +3,7 @@
 namespace Silviooosilva\CacheerPhp\CacheStore;
 
 use Exception;
+use Predis\Response\Status;
 use Silviooosilva\CacheerPhp\Utils\CacheLogger;
 use Silviooosilva\CacheerPhp\Helpers\CacheRedisHelper;
 use Silviooosilva\CacheerPhp\Interface\CacheerInterface;
@@ -23,9 +24,9 @@ class RedisCacheStore implements CacheerInterface
     private string $namespace = '';
 
     /**
-     * @var CacheLogger
+     * @var ?CacheLogger
      */
-    private $logger = null;
+    private ?CacheLogger $logger = null;
 
     /**
      * @var string
@@ -55,9 +56,9 @@ class RedisCacheStore implements CacheerInterface
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace
-     * @return void
+     * @return bool
      */
-    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = '')
+    public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = ''): void
     {
         $cacheFullKey = $this->buildKey($cacheKey, $namespace);
         $existingData = $this->getCache($cacheFullKey);
@@ -82,7 +83,7 @@ class RedisCacheStore implements CacheerInterface
      * @param string $namespace
      * @return string
      */
-    private function buildKey(string $key, string $namespace)
+    private function buildKey(string $key, string $namespace): string
     {
         return $this->namespace . ($namespace ? $namespace . ':' : '') . $key;
     }
@@ -94,7 +95,7 @@ class RedisCacheStore implements CacheerInterface
      * @param string $namespace
      * @return void
      */
-    public function clearCache(string $cacheKey, string $namespace = '')
+    public function clearCache(string $cacheKey, string $namespace = ''): void
     {
         $cacheFullKey = $this->buildKey($cacheKey, $namespace);
 
@@ -112,7 +113,7 @@ class RedisCacheStore implements CacheerInterface
      * 
      * @return void
      */
-    public function flushCache()
+    public function flushCache(): void
     {
         if ($this->redis->flushall()) {
             $this->setMessage("Cache flushed successfully", true);
@@ -131,7 +132,7 @@ class RedisCacheStore implements CacheerInterface
      * @param string|int $ttl
      * @return mixed
      */
-    public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600)
+    public function getCache(string $cacheKey, string $namespace = '', string|int $ttl = 3600): mixed
     {
         $fullCacheKey = $this->buildKey($cacheKey, $namespace);
         $cacheData = $this->redis->get($fullCacheKey);
@@ -144,6 +145,7 @@ class RedisCacheStore implements CacheerInterface
 
         $this->setMessage("CacheData not found, does not exists or expired", false);
         $this->logger->info("{$this->getMessage()} from redis driver.");
+        return null;
     }
 
     /**
@@ -152,7 +154,7 @@ class RedisCacheStore implements CacheerInterface
      * @param string $namespace
      * @return array
      */
-    public function getAll(string $namespace = '')
+    public function getAll(string $namespace = ''): array
     {
         $keys = $this->redis->keys($this->buildKey('*', $namespace));
         $results = [];
@@ -185,7 +187,7 @@ class RedisCacheStore implements CacheerInterface
      * @param string|int $ttl
      * @return array
      */
-    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600)
+    public function getMany(array $cacheKeys, string $namespace = '', string|int $ttl = 3600): array
     {
         $results = [];
         foreach ($cacheKeys as $cacheKey) {
@@ -210,7 +212,7 @@ class RedisCacheStore implements CacheerInterface
      * 
      * @return string
      */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
@@ -221,7 +223,7 @@ class RedisCacheStore implements CacheerInterface
      * @param string $fullKey
      * @return string|null
      */
-    private function getDump(string $fullKey)
+    private function getDump(string $fullKey): ?string
     {
         return $this->redis->dump($fullKey);
     }
@@ -231,19 +233,21 @@ class RedisCacheStore implements CacheerInterface
      * 
      * @param string $cacheKey
      * @param string $namespace
-     * @return void
+     * @return bool
      */
-    public function has(string $cacheKey, string $namespace = '')
+    public function has(string $cacheKey, string $namespace = ''): bool
     {
         $cacheFullKey = $this->buildKey($cacheKey, $namespace);
 
         if ($this->redis->exists($cacheFullKey) > 0) {
             $this->setMessage("Cache Key: {$cacheKey} exists!", true);
-        } else {
-            $this->setMessage("Cache Key: {$cacheKey} does not exists!", false);
+            $this->logger->debug("{$this->getMessage()} from redis driver.");
+            return true;
         }
 
+        $this->setMessage("Cache Key: {$cacheKey} does not exists!", false);
         $this->logger->debug("{$this->getMessage()} from redis driver.");
+        return false;
     }
 
     /**
@@ -251,7 +255,7 @@ class RedisCacheStore implements CacheerInterface
      * 
      * @return boolean
      */
-    public function isSuccess()
+    public function isSuccess(): bool
     {
         return $this->success;
     }
@@ -263,7 +267,7 @@ class RedisCacheStore implements CacheerInterface
      * @param string $namespace
      * @return void
      */
-    private function processBatchItems(array $batchItems, string $namespace)
+    private function processBatchItems(array $batchItems, string $namespace): void
     {
         foreach ($batchItems as $item) {
             CacheRedisHelper::validateCacheItem($item);
@@ -281,9 +285,9 @@ class RedisCacheStore implements CacheerInterface
      * @param mixed  $cacheData
      * @param string $namespace
      * @param string|int|null $ttl
-     * @return mixed
+     * @return Status|null
      */
-    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int|null $ttl = null)
+    public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int|null $ttl = null): ?Status
     {
         $cacheFullKey = $this->buildKey($cacheKey, $namespace);
         $serializedData = CacheRedisHelper::serialize($cacheData);
@@ -309,7 +313,7 @@ class RedisCacheStore implements CacheerInterface
      * @param int    $batchSize
      * @return void
      */
-    public function putMany(array $items, string $namespace = '', int $batchSize = 100)
+    public function putMany(array $items, string $namespace = '', int $batchSize = 100): void
     {
         $processedCount = 0;
         $itemCount = count($items);
@@ -323,13 +327,14 @@ class RedisCacheStore implements CacheerInterface
 
     /**
      * Renews the cache for a specific key with a new TTL.
-     * 
+     *
      * @param string $cacheKey
      * @param string|int $ttl
      * @param string $namespace
      * @return void
+     * @throws CacheRedisException
      */
-    public function renewCache(string $cacheKey, string|int $ttl, string $namespace = '')
+    public function renewCache(string $cacheKey, string|int $ttl, string $namespace = ''): void
     {
         $cacheFullKey = $this->buildKey($cacheKey, $namespace);
         $dump = $this->getDump($cacheFullKey);
@@ -353,13 +358,14 @@ class RedisCacheStore implements CacheerInterface
 
     /**
      * Restores a key in Redis with a given TTL and serialized data.
-     * 
+     *
      * @param string $fullKey
      * @param string|int $ttl
      * @param mixed $dump
      * @return bool
+     * @throws CacheRedisException
      */
-    private function restoreKey(string $fullKey, string|int $ttl, mixed $dump)
+    private function restoreKey(string $fullKey, string|int $ttl, mixed $dump): bool
     {
         try {
             $this->redis->restore($fullKey, $ttl * 1000, $dump, 'REPLACE');
@@ -376,7 +382,7 @@ class RedisCacheStore implements CacheerInterface
      * @param boolean $success
      * @return void
      */
-    private function setMessage(string $message, bool $success)
+    private function setMessage(string $message, bool $success): void
     {
         $this->message = $message;
         $this->success = $success;

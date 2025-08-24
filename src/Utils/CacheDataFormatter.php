@@ -27,7 +27,7 @@ class CacheDataFormatter
     *
     * @return string|false
     */
-    public function toJson()
+    public function toJson(): bool|string
     {
         return json_encode(
             $this->data,
@@ -42,7 +42,7 @@ class CacheDataFormatter
     * 
     * @return array
     */
-    public function toArray()
+    public function toArray(): array
     {
         return (array)$this->data;
     }
@@ -52,7 +52,7 @@ class CacheDataFormatter
     * 
     * @return string
     */
-    public function toString()
+    public function toString(): string
     {
         return (string)$this->data;
     }
@@ -62,7 +62,7 @@ class CacheDataFormatter
     * 
     * @return object
     */
-    public function toObject()
+    public function toObject(): object
     {
         return (object)$this->data;
     }
