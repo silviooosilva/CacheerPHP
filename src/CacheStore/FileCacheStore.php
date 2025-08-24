@@ -131,7 +131,7 @@ class FileCacheStore implements CacheerInterface
      *
      * @param string $cacheKey
      * @param string $namespace
-     * @return void
+     * @return bool
      * @throws CacheFileException
      */
     public function clearCache(string $cacheKey, string $namespace = ''): void
@@ -340,18 +340,20 @@ class FileCacheStore implements CacheerInterface
      *
      * @param string $cacheKey
      * @param string $namespace
-     * @return void
+     * @return bool
      * @throws CacheFileException
      */
-    public function has(string $cacheKey, string $namespace = ''): void
+    public function has(string $cacheKey, string $namespace = ''): bool
     {
         $this->getCache($cacheKey, $namespace);
 
         if ($this->isSuccess()) {
             $this->setMessage("Cache key: {$cacheKey} exists and it's available! from file driver", true);
-        } else {
-            $this->setMessage("Cache key: {$cacheKey} does not exists or it's expired! from file driver", false);
+            return true;
         }
+
+        $this->setMessage("Cache key: {$cacheKey} does not exists or it's expired! from file driver", false);
+        return false;
     }
 
     /**

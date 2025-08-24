@@ -36,11 +36,18 @@ $Cacheer->putCache($cacheKey, $userProfile);
 
 $cachedProfile = $Cacheer->getCache($cacheKey);
 
-if ($Cacheer->isSuccess()) {
+if ($Cacheer->has($cacheKey)) {
 echo  "Cache Found: ";
 print_r($cachedProfile);
 } else {
 echo  $Cacheer->getMessage();
+}
+
+// Ou utilizando isSuccess()
+$Cacheer->has($cacheKey);
+if ($Cacheer->isSuccess()) {
+echo  "Cache Found: ";
+print_r($cachedProfile);
 }
 
 

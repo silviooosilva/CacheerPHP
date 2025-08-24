@@ -185,15 +185,22 @@ class DatabaseCacheStore implements CacheerInterface
      * 
      * @param string $cacheKey
      * @param string $namespace
-     * @return void
+     * @return bool
      */
-    public function has(string $cacheKey, string $namespace = ''): void
+    public function has(string $cacheKey, string $namespace = ''): bool
     {
         $cacheData = $this->getCache($cacheKey, $namespace);
+
         if ($cacheData) {
-            $this->logger->debug("Cache key: {$cacheKey} exists and it's available from database driver.");
+            $this->setMessage("Cache key: {$cacheKey} exists and it's available from database driver.", true);
+            $this->logger->debug("{$this->getMessage()}");
+            return true;
         }
-        $this->logger->warning("{$this->getMessage()} from database driver.");
+
+        $this->setMessage("Cache key: {$cacheKey} does not exist or it's expired from database driver.", false);
+        $this->logger->debug("{$this->getMessage()}");
+
+        return false;
     }
 
     /**

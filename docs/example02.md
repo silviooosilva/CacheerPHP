@@ -29,11 +29,18 @@ $Cacheer->putCache($cacheKey, $dailyStats);
 // Recuperando dados do cache por 2 horas
 $cachedStats = $Cacheer->getCache($cacheKey, 'namespace', '2 hours'); //Segunda opção (definição no método)
 
-if ($Cacheer->isSuccess()) {
+if ($Cacheer->has($cacheKey, 'namespace')) {
     echo "Cache Found: ";
     print_r($cachedStats);
 } else {
     echo $Cacheer->getMessage();
+}
+
+// Ou utilizando isSuccess()
+$Cacheer->has($cacheKey, 'namespace');
+if ($Cacheer->isSuccess()) {
+    echo "Cache Found: ";
+    print_r($cachedStats);
 }
 
 ```

@@ -56,7 +56,7 @@ class RedisCacheStore implements CacheerInterface
      * @param string $cacheKey
      * @param mixed  $cacheData
      * @param string $namespace
-     * @return void
+     * @return bool
      */
     public function appendCache(string $cacheKey, mixed $cacheData, string $namespace = ''): void
     {
@@ -233,19 +233,21 @@ class RedisCacheStore implements CacheerInterface
      * 
      * @param string $cacheKey
      * @param string $namespace
-     * @return void
+     * @return bool
      */
-    public function has(string $cacheKey, string $namespace = ''): void
+    public function has(string $cacheKey, string $namespace = ''): bool
     {
         $cacheFullKey = $this->buildKey($cacheKey, $namespace);
 
         if ($this->redis->exists($cacheFullKey) > 0) {
             $this->setMessage("Cache Key: {$cacheKey} exists!", true);
-        } else {
-            $this->setMessage("Cache Key: {$cacheKey} does not exists!", false);
+            $this->logger->debug("{$this->getMessage()} from redis driver.");
+            return true;
         }
 
+        $this->setMessage("Cache Key: {$cacheKey} does not exists!", false);
         $this->logger->debug("{$this->getMessage()} from redis driver.");
+        return false;
     }
 
     /**
