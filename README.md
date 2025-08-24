@@ -77,6 +77,13 @@ if ($cache->isSuccess()) {
 } else {
     echo $cache->getMessage();
 }
+
+// Alternatively, check the state via isSuccess()
+$cache->has($key);
+if ($cache->isSuccess()) {
+    $cached = $cache->getCache($key);
+    var_dump($cached);
+}
 ```
 
 ## Documentation
