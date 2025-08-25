@@ -15,6 +15,37 @@ Here are some examples:
 You've seen that parameters are very susceptible to typing errors, right?
 The **OptionBuilder** arises from the need to eliminate these possible errors.
 
+#### `setUp(array $options): void`
+
+Sets up the `Cacheer` instance with the provided options.
+
+- **Parameters**:
+  - `array $options`: An associative array of configuration options (e.g., `driver`, `path`, etc.).
+
+- **Example**:
+  ```php
+  $cache = new Cacheer();
+  $options = [
+      'driver' => 'file',
+      'path' => '/tmp/cache',
+  ];
+  $cache->setUp($options);
+  ```
+
+#### `getOptions(): array`
+
+Retrieves the current configuration options for the `Cacheer` instance.
+
+- **Returns**:
+  - `array`: The current configuration options.
+
+- **Example**:
+  ```php
+  $cache = new Cacheer();
+  $options = $cache->getOptions();
+  var_dump($options);
+  ```
+
 #### `OptionBuilder()`
 
 The **OptionBuilder** has specific methods for configuring each type of cache driver supported.
