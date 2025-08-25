@@ -4,7 +4,6 @@ namespace Silviooosilva\CacheerPhp\Helpers;
 
 use Silviooosilva\CacheerPhp\Cacheer;
 use Silviooosilva\CacheerPhp\CacheStore\ArrayCacheStore;
-use Silviooosilva\CacheerPhp\CacheStore\DatabaseCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\FileCacheStore;
 use Silviooosilva\CacheerPhp\CacheStore\RedisCacheStore;
 use Silviooosilva\CacheerPhp\Core\Connect;
@@ -97,5 +96,26 @@ class CacheConfig
     public function setDatabaseConnection(string $driver): void
     {
         Connect::setConnection($driver);
+    }
+
+    /**
+     * Sets up the Cacheer instance with the provided options.
+     *
+     * @param array $options
+     * @return void
+     */
+    public function setUp(array $options): void
+    {
+        $this->cacheer->options = $options;
+    }
+
+    /**
+     * Gets the options for the Cacheer instance.
+     *
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->cacheer->options;
     }
 }
