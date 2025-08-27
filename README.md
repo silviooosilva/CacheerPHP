@@ -59,6 +59,10 @@ use Silviooosilva\CacheerPhp\Cacheer;
 $key   = 'user_profile_1234';
 $value = ['id' => 123, 'name' => 'John Doe'];
 
+// Configure cache and driver statically
+Cacheer::setConfig()->setTimeZone('UTC');
+Cacheer::setDriver()->useArrayDriver();
+
 // Static usage with boolean return
 Cacheer::putCache($key, $value);
 if (Cacheer::has($key)) {

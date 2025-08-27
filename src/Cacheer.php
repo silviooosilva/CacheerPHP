@@ -57,6 +57,10 @@ use BadMethodCallException;
  * @method mixed rememberForever(string $cacheKey, Closure $callback)
  * @method static bool renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = '')
  * @method bool renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = '')
+ * @method static setConfig(): CacheConfig
+ * @method setConfig(): CacheConfig
+ * @method static setDriver(): CacheDriver
+ * @method setDriver(): CacheDriver
  * @method static setUp(array $options): void
  * @method setUp(array $options): void
  */
@@ -144,6 +148,14 @@ final class Cacheer
      */
     public function __call(string $method, array $parameters): mixed
     {
+        if ($method === 'setConfig') {
+            return new CacheConfig($this);
+        }
+
+        if ($method === 'setDriver') {
+            return new CacheDriver($this);
+        }
+
         $delegates = [$this->mutator, $this->retriever, $this->config];
 
         foreach ($delegates as $delegate) {
@@ -229,26 +241,6 @@ final class Cacheer
     }
 
     /**
-    * Returns a CacheConfig instance for configuration management.
-    * 
-    * @return CacheConfig
-    */
-    public function setConfig(): CacheConfig
-    {
-        return new CacheConfig($this);
-    }
-
-    /**
-    * Sets the cache driver based on the configuration.
-    * 
-    * @return CacheDriver
-    */
-    public function setDriver(): CacheDriver
-    {
-        return new CacheDriver($this);
-    }
-
-    /**
     * Sets a message for the cache operation.
     *
     * @param string  $message
@@ -314,7 +306,9 @@ final class Cacheer
     }
 
     /**
-     * @return void
+     * Get or create the shared Cacheer instance for static calls.
+     *
+     * @return Cacheer
      */
     private static function instance(): Cacheer
     {
