@@ -189,24 +189,26 @@ final class Cacheer
     * Enable encryption for cached data
     *
     * @param string $key
-    * @return $this
+    * @return Cacheer
     */
-    public function useEncryption(string $key): Cacheer
+    public static function useEncryption(string $key): Cacheer
     {
-        $this->encryptionKey = $key;
-        return $this;
+        $instance = self::instance();
+        $instance->encryptionKey = $key;
+        return $instance;
     }
 
     /**
     * Enable or disable data compression
     *
     * @param bool $status
-    * @return $this
+    * @return Cacheer
     */
-    public function useCompression(bool $status = true): Cacheer
+    public static function useCompression(bool $status = true): Cacheer
     {
-        $this->compression = $status;
-        return $this;
+        $instance = self::instance();
+        $instance->compression = $status;
+        return $instance;
     }
 
     /**
@@ -214,9 +216,10 @@ final class Cacheer
     * 
     * @return void
     */
-    public function useFormatter(): void
+    public static function useFormatter(): void
     {
-        $this->formatted = !$this->formatted;
+        $instance = self::instance();
+        $instance->formatted = !$instance->formatted;
     }
 
     /**
@@ -235,9 +238,9 @@ final class Cacheer
     * 
     * @return bool
     */
-    public function isSuccess(): bool
+    public static function isSuccess(): bool
     {
-        return $this->success;
+        return self::instance()->success;
     }
 
     /**
@@ -258,17 +261,18 @@ final class Cacheer
     * 
     * @return string
     */
-    public function getMessage(): string
+    public static function getMessage(): string
     {
-        return $this->message;
+        return self::instance()->message;
     }
 
     /**
      * @return void
      */
-    public function syncState(): void
+    public static function syncState(): void
     {
-        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
+        $instance = self::instance();
+        $instance->setMessage($instance->cacheStore->getMessage(), $instance->cacheStore->isSuccess());
     }
 
     /**
@@ -276,33 +280,33 @@ final class Cacheer
      * @param bool $success
      * @return void
      */
-    public function setInternalState(string $message, bool $success): void
+    public static function setInternalState(string $message, bool $success): void
     {
-        $this->setMessage($message, $success);
+        self::instance()->setMessage($message, $success);
     }
 
     /**
      * @return bool
      */
-    public function isFormatted(): bool
+    public static function isFormatted(): bool
     {
-        return $this->formatted;
+        return self::instance()->formatted;
     }
 
     /**
      * @return bool
      */
-    public function isCompressionEnabled(): bool
+    public static function isCompressionEnabled(): bool
     {
-        return $this->compression;
+        return self::instance()->compression;
     }
 
     /**
      * @return string|null
      */
-    public function getEncryptionKey(): ?string
+    public static function getEncryptionKey(): ?string
     {
-        return $this->encryptionKey;
+        return self::instance()->encryptionKey;
     }
 
     /**
