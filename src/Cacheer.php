@@ -57,6 +57,10 @@ use BadMethodCallException;
  * @method mixed rememberForever(string $cacheKey, Closure $callback)
  * @method static bool renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = '')
  * @method bool renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = '')
+ * @method static setConfig(): CacheConfig
+ * @method setConfig(): CacheConfig
+ * @method static setDriver(): CacheDriver
+ * @method setDriver(): CacheDriver
  * @method static setUp(array $options): void
  * @method setUp(array $options): void
  */
