@@ -178,8 +178,8 @@ final class Cacheer
     {
         $instance = self::instance();
 
-        if ($instance === null) {
-            throw new \RuntimeException("Cacheer static instance is not initialized.");
+        if (method_exists($instance, $method)) {
+            return $instance->$method(...$parameters);
         }
 
         return $instance->__call($method, $parameters);
@@ -191,11 +191,10 @@ final class Cacheer
     * @param string $key
     * @return Cacheer
     */
-    public static function useEncryption(string $key): Cacheer
+    public function useEncryption(string $key): Cacheer
     {
-        $instance = self::instance();
-        $instance->encryptionKey = $key;
-        return $instance;
+        $this->encryptionKey = $key;
+        return $this;
     }
 
     /**
@@ -204,11 +203,10 @@ final class Cacheer
     * @param bool $status
     * @return Cacheer
     */
-    public static function useCompression(bool $status = true): Cacheer
+    public function useCompression(bool $status = true): Cacheer
     {
-        $instance = self::instance();
-        $instance->compression = $status;
-        return $instance;
+        $this->compression = $status;
+        return $this;
     }
 
     /**
@@ -216,10 +214,9 @@ final class Cacheer
     * 
     * @return void
     */
-    public static function useFormatter(): void
+    public function useFormatter(): void
     {
-        $instance = self::instance();
-        $instance->formatted = !$instance->formatted;
+        $this->formatted = !$this->formatted;
     }
 
     /**
@@ -238,9 +235,9 @@ final class Cacheer
     * 
     * @return bool
     */
-    public static function isSuccess(): bool
+    public function isSuccess(): bool
     {
-        return self::instance()->success;
+        return $this->success;
     }
 
     /**
@@ -261,18 +258,17 @@ final class Cacheer
     * 
     * @return string
     */
-    public static function getMessage(): string
+    public function getMessage(): string
     {
-        return self::instance()->message;
+        return $this->message;
     }
 
     /**
      * @return void
      */
-    public static function syncState(): void
+    public function syncState(): void
     {
-        $instance = self::instance();
-        $instance->setMessage($instance->cacheStore->getMessage(), $instance->cacheStore->isSuccess());
+        $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
     }
 
     /**
@@ -280,33 +276,33 @@ final class Cacheer
      * @param bool $success
      * @return void
      */
-    public static function setInternalState(string $message, bool $success): void
+    public function setInternalState(string $message, bool $success): void
     {
-        self::instance()->setMessage($message, $success);
+        $this->setMessage($message, $success);
     }
 
     /**
      * @return bool
      */
-    public static function isFormatted(): bool
+    public function isFormatted(): bool
     {
-        return self::instance()->formatted;
+        return $this->formatted;
     }
 
     /**
      * @return bool
      */
-    public static function isCompressionEnabled(): bool
+    public function isCompressionEnabled(): bool
     {
-        return self::instance()->compression;
+        return $this->compression;
     }
 
     /**
      * @return string|null
      */
-    public static function getEncryptionKey(): ?string
+    public function getEncryptionKey(): ?string
     {
-        return self::instance()->encryptionKey;
+        return $this->encryptionKey;
     }
 
     /**
