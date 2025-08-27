@@ -144,6 +144,14 @@ final class Cacheer
      */
     public function __call(string $method, array $parameters): mixed
     {
+        if ($method === 'setConfig') {
+            return new CacheConfig($this);
+        }
+
+        if ($method === 'setDriver') {
+            return new CacheDriver($this);
+        }
+
         $delegates = [$this->mutator, $this->retriever, $this->config];
 
         foreach ($delegates as $delegate) {
@@ -226,26 +234,6 @@ final class Cacheer
     public function isSuccess(): bool
     {
         return $this->success;
-    }
-
-    /**
-    * Returns a CacheConfig instance for configuration management.
-    * 
-    * @return CacheConfig
-    */
-    public function setConfig(): CacheConfig
-    {
-        return new CacheConfig($this);
-    }
-
-    /**
-    * Sets the cache driver based on the configuration.
-    * 
-    * @return CacheDriver
-    */
-    public function setDriver(): CacheDriver
-    {
-        return new CacheDriver($this);
     }
 
     /**
