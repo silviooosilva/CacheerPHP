@@ -70,7 +70,11 @@ $Cacheer->setDriver()->useDatabaseDriver();
 
 ```
 
-> These configuration steps can also be performed statically using `Cacheer::setConfig()->setDatabaseConnection('mysql');`
+> These configuration steps can also be performed statically:
+> ```php
+> Cacheer::setConfig()->setDatabaseConnection('mysql');
+> Cacheer::setDriver()->useDatabaseDriver();
+> ```
 
 #### 3) Configure Timezone
 
@@ -78,6 +82,10 @@ $Cacheer->setDriver()->useDatabaseDriver();
 
 ```php
 $Cacheer->setConfig()->setTimeZone('Africa/Luanda');
+```
+
+```php
+Cacheer::setConfig()->setTimeZone('Africa/Luanda');
 ```
 **NB: Make sure the provided timezone is valid**
 - https://www.php.net/manual/en/timezones.php 
@@ -88,4 +96,8 @@ $Cacheer->setConfig()->setTimeZone('Africa/Luanda');
 
 ```php
 $Cacheer->setConfig()->setLoggerPath('/path/CacheerPHP.log');
+```
+
+```php
+Cacheer::setConfig()->setLoggerPath('/path/CacheerPHP.log');
 ```
