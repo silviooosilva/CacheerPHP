@@ -16,6 +16,10 @@ $Cacheer = new Cacheer();
 $Cacheer->setConfig();
 ```
 
+```php
+Cacheer::setConfig();
+```
+
 > **Note:** Configuration methods can also be called statically, e.g. `Cacheer::setConfig()->setDatabaseConnection('mysql');`
 
 Configures the database for storing the cache.
@@ -26,6 +30,10 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 $Cacheer = new Cacheer();
 $Cacheer->setConfig()->setDatabaseConnection(string $driver)
+```
+
+```php
+Cacheer::setConfig()->setDatabaseConnection(string $driver);
 ```
 
 - Parameters:
@@ -45,6 +53,10 @@ $Cacheer = new Cacheer();
 $Cacheer->setConfig()->setDatabaseConnection('mysql');
 ```
 
+```php
+Cacheer::setConfig()->setDatabaseConnection('mysql');
+```
+
 There is also an alternative, which is to define the driver in the .env file, through the DB_CONNECTION variable, passing the same values.
 
 Timezone
@@ -57,6 +69,10 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 $Cacheer = new Cacheer();
 $Cacheer->setConfig()->setTimeZone(string $timezone);
+```
+
+```php
+Cacheer::setConfig()->setTimeZone(string $timezone);
 ```
 
 Sets the time zone for cache operations.
@@ -72,6 +88,10 @@ $timezone: Time zone in PHP format (example: 'UTC', 'Africa/Luanda').
 $Cacheer->setConfig()->setTimeZone('UTC');
 ```
 
+```php
+Cacheer::setConfig()->setTimeZone('UTC');
+```
+
 Check out the timezones supported by PHP here: 
 https://www.php.net/manual/en/timezones.php
 
@@ -80,6 +100,10 @@ Logger
 
 ```php
 $Cacheer->setConfig()->setLoggerPath(string $path);
+```
+
+```php
+Cacheer::setConfig()->setLoggerPath(string $path);
 ```
 Defines the path where the logs will be stored.
 
@@ -93,4 +117,8 @@ $path: Caminho completo para o arquivo de logs.
 
 ```php
 $Cacheer->setConfig()->setLoggerPath('/path/to/logs/CacheerPHP.log');
+```
+
+```php
+Cacheer::setConfig()->setLoggerPath('/path/to/logs/CacheerPHP.log');
 ```
