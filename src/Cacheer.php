@@ -302,7 +302,9 @@ final class Cacheer
     }
 
     /**
-     * @return void
+     * Get or create the shared Cacheer instance for static calls.
+     *
+     * @return Cacheer
      */
     private static function instance(): Cacheer
     {
