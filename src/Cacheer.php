@@ -59,6 +59,30 @@ use BadMethodCallException;
  * @method bool renewCache(string $cacheKey, int|string $ttl = 3600, string $namespace = '')
  * @method static setUp(array $options): void
  * @method setUp(array $options): void
+ * @method static CacheConfig setConfig()
+ * @method CacheConfig setConfig()
+ * @method static CacheDriver setDriver()
+ * @method CacheDriver setDriver()
+ * @method static Cacheer useEncryption(string $key)
+ * @method Cacheer useEncryption(string $key)
+ * @method static Cacheer useCompression(bool $status = true)
+ * @method Cacheer useCompression(bool $status = true)
+ * @method static void useFormatter()
+ * @method void useFormatter()
+ * @method static bool isSuccess()
+ * @method bool isSuccess()
+ * @method static string getMessage()
+ * @method string getMessage()
+ * @method static void syncState()
+ * @method void syncState()
+ * @method static void setInternalState(string $message, bool $success)
+ * @method void setInternalState(string $message, bool $success)
+ * @method static bool isFormatted()
+ * @method bool isFormatted()
+ * @method static bool isCompressionEnabled()
+ * @method bool isCompressionEnabled()
+ * @method static string|null getEncryptionKey()
+ * @method string|null getEncryptionKey()
  */
 final class Cacheer
 {
@@ -131,7 +155,7 @@ final class Cacheer
         $this->retriever = new CacheRetriever($this);
         $this->mutator = new CacheMutator($this);
         $this->config = new CacheConfig($this);
-        $this->setDriver()->useDefaultDriver();
+        (new CacheDriver($this))->useDefaultDriver();
     }
 
     /**
@@ -144,6 +168,18 @@ final class Cacheer
      */
     public function __call(string $method, array $parameters): mixed
     {
+        if ($method === 'setDriver') {
+            return new CacheDriver($this);
+        }
+
+        if ($method === 'setConfig') {
+            return $this->config;
+        }
+
+        if (method_exists($this, $method)) {
+            return $this->{$method}(...$parameters);
+        }
+
         $delegates = [$this->mutator, $this->retriever, $this->config];
 
         foreach ($delegates as $delegate) {
@@ -153,6 +189,26 @@ final class Cacheer
         }
 
         throw new BadMethodCallException("Method {$method} does not exist");
+    }
+
+    /**
+     * Retrieve the configuration helper for the shared instance.
+     *
+     * @return CacheConfig
+     */
+    public static function setConfig(): CacheConfig
+    {
+        return new CacheConfig(self::instance());
+    }
+
+    /**
+     * Retrieve the driver helper for the shared instance.
+     *
+     * @return CacheDriver
+     */
+    public static function setDriver(): CacheDriver
+    {
+        return new CacheDriver(self::instance());
     }
 
     /**
@@ -179,7 +235,7 @@ final class Cacheer
     * @param string $key
     * @return $this
     */
-    public function useEncryption(string $key): Cacheer
+    protected function useEncryption(string $key): Cacheer
     {
         $this->encryptionKey = $key;
         return $this;
@@ -191,7 +247,7 @@ final class Cacheer
     * @param bool $status
     * @return $this
     */
-    public function useCompression(bool $status = true): Cacheer
+    protected function useCompression(bool $status = true): Cacheer
     {
         $this->compression = $status;
         return $this;
@@ -202,7 +258,7 @@ final class Cacheer
     * 
     * @return void
     */
-    public function useFormatter(): void
+    protected function useFormatter(): void
     {
         $this->formatted = !$this->formatted;
     }
@@ -223,29 +279,9 @@ final class Cacheer
     * 
     * @return bool
     */
-    public function isSuccess(): bool
+    protected function isSuccess(): bool
     {
         return $this->success;
-    }
-
-    /**
-    * Returns a CacheConfig instance for configuration management.
-    * 
-    * @return CacheConfig
-    */
-    public function setConfig(): CacheConfig
-    {
-        return new CacheConfig($this);
-    }
-
-    /**
-    * Sets the cache driver based on the configuration.
-    * 
-    * @return CacheDriver
-    */
-    public function setDriver(): CacheDriver
-    {
-        return new CacheDriver($this);
     }
 
     /**
@@ -266,7 +302,7 @@ final class Cacheer
     * 
     * @return string
     */
-    public function getMessage(): string
+    protected function getMessage(): string
     {
         return $this->message;
     }
@@ -274,7 +310,7 @@ final class Cacheer
     /**
      * @return void
      */
-    public function syncState(): void
+    protected function syncState(): void
     {
         $this->setMessage($this->cacheStore->getMessage(), $this->cacheStore->isSuccess());
     }
@@ -284,7 +320,7 @@ final class Cacheer
      * @param bool $success
      * @return void
      */
-    public function setInternalState(string $message, bool $success): void
+    protected function setInternalState(string $message, bool $success): void
     {
         $this->setMessage($message, $success);
     }
@@ -292,7 +328,7 @@ final class Cacheer
     /**
      * @return bool
      */
-    public function isFormatted(): bool
+    protected function isFormatted(): bool
     {
         return $this->formatted;
     }
@@ -300,7 +336,7 @@ final class Cacheer
     /**
      * @return bool
      */
-    public function isCompressionEnabled(): bool
+    protected function isCompressionEnabled(): bool
     {
         return $this->compression;
     }
@@ -308,13 +344,15 @@ final class Cacheer
     /**
      * @return string|null
      */
-    public function getEncryptionKey(): ?string
+    protected function getEncryptionKey(): ?string
     {
         return $this->encryptionKey;
     }
 
     /**
-     * @return void
+     * Get or create the shared Cacheer instance for static calls.
+     *
+     * @return Cacheer
      */
     private static function instance(): Cacheer
     {
