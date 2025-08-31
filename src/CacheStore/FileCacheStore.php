@@ -88,6 +88,20 @@ class FileCacheStore implements CacheerInterface
     }
 
     /**
+     * Returns the path for a tag index file.
+     * @param string $tag
+     * @return string
+     */
+    private function getTagIndexPath(string $tag): string
+    {
+        $tagDir = rtrim($this->cacheDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . '_tags';
+        if (!$this->fileManager->directoryExists($tagDir)) {
+            $this->fileManager->createDirectory($tagDir);
+        }
+        return $tagDir . DIRECTORY_SEPARATOR . $tag . '.json';
+    }
+
+    /**
      * Appends data to an existing cache item.
      *
      * @param string $cacheKey
@@ -154,6 +168,63 @@ class FileCacheStore implements CacheerInterface
     public function flushCache(): void
     {
         $this->flusher->flushCache();
+    }
+
+    /**
+     * Associates one or more keys to a tag.
+     *
+     * @param string $tag
+     * @param string ...$keys
+     * @return bool
+     */
+    public function tag(string $tag, string ...$keys): bool
+    {
+        $path = $this->getTagIndexPath($tag);
+        $current = [];
+        if ($this->fileManager->fileExists($path)) {
+            $json = $this->fileManager->readFile($path);
+            $decoded = json_decode($json, true);
+            if (is_array($decoded)) {
+                $current = $decoded;
+            }
+        }
+        foreach ($keys as $key) {
+            // Store either raw key or "namespace:key"
+            $current[$key] = true;
+        }
+        $this->fileManager->writeFile($path, json_encode($current));
+        $this->setMessage("Tagged successfully", true);
+        $this->logger->debug("{$this->getMessage()} from file driver.");
+        return true;
+    }
+
+    /**
+     * Flush all keys associated with a tag.
+     *
+     * @param string $tag
+     * @return void
+     */
+    public function flushTag(string $tag): void
+    {
+        $path = $this->getTagIndexPath($tag);
+        $current = [];
+        if ($this->fileManager->fileExists($path)) {
+            $json = $this->fileManager->readFile($path);
+            $current = json_decode($json, true) ?: [];
+        }
+        foreach (array_keys($current) as $key) {
+            if (str_contains($key, ':')) {
+                [$np, $k] = explode(':', $key, 2);
+                $this->clearCache($k, $np);
+            } else {
+                $this->clearCache($key, '');
+            }
+        }
+        if ($this->fileManager->fileExists($path)) {
+            $this->fileManager->removeFile($path);
+        }
+        $this->setMessage("Tag flushed successfully", true);
+        $this->logger->debug("{$this->getMessage()} from file driver.");
     }
 
     /**

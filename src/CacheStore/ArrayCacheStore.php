@@ -34,6 +34,11 @@ class ArrayCacheStore implements CacheerInterface
   private ?CacheLogger $logger = null;
 
   /**
+   * @var array<string, array<string,bool>>
+   */
+  private array $tags = [];
+
+  /**
    * ArrayCacheStore constructor.
    * 
    * @param string $logPath
@@ -115,6 +120,7 @@ class ArrayCacheStore implements CacheerInterface
   {
     unset($this->arrayStore);
     $this->arrayStore = [];
+    $this->tags = [];
     $this->setMessage("Cache flushed successfully", true);
     $this->logger->debug("{$this->getMessage()} from array driver.");
   }
@@ -387,5 +393,52 @@ class ArrayCacheStore implements CacheerInterface
   private function serialize(mixed $data, bool $serialize = true): mixed
   {
     return $serialize ? serialize($data) : unserialize($data);
+  }
+
+  /**
+   * Associates one or more keys to a tag.
+   *
+   * @param string $tag
+   * @param string ...$keys
+   * @return bool
+   */
+  public function tag(string $tag, string ...$keys): bool
+  {
+    if (!isset($this->tags[$tag])) {
+      $this->tags[$tag] = [];
+    }
+    foreach ($keys as $key) {
+      // Accept either raw key or "namespace:key"
+      $arrayStoreKey = (str_contains($key, ':')) ? $key : $this->buildArrayKey($key, '');
+      $this->tags[$tag][$arrayStoreKey] = true;
+    }
+    $this->setMessage("Tagged successfully", true);
+    $this->logger?->debug("{$this->getMessage()} from array driver.");
+    return true;
+  }
+
+  /**
+   * Flushes all keys associated with a tag.
+   *
+   * @param string $tag
+   * @return void
+   */
+  public function flushTag(string $tag): void
+  {
+    $keys = array_keys($this->tags[$tag] ?? []);
+    foreach ($keys as $arrayStoreKey) {
+      // Recover original key/namespace combination
+      $parts = explode(':', $arrayStoreKey, 2);
+      if (count($parts) === 2) {
+        [$np, $key] = $parts;
+      } else {
+        $np = '';
+        $key = $arrayStoreKey;
+      }
+      $this->clearCache($key, $np);
+    }
+    unset($this->tags[$tag]);
+    $this->setMessage("Tag flushed successfully", true);
+    $this->logger?->debug("{$this->getMessage()} from array driver.");
   }
 }

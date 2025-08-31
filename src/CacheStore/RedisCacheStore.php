@@ -125,6 +125,49 @@ class RedisCacheStore implements CacheerInterface
     }
 
     /**
+     * Associates one or more keys to a tag using a Redis Set.
+     *
+     * @param string $tag
+     * @param string ...$keys
+     * @return bool
+     */
+    public function tag(string $tag, string ...$keys): bool
+    {
+        $setKey = "tag:" . $tag;
+        $added = 0;
+        foreach ($keys as $key) {
+            // Accept either raw key or "namespace:key"
+            $added += (int) $this->redis->sadd($setKey, [$key]);
+        }
+        $this->setMessage("Tagged successfully", true);
+        $this->logger->debug("{$this->getMessage()} from redis driver.");
+        return $added >= 0;
+    }
+
+    /**
+     * Flush all keys associated with a tag.
+     *
+     * @param string $tag
+     * @return void
+     */
+    public function flushTag(string $tag): void
+    {
+        $setKey = "tag:" . $tag;
+        $members = $this->redis->smembers($setKey) ?? [];
+        foreach ($members as $key) {
+            if (str_contains($key, ':')) {
+                [$np, $k] = explode(':', $key, 2);
+                $this->clearCache($k, $np);
+            } else {
+                $this->clearCache($key, '');
+            }
+        }
+        $this->redis->del($setKey);
+        $this->setMessage("Tag flushed successfully", true);
+        $this->logger->debug("{$this->getMessage()} from redis driver.");
+    }
+
+    /**
      * Retrieves a single cache item by its key.
      * 
      * @param string $cacheKey

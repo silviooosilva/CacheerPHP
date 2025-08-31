@@ -199,4 +199,38 @@ class FileCacheStoreTest extends TestCase
         $this->assertEquals($expectedData, $this->cache->getCache($cacheKey));
         }
 
+        public function test_tag_and_flush_tag_in_file_driver()
+        {
+        $k1 = 'tag_key_1';
+        $k2 = 'tag_key_2';
+        $this->cache->putCache($k1, 'v1');
+        $this->cache->putCache($k2, 'v2');
+
+        $ok = $this->cache->tag('groupA', $k1, $k2);
+        $this->assertTrue($ok);
+        $this->assertTrue($this->cache->isSuccess());
+
+        $this->cache->flushTag('groupA');
+        $this->assertTrue($this->cache->isSuccess());
+
+        $this->assertNull($this->cache->getCache($k1));
+        $this->assertNull($this->cache->getCache($k2));
+        }
+
+        public function test_tag_with_namespace_and_flush_tag_in_file_driver()
+        {
+        $ns = 'nsA';
+        $k1 = 'k1';
+        $k2 = 'k2';
+        $this->cache->putCache($k1, 'v1', $ns);
+        $this->cache->putCache($k2, 'v2', $ns);
+
+        $ok = $this->cache->tag('groupNS', $ns . ':' . $k1, $ns . ':' . $k2);
+        $this->assertTrue($ok);
+
+        $this->cache->flushTag('groupNS');
+        $this->assertNull($this->cache->getCache($k1, $ns));
+        $this->assertNull($this->cache->getCache($k2, $ns));
+        }
+
 }

@@ -31,3 +31,10 @@ The **OptionBuilder** simplifies the configuration of CacheerPHP by eliminating 
 Built-in methods to reduce storage space and secure cached data.
 
 [API Reference - Compression & Encryption](API-Reference/compression_encryption.md)
+
+### 5. **Tagging**
+Group keys under tags and invalidate them efficiently across drivers.
+
+[API Reference - Cache Functions (tag/flushTag)](API-Reference/FuncoesCache/README.md)
+
+See a complete usage example in: docs/example10.md

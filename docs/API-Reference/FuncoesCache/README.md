@@ -236,6 +236,43 @@ $Cacheer->clearCache(string $cacheKey, string $namespace);
 */
 $Cacheer->flushCache();
 ```
+
+### `tag()` e `flushTag()` - Agrupar e invalidar por tag
+
+```php
+/**
+ * Associa uma ou mais chaves a uma tag.
+ * Aceita tanto "key" quanto "namespace:key".
+ * Retorna true em caso de sucesso.
+ */
+$Cacheer->tag(string $tag, string ...$keys): bool;
+
+/**
+ * Remove todos os itens associados a uma tag.
+ * Retorna true em caso de sucesso.
+ */
+$Cacheer->flushTag(string $tag): bool;
+
+// Exemplos básicos
+Cacheer::putCache('user:1', ['id' => 1]);
+Cacheer::putCache('user:2', ['id' => 2]);
+
+// Sem namespace explícito
+Cacheer::tag('users', 'user:1', 'user:2');
+Cacheer::flushTag('users'); // invalida 'user:1' e 'user:2'
+
+// Com namespace explícito
+Cacheer::putCache('profile', ['id' => 10], 'nsA');
+Cacheer::putCache('settings', ['id' => 10], 'nsA');
+Cacheer::tag('grpA', 'nsA:profile', 'nsA:settings');
+Cacheer::flushTag('grpA'); // invalida nsA:profile e nsA:settings
+```
+
+Notas de implementação por driver (resumo):
+- File: índice persistido em `cacheDir/_tags/{tag}.json`.
+- Redis: índice em Set `tag:{tag}`.
+- Database: índice no namespace reservado `__tags__` com chave `tag:{tag}`.
+- Array: índice em memória, reiniciado em `flushCache()`.
 ### `useCompression()` - Enable or disable compression
 
 ```php
