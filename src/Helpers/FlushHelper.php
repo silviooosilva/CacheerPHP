@@ -4,6 +4,10 @@ namespace Silviooosilva\CacheerPhp\Helpers;
 
 /**
  * Class FlushHelper
+ * 
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ * 
  * Builds deterministic file paths for last-flush timestamps per store type.
  */
 class FlushHelper
