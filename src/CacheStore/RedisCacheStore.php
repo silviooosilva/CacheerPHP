@@ -9,6 +9,9 @@ use Silviooosilva\CacheerPhp\Helpers\CacheRedisHelper;
 use Silviooosilva\CacheerPhp\Interface\CacheerInterface;
 use Silviooosilva\CacheerPhp\Exceptions\CacheRedisException;
 use Silviooosilva\CacheerPhp\CacheStore\CacheManager\RedisCacheManager;
+use Silviooosilva\CacheerPhp\CacheStore\CacheManager\GenericFlusher;
+use Silviooosilva\CacheerPhp\Helpers\CacheFileHelper;
+use Silviooosilva\CacheerPhp\Helpers\FlushHelper;
 
 /**
  * Class RedisCacheStore
@@ -38,16 +41,40 @@ class RedisCacheStore implements CacheerInterface
      */
     private bool $success = false;
 
+    /** @var int|null */
+    private ?int $defaultTTL = null;
+
+    /** @var GenericFlusher|null */
+    private ?GenericFlusher $flusher = null;
+
 
     /**
      * RedisCacheStore constructor.
      *
      * @param string $logPath
+     * @param array $options
      */
-    public function __construct(string $logPath)
+    public function __construct(string $logPath, array $options = [])
     {
         $this->redis = RedisCacheManager::connect();
         $this->logger = new CacheLogger($logPath);
+        
+        // OptionBuilder support
+        if (!empty($options['namespace'])) {
+            $this->namespace = (string) $options['namespace'];
+        }
+
+        // Default TTL from options
+        if (!empty($options['expirationTime'])) {
+            $this->defaultTTL = (int) CacheFileHelper::convertExpirationToSeconds((string) $options['expirationTime']);
+        }
+
+        // Auto-flush support
+        $lastFlushFile = FlushHelper::pathFor('redis', $this->namespace ?: 'default');
+        $this->flusher = new GenericFlusher($lastFlushFile, function () {
+            $this->flushCache();
+        });
+        $this->flusher->handleAutoFlush($options);
     }
 
     /**
@@ -292,8 +319,17 @@ class RedisCacheStore implements CacheerInterface
         $cacheFullKey = $this->buildKey($cacheKey, $namespace);
         $serializedData = CacheRedisHelper::serialize($cacheData);
 
-        $result = $ttl ? $this->redis->setex($cacheFullKey, (int) $ttl, $serializedData)
-                       : $this->redis->set($cacheFullKey, $serializedData);
+        // Resolve TTL with OptionBuilder default when applicable
+        $ttlToUse = $ttl;
+        if ($this->defaultTTL !== null && ($ttl === null || (int)$ttl === 3600)) {
+            $ttlToUse = $this->defaultTTL;
+        }
+        if (is_string($ttlToUse)) {
+            $ttlToUse = (int) CacheFileHelper::convertExpirationToSeconds($ttlToUse);
+        }
+
+        $result = $ttlToUse ? $this->redis->setex($cacheFullKey, (int) $ttlToUse, $serializedData)
+                            : $this->redis->set($cacheFullKey, $serializedData);
 
         if ($result) {
             $this->setMessage("Cache stored successfully", true);

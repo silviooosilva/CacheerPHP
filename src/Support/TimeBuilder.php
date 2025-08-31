@@ -3,7 +3,6 @@
 namespace Silviooosilva\CacheerPhp\Support;
 
 use Closure;
-use Silviooosilva\CacheerPhp\CacheStore\CacheManager\OptionBuilders\FileOptionBuilder;
 
 /**
  * Class TimeBuilder
@@ -16,17 +15,17 @@ class TimeBuilder
   /** @param Closure $callback */
   private Closure $callback;
 
-  /** @var ?FileOptionBuilder */
-  private ?FileOptionBuilder $builder = null;
+  /** @var mixed */
+  private $builder = null;
 
   /**
   * TimeBuilder constructor.
   * @param Closure $callback
-  * @param FileOptionBuilder $builder
+  * @param mixed $builder
   *
   * @return void
   */
-  public function __construct(Closure $callback, FileOptionBuilder $builder)
+  public function __construct(Closure $callback, $builder)
   {
     $this->callback = $callback;
     $this->builder = $builder;
@@ -36,9 +35,9 @@ class TimeBuilder
      * Sets the time in seconds.
      *
      * @param int $seconds
-     * @return FileOptionBuilder|null
+     * @return mixed
      */
-  public function second(int $seconds): ?FileOptionBuilder
+  public function second(int $seconds)
   {
     return $this->setTime($seconds, "seconds");
   }
@@ -47,9 +46,9 @@ class TimeBuilder
      * Sets the time in minutes.
      *
      * @param int $minutes
-     * @return FileOptionBuilder|null
+     * @return mixed
      */
-  public function minute(int $minutes): ?FileOptionBuilder
+  public function minute(int $minutes)
   {
     return $this->setTime($minutes, "minutes");
   }
@@ -58,9 +57,9 @@ class TimeBuilder
      * Sets the time in hours.
      *
      * @param int $hours
-     * @return FileOptionBuilder|null
+     * @return mixed
      */
-  public function hour(int $hours): ?FileOptionBuilder
+  public function hour(int $hours)
   {
     return $this->setTime($hours, "hours");
   }
@@ -69,9 +68,9 @@ class TimeBuilder
      * Sets the time in days.
      *
      * @param int $days
-     * @return FileOptionBuilder|null
+     * @return mixed
      */
-  public function day(int $days): ?FileOptionBuilder
+  public function day(int $days)
   {
     return $this->setTime($days, "days");
   }
@@ -80,9 +79,9 @@ class TimeBuilder
      * Sets the time in weeks.
      *
      * @param int $weeks
-     * @return FileOptionBuilder|null
+     * @return mixed
      */
-  public function week(int $weeks): ?FileOptionBuilder
+  public function week(int $weeks)
   {
     return $this->setTime($weeks, "weeks");
   }
@@ -91,9 +90,9 @@ class TimeBuilder
      * Sets the time in months.
      *
      * @param int $months
-     * @return FileOptionBuilder|null
+     * @return mixed
      */
-  public function month(int $months): ?FileOptionBuilder
+  public function month(int $months)
   {
     return $this->setTime($months, "months");
   }
@@ -104,9 +103,9 @@ class TimeBuilder
      *
      * @param int $value
      * @param string $unit
-     * @return FileOptionBuilder|null
+     * @return mixed
      */
-  private function setTime(int $value, string $unit): ?FileOptionBuilder
+  private function setTime(int $value, string $unit)
   {
    ($this->callback)("{$value} {$unit}");
     return $this->builder;

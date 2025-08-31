@@ -24,7 +24,14 @@ It allows you to define the different backends available for use.
 [API Reference - setDriver()](API-Reference/setDriver.md)
 
 ### 3. **OptionBuilder**
-The **OptionBuilder** simplifies the configuration of CacheerPHP by eliminating typing errors and making the process more intuitive.
+The **OptionBuilder** simplifies configuration via fluent builders per driver:
+- `OptionBuilder::forFile()` → File options (`dir`, `expirationTime`, `flushAfter`)
+- `OptionBuilder::forRedis()` → Redis options (`setNamespace`, default `expirationTime`, `flushAfter` auto-flush)
+- `OptionBuilder::forDatabase()` → Database options (`table`, default `expirationTime`, `flushAfter` auto-flush)
+
+Notes:
+- `expirationTime` acts as default TTL when you omit a TTL in `putCache()` (or pass 3600). Explicit TTL values other than 3600 override the default.
+- `flushAfter` triggers an auto-flush check when the store initializes; if the interval has elapsed, the store calls `flushCache()`.
 
 [API Reference - OptionBuilder](API-Reference/optionBuilder.md)
 ### 4. **Compression & Encryption**
