@@ -6,6 +6,10 @@ use Silviooosilva\CacheerPhp\Helpers\CacheFileHelper;
 
 /**
  * Class GenericFlusher
+ *
+ * @author Sílvio Silva <https://github.com/silviooosilva>
+ * @package Silviooosilva\CacheerPhp
+ * 
  * Lightweight flusher that stores last flush timestamp in a file and invokes a provided callback.
  */
 class GenericFlusher
