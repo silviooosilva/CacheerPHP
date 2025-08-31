@@ -9,6 +9,8 @@ use Silviooosilva\CacheerPhp\Repositories\CacheDatabaseRepository;
 use Silviooosilva\CacheerPhp\CacheStore\CacheManager\GenericFlusher;
 use Silviooosilva\CacheerPhp\Helpers\CacheFileHelper;
 use Silviooosilva\CacheerPhp\Helpers\FlushHelper;
+use Silviooosilva\CacheerPhp\Core\Connect;
+use Silviooosilva\CacheerPhp\Core\MigrationManager;
 
 /**
  * Class DatabaseCacheStore
@@ -54,6 +56,10 @@ class DatabaseCacheStore implements CacheerInterface
         $this->logger = new CacheLogger($logPath);
         $table = $options['table'] ?? 'cacheer_table';
         $this->cacheRepository = new CacheDatabaseRepository($table);
+
+        // Ensure the custom table exists by running a targeted migration
+        $pdo = Connect::getInstance();
+        MigrationManager::migrate($pdo, $table);
 
         if (!empty($options['expirationTime'])) {
             $this->defaultTTL = (int) CacheFileHelper::convertExpirationToSeconds((string) $options['expirationTime']);
