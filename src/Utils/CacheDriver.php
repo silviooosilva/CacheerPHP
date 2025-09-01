@@ -44,7 +44,7 @@ class CacheDriver
     */
     public function useDatabaseDriver(): Cacheer
     {
-        $this->cacheer->cacheStore = new DatabaseCacheStore($this->logPath);
+        $this->cacheer->cacheStore = new DatabaseCacheStore($this->logPath, $this->cacheer->options);
         return $this->cacheer;
     }
 
@@ -67,7 +67,7 @@ class CacheDriver
     */
     public function useRedisDriver(): Cacheer
     {
-        $this->cacheer->cacheStore = new RedisCacheStore($this->logPath);
+        $this->cacheer->cacheStore = new RedisCacheStore($this->logPath, $this->cacheer->options);
         return $this->cacheer;
     }
 

@@ -24,6 +24,7 @@ $redisHost      = $_ENV['REDIS_HOST'] ?? 'localhost';
 $redisPassword  = $_ENV['REDIS_PASSWORD'] ?? '';
 $redisPort      = $_ENV['REDIS_PORT'] ?? '6379';
 $redisNamespace = $_ENV['REDIS_NAMESPACE'] ?? '';
+$cacheTable     = $_ENV['CACHEER_TABLE'] ?? 'cacheer_table';
 
 Connect::setConnection($Connection);
 
@@ -76,3 +77,7 @@ define('REDIS_CONNECTION_CONFIG', [
     'REDIS_NAMESPACE'=> $redisNamespace
 ]);
 
+// Cache table name for database driver
+if (!defined('CACHEER_TABLE')) {
+    define('CACHEER_TABLE', $cacheTable);
+}

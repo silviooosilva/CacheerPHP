@@ -22,7 +22,7 @@ CacheerPHP is a minimalist PHP caching library. Version 4 brings a more robust A
 - **Namespaces:** group entries by category for easier management.
 - **Flexible output formatting:** return cached data as JSON, arrays, strings or objects.
 - **Compression & encryption:** reduce storage footprint and secure cache contents.
-- **OptionBuilder:** fluent builder that helps configure drivers without typos (currently for file driver).
+- **OptionBuilder:** fluent builders to configure File, Redis and Database drivers without typos (supports default TTL via `expirationTime` and auto-flush via `flushAfter`).
 - **Advanced logging and statistics:** monitor hits/misses and average times (*coming soon*).
 
 ## Requirements

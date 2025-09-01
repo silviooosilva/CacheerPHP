@@ -18,11 +18,11 @@ class MigrationManager
      * @param PDO $connection
      * @return void
      */
-    public static function migrate(PDO $connection): void
+    public static function migrate(PDO $connection, ?string $tableName = null): void
     {
         try {
             self::prepareDatabase($connection);
-            $queries = self::getMigrationQueries($connection);
+            $queries = self::getMigrationQueries($connection, $tableName);
             foreach ($queries as $query) {
                 if (trim($query)) {
                     $connection->exec($query);
@@ -54,14 +54,15 @@ class MigrationManager
      * @param PDO $connection
      * @return array
      */
-    private static function getMigrationQueries(PDO $connection): array
+    private static function getMigrationQueries(PDO $connection, ?string $tableName = null): array
     {
         $driver = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         $createdAtDefault = ($driver === 'pgsql') ? 'DEFAULT NOW()' : 'DEFAULT CURRENT_TIMESTAMP';
+        $table = $tableName ?: (defined('CACHEER_TABLE') ? CACHEER_TABLE : 'cacheer_table');
 
         if ($driver === 'sqlite') {
             $query = "
-                CREATE TABLE IF NOT EXISTS cacheer_table (
+                CREATE TABLE IF NOT EXISTS {$table} (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     cacheKey VARCHAR(255) NOT NULL,
                     cacheData TEXT NOT NULL,
@@ -70,14 +71,14 @@ class MigrationManager
                     created_at DATETIME $createdAtDefault,
                     UNIQUE(cacheKey, cacheNamespace)
                 );
-                CREATE INDEX IF NOT EXISTS idx_cacheer_cacheKey ON cacheer_table (cacheKey);
-                CREATE INDEX IF NOT EXISTS idx_cacheer_cacheNamespace ON cacheer_table (cacheNamespace);
-                CREATE INDEX IF NOT EXISTS idx_cacheer_expirationTime ON cacheer_table (expirationTime);
-                CREATE INDEX IF NOT EXISTS idx_cacheer_key_namespace ON cacheer_table (cacheKey, cacheNamespace);
+                CREATE INDEX IF NOT EXISTS idx_{$table}_cacheKey ON {$table} (cacheKey);
+                CREATE INDEX IF NOT EXISTS idx_{$table}_cacheNamespace ON {$table} (cacheNamespace);
+                CREATE INDEX IF NOT EXISTS idx_{$table}_expirationTime ON {$table} (expirationTime);
+                CREATE INDEX IF NOT EXISTS idx_{$table}_key_namespace ON {$table} (cacheKey, cacheNamespace);
             ";
         } elseif ($driver === 'pgsql') {
             $query = "
-                CREATE TABLE IF NOT EXISTS cacheer_table (
+                CREATE TABLE IF NOT EXISTS {$table} (
                     id SERIAL PRIMARY KEY,
                     cacheKey VARCHAR(255) NOT NULL,
                     cacheData TEXT NOT NULL,
@@ -86,14 +87,14 @@ class MigrationManager
                     created_at TIMESTAMP $createdAtDefault,
                     UNIQUE(cacheKey, cacheNamespace)
                 );
-                CREATE INDEX IF NOT EXISTS idx_cacheer_cacheKey ON cacheer_table (cacheKey);
-                CREATE INDEX IF NOT EXISTS idx_cacheer_cacheNamespace ON cacheer_table (cacheNamespace);
-                CREATE INDEX IF NOT EXISTS idx_cacheer_expirationTime ON cacheer_table (expirationTime);
-                CREATE INDEX IF NOT EXISTS idx_cacheer_key_namespace ON cacheer_table (cacheKey, cacheNamespace);
+                CREATE INDEX IF NOT EXISTS idx_{$table}_cacheKey ON {$table} (cacheKey);
+                CREATE INDEX IF NOT EXISTS idx_{$table}_cacheNamespace ON {$table} (cacheNamespace);
+                CREATE INDEX IF NOT EXISTS idx_{$table}_expirationTime ON {$table} (expirationTime);
+                CREATE INDEX IF NOT EXISTS idx_{$table}_key_namespace ON {$table} (cacheKey, cacheNamespace);
             ";
         } else {
             $query = "
-                CREATE TABLE IF NOT EXISTS cacheer_table (
+                CREATE TABLE IF NOT EXISTS {$table} (
                     id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
                     cacheKey VARCHAR(255) NOT NULL,
                     cacheData LONGTEXT NOT NULL,
@@ -101,10 +102,10 @@ class MigrationManager
                     expirationTime DATETIME NOT NULL,
                     created_at TIMESTAMP $createdAtDefault,
                     UNIQUE KEY unique_cache_key_namespace (cacheKey, cacheNamespace),
-                    KEY idx_cacheer_cacheKey (cacheKey),
-                    KEY idx_cacheer_cacheNamespace (cacheNamespace),
-                    KEY idx_cacheer_expirationTime (expirationTime),
-                    KEY idx_cacheer_key_namespace (cacheKey, cacheNamespace)
+                    KEY idx_{$table}_cacheKey (cacheKey),
+                    KEY idx_{$table}_cacheNamespace (cacheNamespace),
+                    KEY idx_{$table}_expirationTime (expirationTime),
+                    KEY idx_{$table}_key_namespace (cacheKey, cacheNamespace)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             ";
         }

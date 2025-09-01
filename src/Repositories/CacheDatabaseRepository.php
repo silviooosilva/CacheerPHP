@@ -16,15 +16,19 @@ class CacheDatabaseRepository
     /** @var ?PDO */
     private ?PDO $connection = null;
 
+    /** @var string */
+    private string $table = 'cacheer_table';
+
    
     /**
      * CacheDatabaseRepository constructor.
      * Initializes the database connection using the Connect class.
      * 
      */
-    public function __construct()
+    public function __construct(string $table = 'cacheer_table')
     {
         $this->connection = Connect::getInstance();
+        $this->table = $table ?: 'cacheer_table';
     }
 
 
@@ -47,7 +51,7 @@ class CacheDatabaseRepository
         $createdAt = date('Y-m-d H:i:s');
 
         $stmt = $this->connection->prepare(
-            "INSERT INTO cacheer_table (cacheKey, cacheData, cacheNamespace, expirationTime, created_at) 
+            "INSERT INTO {$this->table} (cacheKey, cacheData, cacheNamespace, expirationTime, created_at) 
             VALUES (:cacheKey, :cacheData, :namespace, :expirationTime, :createdAt)"
         );
         $stmt->bindValue(':cacheKey', $cacheKey);
@@ -72,7 +76,7 @@ class CacheDatabaseRepository
         $nowFunction = $this->getCurrentDateTime($driver);
 
         $stmt = $this->connection->prepare(
-            "SELECT cacheData FROM cacheer_table 
+            "SELECT cacheData FROM {$this->table} 
             WHERE cacheKey = :cacheKey AND cacheNamespace = :namespace AND expirationTime > $nowFunction
             LIMIT 1"
         );
@@ -95,7 +99,7 @@ class CacheDatabaseRepository
         $nowFunction = $this->getCurrentDateTime($driver);
 
         $stmt = $this->connection->prepare(
-            "SELECT cacheKey, cacheData FROM cacheer_table 
+            "SELECT cacheKey, cacheData FROM {$this->table} 
             WHERE cacheNamespace = :namespace AND expirationTime > $nowFunction"
         );
         $stmt->bindValue(':namespace', $namespace);
@@ -117,9 +121,9 @@ class CacheDatabaseRepository
     {
         $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driver === 'mysql' || $driver === 'mariadb') {
-            return "UPDATE cacheer_table SET cacheData = :cacheData, cacheNamespace = :namespace WHERE cacheKey = :cacheKey LIMIT 1";
+            return "UPDATE {$this->table} SET cacheData = :cacheData, cacheNamespace = :namespace WHERE cacheKey = :cacheKey LIMIT 1";
         }
-        return "UPDATE cacheer_table SET cacheData = :cacheData, cacheNamespace = :namespace WHERE cacheKey = :cacheKey";
+        return "UPDATE {$this->table} SET cacheData = :cacheData, cacheNamespace = :namespace WHERE cacheKey = :cacheKey";
     }
 
     /**
@@ -131,9 +135,9 @@ class CacheDatabaseRepository
     {
         $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driver === 'mysql' || $driver === 'mariadb') {
-            return "DELETE FROM cacheer_table WHERE cacheKey = :cacheKey AND cacheNamespace = :namespace LIMIT 1";
+            return "DELETE FROM {$this->table} WHERE cacheKey = :cacheKey AND cacheNamespace = :namespace LIMIT 1";
         }
-        return "DELETE FROM cacheer_table WHERE cacheKey = :cacheKey AND cacheNamespace = :namespace";
+        return "DELETE FROM {$this->table} WHERE cacheKey = :cacheKey AND cacheNamespace = :namespace";
     }
 
     /**
@@ -183,11 +187,11 @@ class CacheDatabaseRepository
     {
         $driver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driver === 'sqlite') {
-            return "UPDATE cacheer_table
+            return "UPDATE {$this->table}
                     SET expirationTime = DATETIME(expirationTime, '+' || :ttl || ' seconds')
                     WHERE cacheKey = :cacheKey AND cacheNamespace = :namespace AND expirationTime > :currentTime";
         }
-        return "UPDATE cacheer_table
+        return "UPDATE {$this->table}
                 SET expirationTime = DATE_ADD(expirationTime, INTERVAL :ttl SECOND)
                 WHERE cacheKey = :cacheKey AND cacheNamespace = :namespace AND expirationTime > :currentTime";
     }
@@ -203,7 +207,7 @@ class CacheDatabaseRepository
     private function hasValidCache(string $cacheKey, string $namespace, string $currentTime): bool
     {
         $stmt = $this->connection->prepare(
-            "SELECT 1 FROM cacheer_table 
+            "SELECT 1 FROM {$this->table} 
             WHERE cacheKey = :cacheKey AND cacheNamespace = :namespace AND expirationTime > :currentTime
             LIMIT 1"
         );
@@ -247,7 +251,7 @@ class CacheDatabaseRepository
     */
     public function flush(): bool
     {
-        return $this->connection->exec("DELETE FROM cacheer_table") !== false;
+        return $this->connection->exec("DELETE FROM {$this->table}") !== false;
     }
 
     /**
