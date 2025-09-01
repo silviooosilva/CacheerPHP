@@ -92,20 +92,17 @@ if ($cache->isSuccess()) {
 
 ## Documentation
 
-- [Storing and retrieving cached data](docs/example01.md)
-- [Customizable cache expiration](docs/example02.md)
-- [Cache flushing and cleaning](docs/example03.md)
-- [Namespace support for cache organization](docs/example04.md)
-- [Automatic cleaning of the `flushAfter` cache directory](docs/example09.md)
-- [API Response Cache](docs/example05.md)
-- [Custom Data Output (`JSON`)](docs/example06.md)
-- [Custom Data Output (`Array`)](docs/example07.md)
-- [Custom Data Output (`String`)](docs/example08.md)
-- [Upgrade Guide for Version 2.0.0](docs/guide2.0.0.md)
-- [API Reference](docs/api-reference.md)
-- [API Reference - Cache Functions](docs/API-Reference/FuncoesCache/README.md)
+- English
+  - Getting Started: `docs/en/getting-started.md`
+  - API Reference: `docs/en/api/reference.md`
+  - Recipes (Examples): `docs/en/recipes/examples.md`
 
-Additional examples are available in the `Examples` directory.
+- Português (PT-BR)
+  - Primeiros Passos: `docs/pt/getting-started.md`
+  - Referência da API: `docs/pt/api/referencia.md`
+  - Receitas (Exemplos): `docs/pt/recipes/exemplos.md`
+
+Runnable PHP samples live in the `Examples/` directory.
 
 ## Testing
 
