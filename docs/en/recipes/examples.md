@@ -1,4 +1,4 @@
-# Recipes (Examples)
+# Examples
 
 Consolidated examples using CacheerPHP. For runnable PHP samples, see `Examples/`.
 
