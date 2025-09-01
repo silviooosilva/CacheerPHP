@@ -1,4 +1,4 @@
-# Receitas (Exemplos)
+# Exemplos
 
 Exemplos consolidados do CacheerPHP. Para exemplos executáveis em PHP, veja `Examples/`.
 
