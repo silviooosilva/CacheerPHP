@@ -52,16 +52,6 @@ $Cacheer->getAll(string $namespace);
 
 /**
 * Stores an item in the cache with a specific TTL.
-*/
-$Cacheer->getAll(string $namespace);
-```
-
-### `putCache()` - Stores data in the cache
-
-```php
-
-/**
-* Stores an item in the cache with a specific TTL.
 * @param string $cacheKey Unique item key
 * @param mixed $cacheData Data to be stored (serializable)
 * @param string|int $ttl Lifetime in seconds (default: 3600)

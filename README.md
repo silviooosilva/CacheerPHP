@@ -93,14 +93,14 @@ if ($cache->isSuccess()) {
 ## Documentation
 
 - English
-  - Getting Started: `docs/en/getting-started.md`
-  - API Reference: `docs/en/api/reference.md`
-  - Recipes (Examples): `docs/en/recipes/examples.md`
+  - [Getting Started]: (docs/en/getting-started.md)
+  - [API Reference]: (docs/en/api/reference.md)
+  - [Examples]: (docs/en/recipes/examples.md)
 
 - Português (PT-BR)
-  - Primeiros Passos: `docs/pt/getting-started.md`
-  - Referência da API: `docs/pt/api/referencia.md`
-  - Receitas (Exemplos): `docs/pt/recipes/exemplos.md`
+  - [Primeiros Passos]: (docs/pt/getting-started.md)
+  - [Referência da API]: (docs/pt/api/referencia.md)
+  - [Exemplos]: (docs/pt/recipes/exemplos.md)
 
 Runnable PHP samples live in the `Examples/` directory.
 
