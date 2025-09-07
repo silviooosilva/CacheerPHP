@@ -102,7 +102,7 @@ if ($cache->isSuccess()) {
   - [Referência da API](docs/pt/api/referencia.md)
   - [Exemplos](docs/pt/recipes/exemplos.md)
 
-Runnable PHP samples live in the `Examples/` directory.
+Runnable PHP samples live in the [`Examples`](./Examples/) directory.
 
 ## Testing
 

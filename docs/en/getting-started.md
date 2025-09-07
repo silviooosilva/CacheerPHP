@@ -62,6 +62,6 @@ if ($cache->isSuccess()) {
 
 ## Next Steps
 
-- API: `docs/en/api/reference.md`
-- Recipes (Examples): `docs/en/recipes/examples.md`
+- [API](./api/reference.md)
+- [Examples](./recipes/examples.md)
 
