@@ -190,4 +190,31 @@ class CacheMutator
 
         return $this->cacheer->isSuccess();
     }
+
+    /**
+     * Associates keys to a tag in the current driver.
+     *
+     * @param string $tag
+     * @param string ...$keys
+     * @return bool
+     */
+    public function tag(string $tag, string ...$keys): bool
+    {
+        $this->cacheer->cacheStore->tag($tag, ...$keys);
+        $this->cacheer->syncState();
+        return $this->cacheer->isSuccess();
+    }
+
+    /**
+     * Flushes all keys associated with a tag in the current driver.
+     *
+     * @param string $tag
+     * @return bool
+     */
+    public function flushTag(string $tag): bool
+    {
+        $this->cacheer->cacheStore->flushTag($tag);
+        $this->cacheer->syncState();
+        return $this->cacheer->isSuccess();
+    }
 }

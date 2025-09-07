@@ -103,5 +103,21 @@ interface CacheerInterface
      * @return bool True on success, false on failure
      */
     public function renewCache(string $cacheKey, int | string $ttl, string $namespace = '');
-}
 
+    /**
+     * Associates one or more cache keys to a tag.
+     *
+     * @param string $tag
+     * @param string ...$keys One or more cache keys
+     * @return mixed
+     */
+    public function tag(string $tag, string ...$keys);
+
+    /**
+     * Flushes all cache items associated with a tag.
+     *
+     * @param string $tag
+     * @return mixed
+     */
+    public function flushTag(string $tag);
+}

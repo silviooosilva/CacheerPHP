@@ -131,6 +131,57 @@ class DatabaseCacheStore implements CacheerInterface
     }
 
     /**
+     * Associates one or more keys to a tag using a reserved namespace.
+     *
+     * @param string $tag
+     * @param string ...$keys
+     * @return bool
+     */
+    public function tag(string $tag, string ...$keys): bool
+    {
+        $indexKey = "tag:" . $tag;
+        $namespace = '__tags__';
+        $existing = $this->cacheRepository->retrieve($indexKey, $namespace) ?? [];
+        if (!is_array($existing)) {
+            $existing = [];
+        }
+        foreach ($keys as $key) {
+            // Store either raw key or "namespace:key"
+            $existing[$key] = true;
+        }
+        $ok = $this->cacheRepository->store($indexKey, $existing, $namespace, 31536000);
+        $this->setMessage($ok ? "Tagged successfully" : "Failed to tag keys", $ok);
+        $this->logger->debug("{$this->getMessage()} from database driver.");
+        return $ok;
+    }
+
+    /**
+     * Flush all keys associated with a tag.
+     *
+     * @param string $tag
+     * @return void
+     */
+    public function flushTag(string $tag): void
+    {
+        $indexKey = "tag:" . $tag;
+        $namespace = '__tags__';
+        $existing = $this->cacheRepository->retrieve($indexKey, $namespace) ?? [];
+        if (is_array($existing)) {
+            foreach (array_keys($existing) as $key) {
+                if (str_contains($key, ':')) {
+                    [$np, $k] = explode(':', $key, 2);
+                    $this->clearCache($k, $np);
+                } else {
+                    $this->clearCache($key, '');
+                }
+            }
+        }
+        $this->cacheRepository->clear($indexKey, $namespace);
+        $this->setMessage("Tag flushed successfully", true);
+        $this->logger->debug("{$this->getMessage()} from database driver.");
+    }
+
+    /**
      * Gets a single cache item.
      * 
      * @param string $cacheKey
