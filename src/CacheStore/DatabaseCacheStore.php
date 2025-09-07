@@ -6,6 +6,11 @@ use Silviooosilva\CacheerPhp\Interface\CacheerInterface;
 use Silviooosilva\CacheerPhp\Helpers\CacheDatabaseHelper;
 use Silviooosilva\CacheerPhp\Utils\CacheLogger;
 use Silviooosilva\CacheerPhp\Repositories\CacheDatabaseRepository;
+use Silviooosilva\CacheerPhp\CacheStore\CacheManager\GenericFlusher;
+use Silviooosilva\CacheerPhp\Helpers\CacheFileHelper;
+use Silviooosilva\CacheerPhp\Helpers\FlushHelper;
+use Silviooosilva\CacheerPhp\Core\Connect;
+use Silviooosilva\CacheerPhp\Core\MigrationManager;
 
 /**
  * Class DatabaseCacheStore
@@ -34,15 +39,37 @@ class DatabaseCacheStore implements CacheerInterface
      */
     private CacheDatabaseRepository $cacheRepository;
 
+    /** @var int|null */
+    private ?int $defaultTTL = null;
+
+    /** @var GenericFlusher|null */
+    private ?GenericFlusher $flusher = null;
+
     /**
      * DatabaseCacheStore constructor.
      *
      * @param string $logPath
+     * @param array $options
      */
-    public function __construct(string $logPath)
+    public function __construct(string $logPath, array $options = [])
     {
         $this->logger = new CacheLogger($logPath);
-        $this->cacheRepository = new CacheDatabaseRepository();
+        $table = $options['table'] ?? 'cacheer_table';
+        $this->cacheRepository = new CacheDatabaseRepository($table);
+
+        // Ensure the custom table exists by running a targeted migration
+        $pdo = Connect::getInstance();
+        MigrationManager::migrate($pdo, $table);
+
+        if (!empty($options['expirationTime'])) {
+            $this->defaultTTL = (int) CacheFileHelper::convertExpirationToSeconds((string) $options['expirationTime']);
+        }
+
+        $lastFlushFile = FlushHelper::pathFor('db', $table);
+        $this->flusher = new GenericFlusher($lastFlushFile, function () {
+            $this->flushCache();
+        });
+        $this->flusher->handleAutoFlush($options);
     }
 
     /**
@@ -294,7 +321,15 @@ class DatabaseCacheStore implements CacheerInterface
      */
     public function putCache(string $cacheKey, mixed $cacheData, string $namespace = '', string|int $ttl = 3600): bool
     {
-        if($this->storeCache($cacheKey, $cacheData, $namespace, $ttl)){
+        $ttlToUse = $ttl;
+        if ($this->defaultTTL !== null && ($ttl === null || (int)$ttl === 3600)) {
+            $ttlToUse = $this->defaultTTL;
+        }
+        if (is_string($ttlToUse)) {
+            $ttlToUse = (int) CacheFileHelper::convertExpirationToSeconds($ttlToUse);
+        }
+
+        if($this->storeCache($cacheKey, $cacheData, $namespace, $ttlToUse)){
             $this->logger->debug("{$this->getMessage()} from database driver.");
             return true;
         }

@@ -4,7 +4,9 @@ TimeBuilder provides a fluid and chainable way of defining time periods in a mor
 
 It allows expirationTime and flushAfter values to be passed directly as integers or defined using chained methods such as day(1), week(2), etc.
 
-#### Simple use
+TimeBuilder can be chained from File, Redis and Database builders to define values for `expirationTime()` and `flushAfter()`.
+
+#### Simple use (File)
 
 ```php
 OptionBuilder::forFile()
@@ -17,6 +19,20 @@ Or use TimeBuilder's chained approach:
 OptionBuilder::forFile()
     ->expirationTime()->day(1)
     ->build();
+```
+
+#### Use with Redis and Database
+
+```php
+// Redis default TTL of 10 minutes
+OptionBuilder::forRedis()
+  ->expirationTime()->minute(10)
+  ->build();
+
+// Database flush interval of 1 week
+OptionBuilder::forDatabase()
+  ->flushAfter()->week(1)
+  ->build();
 ```
 
 #### Available methods

@@ -16,6 +16,7 @@ cp .env.example .env
 | `DB_DATABASE`  | Database name                                             | `cacheer_db`|
 | `DB_USERNAME`  | Database user                                             | `root`      |
 | `DB_PASSWORD`  | Database password                                         | *(empty)*   |
+| `CACHEER_TABLE`| Cache table name for database driver                      | `cacheer_table` |
 
 ## Redis settings
 
