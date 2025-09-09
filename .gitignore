@@ -8,3 +8,19 @@
 cacheer.log
 /tests/Unit/cache
 /Examples/InternalTests/
+ 
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Node (site)
+node_modules/
+cacheerphp.github.io/node_modules/
+cacheerphp.github.io/.cache/
+cacheerphp.github.io/dist/
+cacheerphp.github.io/build/
+cacheerphp.github.io/coverage/
+cacheerphp.github.io/npm-debug.log*
+cacheerphp.github.io/yarn-*.log*
+cacheerphp.github.io/pnpm-debug.log*

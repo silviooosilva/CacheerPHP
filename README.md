@@ -1,7 +1,7 @@
 # CacheerPHP
 
 <p align="center">
-  <a href="https://github.com/silviooosilva/CacheerPHP"><img src="docs/cacheer_php_logo__.png" width="450"/></a>
+  <a href="https://github.com/silviooosilva/CacheerPHP"><img src="./art/cacheer_php_logo__.png" width="450" alt="CacheerPHP Logo"/></a>
 </p>
 
 [![Maintainer](https://img.shields.io/badge/maintainer-@silviooosilva-blue.svg?style=for-the-badge&color=blue)](https://github.com/silviooosilva)
@@ -47,7 +47,7 @@ Copy the example environment file and adjust the settings for your environment:
 cp .env.example .env
 ```
 
-Environment variables control database and Redis connections. See [Configuration](docs/configuration.md) for the full list.
+Environment variables control database and Redis connections. See [Configuration](https://github.com/CacheerPHP/docs/blob/main/en/guides/configuration.md) for the full list.
 
 ## Quick start
 
@@ -92,17 +92,8 @@ if ($cache->isSuccess()) {
 
 ## Documentation
 
-- English
-  - [Getting Started](docs/en/getting-started.md)
-  - [API Reference](docs/en/api/reference.md)
-  - [Examples](docs/en/recipes/examples.md)
+Full documentation is available at [CacheerPHP Documentation](https://github.com/CacheerPHP/docs).
 
-- Português (PT-BR)
-  - [Primeiros Passos](docs/pt/getting-started.md)
-  - [Referência da API](docs/pt/api/referencia.md)
-  - [Exemplos](docs/pt/recipes/exemplos.md)
-
-Runnable PHP samples live in the [`Examples`](./Examples/) directory.
 
 ## Testing
 
